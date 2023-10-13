@@ -1,7 +1,8 @@
 <template>
-  <form @submit.prevent="login">
-    <label for="password" class="block text-900 font-medium mb-2">Введите СМС-код</label>
-    <InputText id="password" :disabled="isLoading" v-model="code" class="w-full mb-8 text-center" required />
+  <form @submit.prevent="signIn">
+    <InputText id="login" :disabled="isLoading" type="text" placeholder="Логин" v-model="login" class="w-full mb-8 text-center" required />
+    <InputText id="password" :disabled="isLoading" type="password" placeholder="Пароль" v-model="password" class="w-full mb-8 text-center" required />
+
     <Button
       icon="pi pi-user"
       class="w-full flex items-center p-4"
@@ -21,26 +22,23 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 
 import { useMutation } from '@tanstack/vue-query'
-import ky, { baseURL } from '@/network'
+import ky from '@/network'
 
 const toast = useToast()
-
-const props = defineProps<{
-  phone: string
-}>()
 
 const router = useRouter()
 const userStore = useUserStore()
 const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userStore)
 
-const code = ref('')
+const login = ref('')
+const password = ref('')
 
 const { isLoading, mutate } = useMutation<any, any, any>({
-  mutationFn: (payload: any) => ky.post('api/sms_verification', { json: payload, hooks: {
+  mutationFn: (payload: any) => ky.post('api/password_verification', { json: payload, hooks: {
     afterResponse: [
       async (request, options, response) => {
         const body = await response.json()
-        if (response.status === 400 && body.error.type === 'WrongSmsCode') {
+        if (response.status === 400) {
           toast.add({
             severity: 'error',
             summary: body.message
@@ -58,10 +56,10 @@ const { isLoading, mutate } = useMutation<any, any, any>({
   },
 })
 
-const login = () => {
+const signIn = () => {
   mutate({
-    code: code.value,
-    phone: props.phone
+    password: password.value,
+    phone: login.value
   })
 }
 </script>

@@ -2,17 +2,7 @@
 import { ref } from 'vue'
 import logoSrc from '@/assets/logo.svg'
 
-import LoginSendSMS from '@/components/LoginSendSMS.vue'
-import LoginVerifySMS from '@/components/LoginVerifySMS.vue'
-
-const phone = ref('')
-
-const stage = ref<'send-sms' | 'verification'>('send-sms')
-
-const setPhone = (val: string) => {
-  phone.value = val
-  stage.value = 'verification'
-}
+import LoginForm from '@/components/LoginForm.vue'
 
 </script>
 
@@ -28,10 +18,7 @@ const setPhone = (val: string) => {
       </div>
 
       <div>
-        <Transition name="fade" mode="out-in">
-          <LoginSendSMS @set-phone="setPhone" v-if="stage == 'send-sms'"/>
-          <LoginVerifySMS :phone="phone" v-else-if="stage == 'verification'"/>
-        </Transition>
+        <LoginForm/>
       </div>
     </div>
   </main>
