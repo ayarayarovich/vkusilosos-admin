@@ -41,6 +41,7 @@ const { isLoading, mutate } = useMutation<any, any, any>({
         if (response.status === 400) {
           toast.add({
             severity: 'error',
+            life: 3000,
             summary: body.message
           })
         }
