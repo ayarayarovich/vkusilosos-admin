@@ -35,15 +35,7 @@ const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userS
 
 const code = ref('')
 
-const { isLoading, mutate } = useMutation<{
-  accessToken: string,
-  refreshToken: string,
-  user: {
-    userId: number,
-    role: string,
-    phone: string
-  }
-}>({
+const { isLoading, mutate } = useMutation<any, any, any>({
   mutationFn: (payload: any) => ky.post('api/sms_verification', { json: payload, hooks: {
     afterResponse: [
       async (request, options, response) => {
