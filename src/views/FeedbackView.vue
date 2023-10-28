@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { useQuery } from '@tanstack/vue-query'
-import { baseURL } from '@/network'
+import { axiosPrivate } from '@/network'
 
 import type { Feedback } from '@/interfaces'
 
@@ -19,13 +19,15 @@ const getFeedbacksQuery = reactive(
     total: number
   }>({
     queryKey: ['feedbacks', offset, limit],
-    queryFn: ({ queryKey }) =>
-      fetch(baseURL + `/admin/reviews?offset=${queryKey[1]}&limit=${queryKey[2]}`, {
-        method: 'get',
-        headers: {
-          accept: 'application/json'
+    queryFn: async ({ queryKey }) => {
+      const response = await axiosPrivate.get('admin/reviews', {
+        params: {
+          offset: queryKey[1] as number,
+          limit: queryKey[2] as number,
         }
-      }).then((res) => res.json())
+      })
+      return response.data;
+    }
   })
 )
 

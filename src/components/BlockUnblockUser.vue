@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive, watch, computed } from 'vue'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useTableSelectionStore } from '@/stores/table-selection-store'
 import { useConfirm } from 'primevue/useconfirm'
@@ -33,13 +33,11 @@ const tableSelectionStore = useTableSelectionStore()
 const deleteDishMutation = reactive(
   useMutation({
     mutationFn: () =>
-      ky
-        .delete('admin/user', {
-          searchParams: {
-            id: tableSelectionStore.id!
-          }
-        })
-        .json(),
+      axiosPrivate.delete('admin/user', {
+        params: {
+          id: tableSelectionStore.id!
+        }
+      }),
     onSuccess() {
       toast.add({
         severity: 'success',

@@ -3,7 +3,7 @@ import { ref, reactive, watch } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { useQuery } from '@tanstack/vue-query'
 import { useDebounce, useElementBounding } from '@vueuse/core'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 
 import type { User } from '@/interfaces'
 import BlockUnblockUser from '@/components/BlockUnblockUser.vue'
@@ -33,16 +33,16 @@ const query = reactive(
     total: number
   }>({
     queryKey: ['users', offset, limit, debouncedSearchTerm],
-    queryFn: ({ queryKey }) =>
-      ky
-        .get('admin/users', {
-          searchParams: {
-            offset: queryKey[1] as number,
-            limit: queryKey[2] as number,
-            search: queryKey[3] as number
-          }
-        })
-        .json()
+    queryFn: async ({ queryKey }) => {
+      const response = await axiosPrivate.get('admin/users', {
+        params: {
+          offset: queryKey[1] as number,
+          limit: queryKey[2] as number,
+          search: queryKey[3] as number
+        }
+      })
+      return response.data;
+    }
   })
 )
 

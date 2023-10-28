@@ -2,7 +2,7 @@
 import { ref, reactive, toRefs, watch } from 'vue'
 import type { DataTablePageEvent, DataTableRowEditSaveEvent } from 'primevue/datatable'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 import CreateDish from '@/components/CreateDish.vue'
 
 import type { Dish } from '@/interfaces'
@@ -38,16 +38,16 @@ const query = reactive(
     total: number
   }>({
     queryKey: ['dishes', offset, limit, debouncedSearchTerm],
-    queryFn: ({ queryKey }) =>
-      ky
-        .get('admin/dishes', {
-          searchParams: {
-            offset: queryKey[1] as number,
-            limit: queryKey[2] as number,
-            search: queryKey[3] as number
-          }
-        })
-        .json()
+    queryFn: async ({ queryKey }) => {
+      const response = await axiosPrivate.get('admin/dishes', {
+        params: {
+          offset: queryKey[1] as number,
+          limit: queryKey[2] as number,
+          search: queryKey[3] as number
+        }
+      })
+      return response.data;
+    }
   })
 )
 
@@ -59,7 +59,7 @@ watch([data], () => {
 
 const mutateDishQuery = reactive(
   useMutation({
-    mutationFn: (payload: any) => ky.put('admin/dish', { json: payload }).json(),
+    mutationFn: async (payload: any) => await axiosPrivate.put('admin/dish', payload),
     onSuccess(data, variables) {
       queryClient.invalidateQueries(['dishes'])
       toast.add({
@@ -69,12 +69,15 @@ const mutateDishQuery = reactive(
         detail: `Данные блюда (id = ${variables.id}) обновлены`
       })
     },
-    onError() {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Что-то пошло не так...'
-      })
+    onError(error: any) {
+      const body = error.response.data
+      if (error.response.status === 400) {
+        toast.add({
+          severity: 'error',
+          life: 3000,
+          summary: body.message
+        })
+      }
     }
   })
 )

@@ -1,9 +1,51 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import logoSrc from '@/assets/logo.svg'
 
-import LoginForm from '@/components/LoginForm.vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+import { useToast } from 'primevue/usetoast'
 
+import { useMutation } from '@tanstack/vue-query'
+import { axiosPublic } from '@/network'
+
+const toast = useToast()
+
+const router = useRouter()
+const userStore = useUserStore()
+const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userStore)
+
+const form = reactive({
+  password: '',
+  phone: ''
+})
+
+const { isLoading, mutate } = useMutation<any, any, any>({
+  mutationFn: async (payload: any) => {
+    return axiosPublic.post('api/password_verification', payload)
+  },
+  onSuccess({ data }) {
+    console.log(data)
+    accessToken.value = data.accessToken
+    refreshToken.value = data.refreshToken
+    userID.value = data.user.userId
+    isAuthenticated.value = true
+    router.push({ name: 'dashboard' })
+  },
+  onError(error) {
+    const body = error.response.data
+    toast.add({
+      severity: 'error',
+      life: 3000,
+      summary: body.message
+    })
+  }
+})
+
+const signIn = () => {
+  mutate(form)
+}
 </script>
 
 <template>
@@ -18,7 +60,35 @@ import LoginForm from '@/components/LoginForm.vue'
       </div>
 
       <div>
-        <LoginForm/>
+        <form @submit.prevent="signIn">
+          <InputText
+            id="login"
+            :disabled="isLoading"
+            type="text"
+            placeholder="Логин"
+            v-model="form.phone"
+            class="w-full mb-8 text-center"
+            required
+          />
+          <InputText
+            id="password"
+            :disabled="isLoading"
+            type="password"
+            placeholder="Пароль"
+            v-model="form.password"
+            class="w-full mb-8 text-center"
+            required
+          />
+
+          <Button
+            icon="pi pi-user"
+            class="w-full flex items-center p-4"
+            label="Войти"
+            type="submit"
+            :loading="isLoading"
+            :disabled="isLoading"
+          />
+        </form>
       </div>
     </div>
   </main>

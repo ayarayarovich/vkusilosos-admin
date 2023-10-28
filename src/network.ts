@@ -1,41 +1,62 @@
-import ky from 'ky'
-import type { KyInstance } from 'node_modules/ky/distribution/types/ky'
+import axios from 'axios'
 
 import pinia from '@/stores'
 import { useUserStore } from '@/stores/user'
 
-export const baseURL = 'https://api.losos.ayarayarovich.tech'
+const baseURL = 'https://api.losos.ayarayarovich.tech'
 
-// const a = axios.create({
-//   baseURL,
-//   withCredentials: true,
-//   headers: { 'Access-Control-Allow-Origin': 'https://api.losos.ayarayarovich.tech' }
-// })
-
-export default ky.extend({
-  mode: 'cors',
-  prefixUrl: baseURL,
-  retry: 0,
-  hooks: {
-    beforeRequest: [
-      request => {
-        const userStore = useUserStore(pinia)
-        if (userStore.isAuthenticated) {
-				  request.headers.set('Authorization', `Bearer ${userStore.accessToken}`);
-        }
-        else {
-          userStore.signOut()
-        }
-			}
-    ],
-    afterResponse: [
-      async (request, options, response) => {
-        if (response.status === 403 || response.status === 401) {
-          const userStore = useUserStore(pinia)
-          userStore.signOut()
-        }
-      }
-    ]
-  }
+export const axiosPublic = axios.create({
+  baseURL
 })
 
+export const axiosPrivate = axios.create({
+  baseURL
+})
+
+axiosPrivate.interceptors.request.use(
+  (config) => {
+    const userStore = useUserStore(pinia)
+    if (userStore.isAuthenticated) {
+      config.headers['Authorization'] = `Bearer ${userStore.accessToken}`
+    } else {
+      userStore.signOut()
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+axiosPrivate.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    const userStore = useUserStore(pinia)
+
+    const originalConfig = err.config
+    if (err.response) {
+      if ((err.response.status === 403 || err.response.status === 401) && !originalConfig._retry) {
+        originalConfig._retry = true
+
+        try {
+          const rs = await axiosPrivate.post('/api/refresh', {
+            refreshToken: userStore.refreshToken
+          })
+          const { accessToken, refreshToken } = rs.data
+          userStore.accessToken = accessToken
+          userStore.refreshToken = refreshToken
+        
+          axiosPrivate.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+
+          return axiosPrivate(originalConfig)
+        } catch (_error: any) {
+          if (_error.response && _error.response.data) {
+            userStore.isAuthenticated = false
+            return Promise.reject(_error.response.data)
+          }
+
+          userStore.isAuthenticated = false
+          return Promise.reject(_error)
+        }
+      }
+    }
+  }
+)

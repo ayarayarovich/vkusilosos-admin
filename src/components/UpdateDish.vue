@@ -136,7 +136,7 @@
 import type { UpdateDish } from '@/interfaces'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive, watch, computed } from 'vue'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useTableSelectionStore } from '@/stores/table-selection-store'
 
@@ -176,19 +176,18 @@ const visible = ref(false)
 
 const tableSelectionStore = useTableSelectionStore()
 
-const {data, isSuccess} = 
-  useQuery<UpdateDish>({
-    queryKey: ['dishes', tableSelectionStore.id],
-    queryFn: () =>
-      ky
-        .get('admin/dish', {
-          searchParams: {
-            id: tableSelectionStore.id!
-          }
-        })
-        .json(),
-    enabled: visible
-  })
+const { data, isSuccess } = useQuery<UpdateDish>({
+  queryKey: ['dishes', tableSelectionStore.id],
+  queryFn: async () => {
+    const response = await axiosPrivate.get('admin/dish', {
+      params: {
+        id: tableSelectionStore.id!
+      }
+    })
+    return response.data
+  },
+  enabled: visible
+})
 
 watch([data], () => {
   if (isSuccess && data.value) {
@@ -212,7 +211,10 @@ watch([data], () => {
 
 const updateDishMutation = reactive(
   useMutation({
-    mutationFn: (payload: any) => ky.put('admin/dish', { json: payload }).json(),
+    mutationFn: async (payload: any) => {
+      const response = await axiosPrivate.put('admin/dish', payload)
+      return response.data
+    },
     onSuccess(data, variables) {
       toast.add({
         severity: 'success',

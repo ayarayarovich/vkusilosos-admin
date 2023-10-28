@@ -172,7 +172,7 @@
 import type { CreateDish } from '@/interfaces'
 import { useMutation } from '@tanstack/vue-query'
 import { ref, reactive, watch } from 'vue'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 
 
@@ -215,7 +215,7 @@ watch([selected], () => (payload.color = selected.value.code))
 
 const createDishMutation = reactive(
   useMutation({
-    mutationFn: (payload: any) => ky.put('admin/dish', { json: payload }).json(),
+    mutationFn: (payload: any) => axiosPrivate.put('admin/dish', payload),
     onSuccess(data, variables) {
       toast.add({
         severity: 'success',

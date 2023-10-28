@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive } from 'vue'
-import ky from '@/network'
+import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useTableSelectionStore } from '@/stores/table-selection-store'
 
@@ -51,7 +51,7 @@ const tableSelectionStore = useTableSelectionStore()
 
 const updateDishMutation = reactive(
   useMutation({
-    mutationFn: (payload: any) => ky.post('admin/user/gift', { json: payload }).json(),
+    mutationFn: (payload: any) => axiosPrivate.post('admin/user/gift', payload),
     onSuccess(data, variables) {
       toast.add({
         severity: 'success',
