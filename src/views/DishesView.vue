@@ -10,7 +10,7 @@ import { useDebounce, useElementBounding } from '@vueuse/core'
 import { useToast } from 'primevue/usetoast'
 import UpdateDish from '@/components/UpdateDish.vue'
 import DeleteDish from '@/components/DeleteDish.vue'
-import { useTableSelectionStore } from '@/stores/table-selection-store'
+import emitter from '@/emmiter'
 
 const rowsPerPage = ref(20)
 
@@ -23,14 +23,6 @@ const totalRecords = ref<number>()
 
 const queryClient = useQueryClient()
 const toast = useToast()
-const tableSelectionStore = useTableSelectionStore()
-
-watch([selectedDish], () => {
-  if (selectedDish.value) {
-    tableSelectionStore.id = selectedDish.value.id
-    tableSelectionStore.name = selectedDish.value.name
-  }
-})
 
 const query = reactive(
   useQuery<{
@@ -46,15 +38,15 @@ const query = reactive(
           search: queryKey[3] as number
         }
       })
-      return response.data;
+      return response.data
     }
   })
 )
 
-const { data } = toRefs(query)
-
-watch([data], () => {
-  totalRecords.value = data.value?.total
+watch([query], () => {
+  if (query.data) {
+    totalRecords.value = query.data.total
+  }
 })
 
 const mutateDishQuery = reactive(
@@ -135,10 +127,9 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
         :totalRecords="totalRecords"
         :loading="query.isLoading"
       >
-        <Column selectionMode="single" headerStyle="width: 3rem"></Column>
-        <Column field="id" header="ID"></Column>
-        <Column field="name" header="Название">
-        </Column>
+        <Column selectionMode="single" headerStyle="width: 3rem" />
+        <Column field="id" header="ID" />
+        <Column field="name" header="Название" />
         <Column field="img" header="Картинка">
           <template #body="slotProps">
             <img
@@ -148,19 +139,40 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
             />
           </template>
         </Column>
-        <Column field="price" header="Цена">
-        </Column>
-        <Column field="sale_price" header="Цена продажи"/>
+        <Column field="price" header="Цена" />
+        <Column field="sale_price" header="Цена продажи" />
         <template #header>
-          <div class="flex gap-4 justify-end">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search" />
-              <InputText v-model="searchTerm" placeholder="Поиск" />
-            </span>
+          <div class="flex justify-between items-center">
+            <div>
+              <Button
+                icon="pi pi-refresh"
+                :disabled="query.isFetching"
+                @click="queryClient.invalidateQueries(['dishes'])"
+              />
+            </div>
 
-            <UpdateDish :disabled="!selectedDish" />
-            <DeleteDish :disabled="!selectedDish" />
+            <div class="flex gap-4">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText v-model="searchTerm" placeholder="Поиск" />
+              </span>
+
+              <Button
+                label="Изменить"
+                icon="pi pi-external-link"
+                :disabled="!selectedDish"
+                @click="
+                  emitter.emit('Dishes.Edit', { id: selectedDish!.id, name: selectedDish!.name })
+                "
+              />
+              <UpdateDish />
+              <DeleteDish :disabled="!selectedDish" />
+            </div>
           </div>
+        </template>
+
+        <template #loading>
+          <ProgressSpinner class="h-8" />
         </template>
       </DataTable>
     </div>

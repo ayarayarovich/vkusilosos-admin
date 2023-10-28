@@ -41,29 +41,41 @@ export interface Feedback {
 }
 
 export interface CreateDish {
-  name: string
-  description: string
-  price: number
-  sale_price: number
-  img: string
-  category: {
-    name: string
-    img: string
-  }
-  iiko_id: number
-  count: number
-  weight: number
-  energy: number
-  belki: number
-  ziri: number
-  uglevodi: number
-  color: string
-  size: number
-  have: true
-  can_deliver: true
-  active: true
+  name: string | undefined
+  description: string | undefined
+  price: number | undefined
+  sale_price: number | undefined
+  img: string | undefined
+  category_id: number | undefined
+  iiko_id: number | undefined
+  count: number | undefined
+  weight: number | undefined
+  energy: number | undefined
+  belki: number | undefined
+  ziri: number | undefined
+  uglevodi: number | undefined
+  color: string | undefined
+  size: number | undefined
+  have: boolean | undefined
+  can_deliver: boolean | undefined
+  active: boolean | undefined
 }
 
 export interface UpdateDish extends CreateDish {
   id: number
+}
+
+export interface CreateCategory {
+  name: string
+}
+
+export interface Category {
+  id: number
+  name: string
+  count_dishes: number
+}
+
+export interface UpdateCategory {
+  id: number
+  name: string
 }

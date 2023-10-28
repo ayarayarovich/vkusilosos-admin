@@ -61,7 +61,7 @@ const confirmStatusChange = () => {
   confirm.require({
     message: `Вы уверены, что хотите изменить статус пользователя ${tableSelectionStore.name} (id: ${tableSelectionStore.id}) ?`,
     header: 'Подтверждение',
-    icon: 'pi pi-info-circle',
+    icon: 'pi pi-info-circle', 
     acceptClass: 'p-button-danger',
     accept: () => {
       deleteDishMutation.mutate()

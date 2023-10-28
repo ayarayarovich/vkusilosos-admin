@@ -60,17 +60,15 @@ const deleteDishMutation = reactive(
 )
 
 const confirmDelete = () => {
-    confirm.require({
-        message: 'Вы уверены, что хотите удалить это блюдо?',
-        header: 'Подтверждение',
-        icon: 'pi pi-info-circle',
-        acceptClass: 'p-button-danger',
-        accept: () => {
-            deleteDishMutation.mutate()
-        },
-        reject: () => {}
-    });
-};
-
-
+  confirm.require({
+    message: 'Вы уверены, что хотите удалить это блюдо?',
+    header: 'Подтверждение',
+    icon: 'pi pi-info-circle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteDishMutation.mutate()
+    },
+    reject: () => {}
+  })
+}
 </script>

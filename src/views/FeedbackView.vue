@@ -59,7 +59,6 @@ const onSort = (e: any) => {
       editMode="row"
       v-model:expanded-rows="expandedRows"
       @page="onPage($event)"
-      @sort="onSort($event)"
       :value="getFeedbacksQuery.data?.items"
       dataKey="id"
       lazy
@@ -70,13 +69,13 @@ const onSort = (e: any) => {
       :loading="getFeedbacksQuery.isLoading"
     >
       <Column expander class="w-12"></Column>
-      <Column field="id" sortable header="ID"></Column>
-      <Column field="text" sortable header="Текст">
+      <Column field="id" header="ID"></Column>
+      <Column field="text" header="Текст">
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" />
         </template>
       </Column>
-      <Column field="status" sortable header="Статус">
+      <Column field="status" header="Статус">
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" />
         </template>
@@ -96,6 +95,11 @@ const onSort = (e: any) => {
           </DataTable>
         </div>
       </template>
+
+      <template #loading>
+          <ProgressSpinner class="h-8"/>
+      </template>
+
     </DataTable>
   </main>
 </template>

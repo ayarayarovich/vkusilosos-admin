@@ -51,13 +51,8 @@ const onPage = (e: DataTablePageEvent) => {
   limit.value = e.rows
 }
 
-const onSort = (e: any) => {
-  console.log('onSort', e)
-}
-
 const heading = ref()
 const headingBounding = useElementBounding(heading)
-
 </script>
 
 <template>
@@ -86,25 +81,17 @@ const headingBounding = useElementBounding(heading)
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        @sort="onSort($event)"
         :totalRecords="query.data?.total"
         :loading="query.isLoading"
       >
-        <Column field="id" sortable header="ID"></Column>
-        <Column field="name" sortable header="Имя">
-        </Column>
-        <Column field="surname" sortable header="Фамилия">
-        </Column>
-        <Column field="phone" sortable header="Телефон">
-        </Column>
-        <Column field="role" sortable header="Роль">
-        </Column>
-        <Column field="status" sortable header="Статус">
-        </Column>
-        <Column field="tolal_order" sortable header="Сумма чеков">
-        </Column>
-        <Column field="bonuses" sortable header="Бонусы">
-        </Column>
+        <Column field="id" header="ID" />
+        <Column field="name" header="Имя" />
+        <Column field="surname" header="Фамилия" />
+        <Column field="phone" header="Телефон" />
+        <Column field="role" header="Роль" />
+        <Column field="status" header="Статус" />
+        <Column field="tolal_order" header="Сумма чеков" />
+        <Column field="bonuses" header="Бонусы" />
 
         <template #header>
           <div class="flex justify-end gap-4">
@@ -113,12 +100,15 @@ const headingBounding = useElementBounding(heading)
               <InputText v-model="searchTerm" placeholder="Поиск" />
             </span>
 
-            <BlockUnblockUser :disabled="!selectedUser"/>
-            <GiftBonusesToUser :disabled="!selectedUser"/>
+            <BlockUnblockUser :disabled="!selectedUser" />
+            <GiftBonusesToUser :disabled="!selectedUser" />
           </div>
+        </template>
+
+        <template #loading>
+          <ProgressSpinner class="h-8" />
         </template>
       </DataTable>
     </div>
-
   </main>
 </template>

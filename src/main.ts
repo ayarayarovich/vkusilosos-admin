@@ -30,6 +30,7 @@ import AutoComplete from 'primevue/autocomplete'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import ConfirmDialog from 'primevue/confirmdialog'
+import ProgressSpinner from 'primevue/progressspinner'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -215,5 +216,6 @@ app.component('AutoComplete', AutoComplete)
 app.component('Dropdown', Dropdown)
 app.component('Checkbox', Checkbox)
 app.component('ConfirmDialog', ConfirmDialog)
+app.component('ProgressSpinner', ProgressSpinner)
 
 app.mount('#app')

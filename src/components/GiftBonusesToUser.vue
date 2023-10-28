@@ -10,11 +10,18 @@
       />
     </div>
 
-    <Dialog v-model:visible="visible" modal :header="`Подарить бонусы ${tableSelectionStore.name} (id: ${tableSelectionStore.id})`" class="max-w-4xl w-full m-4">
+    <Dialog
+      v-model:visible="visible"
+      modal
+      :header="`Подарить бонусы ${tableSelectionStore.name || '(Имя отсутсвует)'} (id: ${
+        tableSelectionStore.id
+      })`"
+      class="max-w-xl w-full m-4"
+    >
       <form class="p-2" @submit.prevent="onSubmit">
         <div class="w-full">
-            <label for="bonus" class="block text-900 font-medium mb-2">Количество бонусов</label>
-            <InputNumber id="bonus" v-model="bonus" class="w-full" required />
+          <label for="bonus" class="block text-900 font-medium mb-2">Количество бонусов</label>
+          <InputNumber id="bonus" v-model="bonus" class="w-full" required />
         </div>
 
         <Button
