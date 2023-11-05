@@ -18,15 +18,15 @@ const getFeedbacksQuery = reactive(
     items: Feedback[]
     total: number
   }>({
-    queryKey: ['feedbacks', offset, limit],
+    queryKey: ['feedbacks', { offset, limit }],
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get('admin/reviews', {
         params: {
-          offset: queryKey[1] as number,
-          limit: queryKey[2] as number,
+          offset: (queryKey[1] as any).offset as number,
+          limit: (queryKey[1] as any).limit as number
         }
       })
-      return response.data;
+      return response.data
     }
   })
 )
@@ -48,8 +48,8 @@ const onSort = (e: any) => {
     </div>
 
     <Message v-if="getFeedbacksQuery.isError" severity="error" :closable="false"
-        >Не удалось загрузить таблицу</Message
-      >
+      >Не удалось загрузить таблицу</Message
+    >
     <DataTable
       v-else
       size="small"
@@ -97,9 +97,8 @@ const onSort = (e: any) => {
       </template>
 
       <template #loading>
-          <ProgressSpinner class="h-8"/>
+        <ProgressSpinner class="h-8" />
       </template>
-
     </DataTable>
   </main>
 </template>

@@ -24,12 +24,12 @@ const query = reactive(
     items: Category[]
     total: number
   }>({
-    queryKey: ['categories', offset, limit],
+    queryKey: ['categories', { offset, limit }],
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get('admin/categories', {
         params: {
-          offset: queryKey[1] as number,
-          limit: queryKey[2] as number,
+          offset: (queryKey[1] as any).offset as number,
+          limit: (queryKey[1] as any).limit as number
         }
       })
       return response.data
@@ -87,6 +87,7 @@ const headingBounding = useElementBounding(heading)
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
+        <Column field="count_dishes" header="Количество блюд" />
         <template #header>
           <div class="flex justify-between items-center">
             <div>
@@ -103,7 +104,10 @@ const headingBounding = useElementBounding(heading)
                 icon="pi pi-external-link"
                 :disabled="!selectedCategory"
                 @click="
-                  emitter.emit('Categories.Edit', { id: selectedCategory!.id, name: selectedCategory!.name })
+                  emitter.emit('Categories.Edit', {
+                    id: selectedCategory!.id,
+                    name: selectedCategory!.name
+                  })
                 "
               />
               <UpdateCategory />

@@ -79,3 +79,44 @@ export interface UpdateCategory {
   id: number
   name: string
 }
+
+export interface CreateRestaurant {
+    name: string,
+    address: string,
+    lat: number,
+    lon: number,
+    geojson: string
+}
+
+export interface Restaurant {
+  id: number
+  name: string
+  address: string
+}
+
+export interface UpdateRestaurant {
+  name: string,
+  address: string,
+  lat: number,
+  lon: number,
+  geojson: string
+}
+
+
+export interface CreateTag {
+  name: string;
+  dishes: number[];
+}
+
+export interface UpdateTag {
+  id: number;
+  name: string;
+  dishes: number[];
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  count_dishes: number;
+  dishes: Category[];
+}

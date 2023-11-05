@@ -15,6 +15,16 @@ type Events = {
     id: number
     name: string
   }
+
+  'Restaurants.Edit': {
+    id: number
+    name: string
+  }
+
+  'Restaurants.Delete': {
+    id: number
+    name: string
+  }
 }
 
 const emitter: Emitter<Events> = mitt<Events>()

@@ -25,21 +25,19 @@ const queryClient = useQueryClient()
 const toast = useToast()
 
 const query = reactive(
-  useQuery<{
-    items: Dish[]
-    total: number
-  }>({
-    queryKey: ['dishes', offset, limit, debouncedSearchTerm],
+  useQuery({
+    queryKey: ['dishes', { offset, limit, searchTerm: debouncedSearchTerm }],
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get('admin/dishes', {
         params: {
-          offset: queryKey[1] as number,
-          limit: queryKey[2] as number,
-          search: queryKey[3] as number
+          offset: (queryKey[1] as any).offset as number,
+          limit: (queryKey[1] as any).limit as number,
+          search: (queryKey[1] as any).searchTerm as string
         }
       })
       return response.data
-    }
+    },
+    placeholderData: (previousData: any) => previousData,
   })
 )
 

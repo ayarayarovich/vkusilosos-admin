@@ -32,16 +32,16 @@ const query = reactive(
     items: User[]
     total: number
   }>({
-    queryKey: ['users', offset, limit, debouncedSearchTerm],
+    queryKey: ['users', { offset, limit, searchTerm: debouncedSearchTerm }],
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get('admin/users', {
         params: {
-          offset: queryKey[1] as number,
-          limit: queryKey[2] as number,
-          search: queryKey[3] as number
+          offset: (queryKey[1] as any).offset as number,
+          limit: (queryKey[1] as any).limit as number,
+          search: (queryKey[1] as any).searchTerm as string
         }
       })
-      return response.data;
+      return response.data
     }
   })
 )

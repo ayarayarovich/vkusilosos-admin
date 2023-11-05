@@ -26,7 +26,6 @@ const { isLoading, mutate } = useMutation<any, any, any>({
     return axiosPublic.post('api/password_verification', payload)
   },
   onSuccess({ data }) {
-    console.log(data)
     accessToken.value = data.accessToken
     refreshToken.value = data.refreshToken
     userID.value = data.user.userId

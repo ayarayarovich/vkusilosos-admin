@@ -7,6 +7,8 @@ import 'primeicons/primeicons.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
+import { ru } from 'yup-locales'
+import { setLocale as YupSetLocale } from 'yup'
 
 import PrimeVue from 'primevue/config'
 import InputNumber from 'primevue/inputnumber'
@@ -31,6 +33,7 @@ import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
+import PickList from 'primevue/picklist'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -38,6 +41,8 @@ import ConfirmationService from 'primevue/confirmationservice'
 import App from '@/App.vue'
 import router from '@/router'
 import pinia from '@/stores'
+
+YupSetLocale(ru)
 
 const app = createApp(App)
 
@@ -217,5 +222,6 @@ app.component('Dropdown', Dropdown)
 app.component('Checkbox', Checkbox)
 app.component('ConfirmDialog', ConfirmDialog)
 app.component('ProgressSpinner', ProgressSpinner)
+app.component('PickList', PickList)
 
 app.mount('#app')
