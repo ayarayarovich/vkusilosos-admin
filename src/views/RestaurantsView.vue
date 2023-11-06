@@ -10,6 +10,7 @@ import { useElementBounding } from '@vueuse/core'
 import emitter from '@/emmiter'
 import CreateRestaurant from '@/components/CreateRestaurant.vue'
 import UpdateRestaurant from '@/components/UpdateRestaurant.vue'
+import DeleteRestaurant from '@/components/DeleteRestaurant.vue'
 
 const rowsPerPage = ref(20)
 
@@ -112,6 +113,7 @@ const headingBounding = useElementBounding(heading)
                 "
               />
               <UpdateRestaurant />
+              <DeleteRestaurant :disabled="!selectedRestaurant" :restaurant="selectedRestaurant" />
             </div>
           </div>
         </template>

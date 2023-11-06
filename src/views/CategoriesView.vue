@@ -9,6 +9,7 @@ import CreateCategory from '@/components/CreateCategory.vue'
 import UpdateCategory from '@/components/UpdateCategory.vue'
 import { useElementBounding } from '@vueuse/core'
 import emitter from '@/emmiter'
+import DeleteCategory from '@/components/DeleteCategory.vue'
 
 const rowsPerPage = ref(20)
 
@@ -111,6 +112,7 @@ const headingBounding = useElementBounding(heading)
                 "
               />
               <UpdateCategory />
+              <DeleteCategory :disabled="!selectedCategory" :category="selectedCategory" />
             </div>
           </div>
         </template>

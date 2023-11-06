@@ -6,9 +6,8 @@ import { axiosPrivate } from '@/network'
 
 import type { Tag } from '@/interfaces'
 import CreateTag from '@/components/CreateTag.vue'
-// import UpdateTag from '@/components/UpdateTag.vue'
 import { useElementBounding } from '@vueuse/core'
-import emitter from '@/emmiter'
+import DeleteTag from '@/components/DeleteTag.vue'
 
 const rowsPerPage = ref(20)
 
@@ -25,7 +24,7 @@ const query = reactive(
     items: Tag[]
     total: number
   }>({
-    queryKey: ['tag', { offset, limit }],
+    queryKey: ['tags', { offset, limit }],
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get('admin/tag', {
         params: {
@@ -97,20 +96,21 @@ const headingBounding = useElementBounding(heading)
               <Button
                 icon="pi pi-refresh"
                 :disabled="query.isFetching"
-                @click="queryClient.invalidateQueries(['tag'])"
+                @click="queryClient.invalidateQueries(['tags'])"
               />
             </div>
 
             <div class="flex gap-4">
-              <Button
+              <!-- <Button
                 label="Изменить"
                 icon="pi pi-external-link"
                 :disabled="!selectedTag"
                 @click="
                   emitter.emit('Categories.Edit', { id: selectedTag!.id, name: selectedTag!.name })
                 "
-              />
+              /> -->
               <!-- <UpdateTag /> -->
+              <DeleteTag :disabled="!selectedTag" :tag="selectedTag" />
             </div>
           </div>
         </template>
