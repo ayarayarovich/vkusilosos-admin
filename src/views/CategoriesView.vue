@@ -8,7 +8,6 @@ import type { Category } from '@/interfaces'
 import CreateCategory from '@/components/CreateCategory.vue'
 import UpdateCategory from '@/components/UpdateCategory.vue'
 import { useElementBounding } from '@vueuse/core'
-import emitter from '@/emmiter'
 import DeleteCategory from '@/components/DeleteCategory.vue'
 
 const rowsPerPage = ref(20)
@@ -100,18 +99,7 @@ const headingBounding = useElementBounding(heading)
             </div>
 
             <div class="flex gap-4">
-              <Button
-                label="Изменить"
-                icon="pi pi-external-link"
-                :disabled="!selectedCategory"
-                @click="
-                  emitter.emit('Categories.Edit', {
-                    id: selectedCategory!.id,
-                    name: selectedCategory!.name
-                  })
-                "
-              />
-              <UpdateCategory />
+              <UpdateCategory :disabled="!selectedCategory" :category="selectedCategory"/>
               <DeleteCategory :disabled="!selectedCategory" :category="selectedCategory" />
             </div>
           </div>

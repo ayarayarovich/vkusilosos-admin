@@ -5,13 +5,9 @@
     </div>
 
     <Dialog v-model:visible="visible" modal header="Создать тег" class="max-w-7xl w-full m-4">
-      <form class="p-2" @submit.prevent="onSubmit">
-        <div class="">
-          <div class="w-full mb-8">
-            <label for="name" class="block text-900 font-medium mb-2">Название</label>
-            <InputText v-bind="name" class="w-full" :class="{ 'p-invalid': errors.name }" />
-            <small class="p-error" id="text-error">{{ errors.name || '&nbsp;' }}</small>
-          </div>
+      <form class="p-2" @submit="onSubmit">
+        <div>
+          <MyInputText name="name" label="Название" />
           <PickList
             v-model="pickListDishes"
             listStyle="height:342px"
@@ -54,27 +50,24 @@
 <script setup lang="ts">
 import type { Dish } from '@/interfaces'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import MyInputText from './MyInputText.vue'
 
 const toast = useToast()
 const queryClient = useQueryClient()
 
 const visible = ref(false)
 
-const schema = yup.object({
+const { handleSubmit, setFieldValue } = useForm({
+  validationSchema: yup.object({
   name: yup.string().required().label('Название тега'),
   dishes: yup.array().of(yup.number())
 })
-
-const { defineComponentBinds, handleSubmit, setFieldValue, errors } = useForm({
-  validationSchema: schema
 })
-
-const name = defineComponentBinds('name')
 
 const pickListDishes = ref<Dish[][]>()
 const { data: availableDishes, isSuccess: areAvailableDishesLoaded } = useQuery<{
@@ -111,13 +104,14 @@ const createTagMutation = reactive(
         summary: 'Успешно',
         detail: `Создан тег ${variables.name}`
       })
-      queryClient.invalidateQueries(['tag'])
+      queryClient.invalidateQueries(['tags'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось создать тег'
+        summary: 'Не удалось создать тег',
+        detail: error
       })
     }
   })

@@ -13,23 +13,19 @@
     <Dialog
       v-model:visible="visible"
       modal
-      :header="`Подарить бонусы ${tableSelectionStore.name || '(Имя отсутсвует)'} (id: ${
-        tableSelectionStore.id
-      })`"
+      :header="`Подарить бонусы ${props.user?.name || '(Имя отсутсвует)'} (id: ${props.user?.id})`"
       class="max-w-xl w-full m-4"
     >
-      <form class="p-2" @submit.prevent="onSubmit">
-        <div class="w-full">
-          <label for="bonus" class="block text-900 font-medium mb-2">Количество бонусов</label>
-          <InputNumber id="bonus" v-model="bonus" class="w-full" required />
-        </div>
+      <form class="p-2" @submit="onSubmit">
+        <MyInputNumber name="id" label="ID" :initial-value="props.user?.id" disabled />
+        <MyInputNumber name="bonus" label="Количество бонусов" />
 
         <Button
           class="w-full flex items-center p-4 mt-8"
           type="submit"
           label="Подарить"
-          :loading="updateDishMutation.isLoading"
-          :disabled="updateDishMutation.isLoading"
+          :loading="updateBonusMutation.isLoading"
+          :disabled="updateBonusMutation.isLoading"
         />
       </form>
     </Dialog>
@@ -41,22 +37,29 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useTableSelectionStore } from '@/stores/table-selection-store'
+import type { User } from '@/interfaces'
+import MyInputNumber from '@/components/MyInputNumber.vue'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const props = defineProps<{
   disabled?: boolean
+  user?: User
 }>()
 
 const toast = useToast()
 const queryClient = useQueryClient()
 
-const bonus = ref<number>()
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    id: yup.number().required().label('ID пользователя'),
+    bonus: yup.number().required().label('Количество бонусов')
+  })
+})
 
 const visible = ref(false)
 
-const tableSelectionStore = useTableSelectionStore()
-
-const updateDishMutation = reactive(
+const updateBonusMutation = reactive(
   useMutation({
     mutationFn: (payload: any) => axiosPrivate.post('admin/user/gift', payload),
     onSuccess(data, variables) {
@@ -64,24 +67,22 @@ const updateDishMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Добавлено бонусов ${tableSelectionStore.name} (id: ${tableSelectionStore.id})`
+        detail: `Добавлено бонусов ${props.user?.name} (id: ${props.user?.id})`
       })
       queryClient.invalidateQueries(['users'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось добавить бонусов'
+        summary: 'Не удалось добавить бонусов',
+        detail: error
       })
     }
   })
 )
 
-const onSubmit = (e: Event) => {
-  updateDishMutation.mutate({
-    id: tableSelectionStore.id,
-    bonus: bonus.value
-  })
-}
+const onSubmit = handleSubmit((vals) => {
+  updateBonusMutation.mutate(vals)
+})
 </script>

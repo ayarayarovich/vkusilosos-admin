@@ -17,25 +17,24 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive, watch, computed } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useTableSelectionStore } from '@/stores/table-selection-store'
 import { useConfirm } from 'primevue/useconfirm'
+import type { User } from '@/interfaces'
 
 const props = defineProps<{
   disabled?: boolean
+  user?: User
 }>()
 
 const toast = useToast()
 const confirm = useConfirm()
 const queryClient = useQueryClient()
 
-const tableSelectionStore = useTableSelectionStore()
-
 const deleteDishMutation = reactive(
   useMutation({
     mutationFn: () =>
       axiosPrivate.delete('admin/user', {
         params: {
-          id: tableSelectionStore.id!
+          id: props.user?.id
         }
       }),
     onSuccess() {
@@ -43,15 +42,16 @@ const deleteDishMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Статус пользователя ${tableSelectionStore.name} (id: ${tableSelectionStore.id}) изменён`
+        detail: `Статус пользователя ${props.user?.name} (id: ${props.user?.id}) изменён`
       })
       queryClient.invalidateQueries(['users'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось изменить статус пользователя'
+        summary: 'Не удалось изменить статус пользователя',
+        detail: error
       })
     }
   })
@@ -59,9 +59,9 @@ const deleteDishMutation = reactive(
 
 const confirmStatusChange = () => {
   confirm.require({
-    message: `Вы уверены, что хотите изменить статус пользователя ${tableSelectionStore.name} (id: ${tableSelectionStore.id}) ?`,
+    message: `Вы уверены, что хотите изменить статус пользователя ${props.user?.name} (id: ${props.user?.id}) ?`,
     header: 'Подтверждение',
-    icon: 'pi pi-info-circle', 
+    icon: 'pi pi-info-circle',
     acceptClass: 'p-button-danger',
     accept: () => {
       deleteDishMutation.mutate()

@@ -10,7 +10,6 @@ import { useDebounce, useElementBounding } from '@vueuse/core'
 import { useToast } from 'primevue/usetoast'
 import UpdateDish from '@/components/UpdateDish.vue'
 import DeleteDish from '@/components/DeleteDish.vue'
-import emitter from '@/emmiter'
 
 const rowsPerPage = ref(20)
 
@@ -154,17 +153,8 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
                 <i class="pi pi-search" />
                 <InputText v-model="searchTerm" placeholder="Поиск" />
               </span>
-
-              <Button
-                label="Изменить"
-                icon="pi pi-external-link"
-                :disabled="!selectedDish"
-                @click="
-                  emitter.emit('Dishes.Edit', { id: selectedDish!.id, name: selectedDish!.name })
-                "
-              />
-              <UpdateDish />
-              <DeleteDish :disabled="!selectedDish" />
+              <UpdateDish :disabled="!selectedDish" :dish="selectedDish" />
+              <DeleteDish :disabled="!selectedDish" :dish="selectedDish" />
             </div>
           </div>
         </template>

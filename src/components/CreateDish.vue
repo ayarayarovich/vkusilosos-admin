@@ -5,198 +5,74 @@
     </div>
 
     <Dialog v-model:visible="visible" modal header="Создать блюдо" class="max-w-4xl w-full m-4">
-      <form class="p-2" @submit.prevent="onSubmit">
-        <div class="grid grid-cols-3 items-center justify-items-center gap-4">
-          <div class="w-full">
-            <label for="name" class="block text-900 font-medium mb-2">Название</label>
-            <InputText id="name" v-model="form.name" type="text" class="w-full" required />
-          </div>
+      <form class="p-2" @submit="onSubmit">
+        <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
+          <MyInputText name="name" label="Название" />
+          <MyInputNumber name="price" label="Цена" mode="currency" currency="RUB" />
+          <MyInputNumber label="Цена продажи" name="sale_price" />
+          <MyInputNumber label="IIKO ID" name="iiko_id" />
+          <MyInputNumber label="Вес" name="weight" />
+          <MyInputNumber label="Пищевая ценность" name="energy" />
+          <MyInputNumber label="Белки" name="belki" />
+          <MyInputNumber label="Жиры" name="ziri" />
+          <MyInputNumber label="Углеводы" name="uglevodi" />
+          <MyInputNumber label="Количество" name="size" />
 
-          <div class="w-full">
-            <label for="price" class="block text-900 font-medium mb-2">Цена</label>
-            <InputNumber
-              id="price"
-              v-model="form.price"
-              type="text"
-              class="w-full"
-              mode="currency"
-              :min="0"
-              currency="RUB"
-              required
+          <DropdownSelect
+            class="w-full"
+            name="color"
+            label="Цвет карточки"
+            placeholder="Выберите"
+            :options="possibleCardColors"
+          />
+
+          <DropdownSelect
+            class="w-full"
+            name="category_id"
+            label="Категория"
+            placeholder="Выберите"
+            :options="possibleCategories"
+          />
+
+          <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full h-full">
+            <MyUploadImage
+              class="rounded-lg"
+              name="img"
+              filename-prop-in-request="image"
+              filename-prop-in-response="fileLink"
+              upload-route="admin/upload"
             />
-          </div>
-
-          <div class="w-full">
-            <label for="sale_price" class="block text-900 font-medium mb-2">Цена продажи</label>
-            <InputNumber
-              id="sale_price"
-              v-model="form.sale_price"
-              type="text"
-              class="w-full"
-              mode="currency"
-              :min="0"
-              currency="RUB"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="iiko_id" class="block text-900 font-medium mb-2">IIKO_ID</label>
-            <InputNumber
-              id="iiko_id"
-              v-model="form.iiko_id"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="weight" class="block text-900 font-medium mb-2">Вес</label>
-            <InputNumber
-              id="weight"
-              v-model="form.weight"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="energy" class="block text-900 font-medium mb-2">Пищевая ценность</label>
-            <InputNumber
-              id="energy"
-              v-model="form.energy"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="belki" class="block text-900 font-medium mb-2">Белки</label>
-            <InputNumber
-              id="belki"
-              v-model="form.belki"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="ziri" class="block text-900 font-medium mb-2">Жири</label>
-            <InputNumber
-              id="ziri"
-              v-model="form.ziri"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="uglevodi" class="block text-900 font-medium mb-2">Углеводы</label>
-            <InputNumber
-              id="uglevodi"
-              v-model="form.uglevodi"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="size" class="block text-900 font-medium mb-2">Количество</label>
-            <InputNumber
-              id="size"
-              v-model="form.size"
-              type="text"
-              class="w-full"
-              :min="0"
-              required
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="color" class="block text-900 font-medium mb-2">Цвет карточки</label>
-            <Dropdown
-              class="w-full"
-              v-model="selectedCardColor"
-              input-id="color"
-              :options="possibleCardColors"
-              optionLabel="label"
-              placeholder="Цвет"
-            />
-          </div>
-
-          <div class="w-full">
-            <label for="category" class="block text-900 font-medium mb-2">Категория</label>
-            <Dropdown
-              class="w-full"
-              v-model="selectedCategory"
-              input-id="category"
-              :options="possibleCategories"
-              optionLabel="label"
-              placeholder="Категория"
-            />
-          </div>
-
-          <div
-            class="col-start-1 col-span-1 row-start-1 row-span-3 w-full border-2 border-gray-200 p-2 rounded-lg h-full flex flex-col items-center gap-2"
-          >
-            <Transition name="fade" mode="out-in">
-              <img
-                v-if="isImageSelected"
-                class="rounded-md w-full h-full aspect-square object-contain object-center drop-shadow-md"
-                :src="imageURL"
-                alt=""
-              />
-              <div v-else class="w-full aspect-square flex items-center justify-center">
-                Выберите картинку
-              </div>
-            </Transition>
-
-            <FileUpload
-              name="image"
-              :auto="true"
-              mode="basic"
-              customUpload
-              @uploader="fileUploader"
-              @select="onSelect"
-              accept="image/*"
-              :maxFileSize="10000000"
-            >
-              <template #empty>
-                <p>Перетащите сюда картинку, которую хотите загрузить</p>
-              </template>
-            </FileUpload>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 items-center justify-items-center my-8">
-          <div class="flex items-center gap-2">
-            <label for="have" class="text-900 leading-none font-medium">В наличии</label>
-            <Checkbox inputId="have" v-model="form.have" :binary="true" />
-          </div>
+        <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
+        <div class="mb-8">
+          <fieldset v-for="(field, idx) in fields" :key="field.key" class="relative border-2 border-gray-200 rounded-lg p-4 mb-4">
+            <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">"{{ field.value.name }}" - {{ field.value.address }}</h3>
+            <div class="flex gap-4">
+              <MyInputNumber
+                disabled
+                class="flex-1"
+                :name="`restaurants[${idx}].restaurant_id`"
+                label="ID ресторана"
+                :initial-value="field.value.id"
+              />
+              <MyInputNumber class="flex-1" :name="`restaurants[${idx}].iiko_id`" label="IIKO ID" />
+              <MyInputNumber
+                class="flex-1"
+                :name="`restaurants[${idx}].price`"
+                label="Цена"
+                mode="currency"
+                currency="RUB"
+              />
+            </div>
+          </fieldset>
+        </div>
 
-          <div class="flex items-center gap-2">
-            <label for="can_deliver" class="text-900 leading-none font-medium"
-              >Можно доставить</label
-            >
-            <Checkbox inputId="can_deliver" v-model="form.can_deliver" :binary="true" />
-          </div>
-
-          <div class="flex items-center gap-2">
-            <label for="active" class="text-900 leading-none font-medium">Активно</label>
-            <Checkbox inputId="active" v-model="form.active" :binary="true" />
-          </div>
+        <div>
+          <MyInputSwitch label="В наличии" name="have" />
+          <MyInputSwitch label="Можно доставить" name="can_deliver" />
+          <MyInputSwitch label="Активно" name="active" />
         </div>
 
         <Button
@@ -204,7 +80,7 @@
           type="submit"
           label="Создать"
           :loading="createDishMutation.isLoading"
-          :disabled="createDishMutation.isLoading || (isImageSelected && !isImageUploaded)"
+          :disabled="createDishMutation.isLoading"
         />
       </form>
     </Dialog>
@@ -212,14 +88,22 @@
 </template>
 
 <script setup lang="ts">
-import type { Category, CreateDish } from '@/interfaces'
+import type { Category, Restaurant } from '@/interfaces'
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import type { FileUploadSelectEvent, FileUploadUploaderEvent } from 'primevue/fileupload'
+import MyUploadImage from '@/components/MyUploadImage.vue'
+import { useFieldArray, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import DropdownSelect from '@/components/DropdownSelect.vue'
+import MyInputText from '@/components/MyInputText.vue'
+import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputSwitch from '@/components/MyInputSwitch.vue'
 
 const toast = useToast()
+
+const visible = ref(false)
 
 const possibleCardColors = ref([
   { label: 'Белый', code: 'white' },
@@ -229,40 +113,44 @@ const possibleCardColors = ref([
   { label: 'Синий', code: 'blue' }
 ])
 
-const form = reactive<CreateDish>({
-  active: false,
-  belki: undefined,
-  can_deliver: false,
-  category_id: undefined,
-  color: '',
-  count: 0,
-  description: '',
-  energy: undefined,
-  have: false,
-  iiko_id: undefined,
-  img: '',
-  name: '',
-  price: undefined,
-  sale_price: undefined,
-  size: undefined,
-  uglevodi: undefined,
-  weight: undefined,
-  ziri: undefined
+const { handleSubmit, setValues } = useForm({
+  validationSchema: yup.object({
+    name: yup.string().required().label('Название'),
+    img: yup.string().required().label('Изображение'),
+    category_id: yup.number().required().label('Категория'),
+    color: yup.string().required().label('Цвет карточки'),
+    belki: yup.number().required().label('Количество белков'),
+    energy: yup.number().required().label('Пищевая ценность'),
+    uglevodi: yup.number().required().label('Количество углеводов'),
+    ziri: yup.number().required().label('Количество жиров'),
+    weight: yup.number().required().label('Вес'),
+    size: yup.number().required().label('Количество'),
+    active: yup.boolean().label('Активно'),
+    can_deliver: yup.boolean().label('Можно доставить'),
+    have: yup.boolean().label('В наличии'),
+    description: yup.string().label('Описание'),
+    price: yup.number().required().label('Цена'),
+    sale_price: yup.number().required().label('Цена продажи'),
+    iiko_id: yup.number().required().label('IIKO ID'),
+    restaurants: yup.array().of(
+      yup.object({
+        restaurant_id: yup.number().required().label('ID ресторана'),
+        iiko_id: yup.number().required().label('IIKO ID блюда'),
+        price: yup.number().required().label('Цена')
+      })
+    )
+  })
 })
 
-const imageURL = ref<string>()
-const isImageSelected = ref(false)
-const isImageUploading = ref(false)
-const isImageUploaded = ref(false)
-
-const selectedCardColor = ref()
-const selectedCategory = ref()
-watch([selectedCardColor], () => (form.color = selectedCardColor.value.code))
-watch([selectedCategory], () => (form.category_id = selectedCategory.value.code))
+const { replace, fields } = useFieldArray<Restaurant>('restaurants')
 
 const createDishMutation = reactive(
   useMutation({
-    mutationFn: async (payload: any) => (await axiosPrivate.put('admin/dish', payload)).data,
+    mutationFn: (payload: any) => {
+      const response = axiosPrivate.put('admin/dish', payload)
+      console.log(response)
+      return response
+    },
     onSuccess(data, variables) {
       toast.add({
         severity: 'success',
@@ -271,17 +159,18 @@ const createDishMutation = reactive(
         detail: `Добавлено блюдо ${variables.name}`
       })
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось создать блюдо'
+        summary: 'Не удалось создать блюдо',
+        detail: error
       })
     }
   })
 )
 
-const { data: categoriesDataQuery } = useQuery<{
+const { data: categoriesData } = useQuery<{
   items: Category[]
   total: number
 }>({
@@ -294,12 +183,13 @@ const { data: categoriesDataQuery } = useQuery<{
       }
     })
     return response.data
-  }
+  },
+  enabled: visible
 })
 
 const possibleCategories = computed(() => {
-  if (categoriesDataQuery.value) {
-    return categoriesDataQuery.value.items.map((item) => ({
+  if (categoriesData.value) {
+    return categoriesData.value.items.map((item) => ({
       label: item.name,
       code: item.id
     }))
@@ -307,41 +197,33 @@ const possibleCategories = computed(() => {
   return []
 })
 
-const onSubmit = (e: Event) => {
-  createDishMutation.mutate(form)
-}
-
-const fileUploader = (e: FileUploadUploaderEvent) => {
-  const files = e.files as any
-  const formData = new FormData()
-  formData.append('image', files[0])
-  isImageUploading.value = true
-  isImageUploaded.value = false
-  axiosPrivate
-    .post('admin/upload', formData)
-    .then((response) => {
-      form.img = response.data.fileLink
-      isImageUploaded.value = true
+const { data: restaurantsData } = useQuery<{
+  items: Restaurant[]
+  total: number
+}>({
+  queryKey: ['restaurants'],
+  queryFn: async () => {
+    const response = await axiosPrivate.get('admin/rests', {
+      params: {
+        limit: 999999999,
+        offset: 0
+      }
     })
-    .catch((error) => {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось загрузить файл',
-        detail: error
-      })
-    })
-    .finally(() => {
-      isImageUploading.value = false
-    })
-}
+    return response.data
+  },
+  enabled: visible
+})
+watch([restaurantsData], () => {
+  if (restaurantsData.value) {
+    replace(
+      restaurantsData.value.items.map((item) => ({
+        ...item
+      }))
+    )
+  }
+})
 
-const onSelect = (e: FileUploadSelectEvent) => {
-  console.log(e.files)
-  isImageSelected.value = true
-  isImageUploaded.value = false
-  imageURL.value = e.files[0].objectURL
-}
-
-const visible = ref(false)
+const onSubmit = handleSubmit((vals) => {
+  createDishMutation.mutate(vals)
+})
 </script>

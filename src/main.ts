@@ -5,13 +5,13 @@ import 'primevue/resources/themes/lara-light-indigo/theme.css'
 import 'primeicons/primeicons.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { ru } from 'yup-locales'
 import { setLocale as YupSetLocale } from 'yup'
 
 import PrimeVue from 'primevue/config'
 import InputNumber from 'primevue/inputnumber'
+import InputSwitch from 'primevue/inputswitch'
 import Splitter from 'primevue/splitter'
 import SplitterPanel from 'primevue/splitterpanel'
 import InputText from 'primevue/inputtext'
@@ -34,6 +34,7 @@ import Checkbox from 'primevue/checkbox'
 import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import PickList from 'primevue/picklist'
+import SelectButton from 'primevue/selectbutton'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -205,6 +206,7 @@ app.component('InputMask', InputMask)
 app.component('Splitter', Splitter)
 app.component('SplitterPanel', SplitterPanel)
 app.component('InputText', InputText)
+app.component('InputSwitch', InputSwitch)
 app.component('Button', Button)
 app.component('Menu', Menu)
 app.component('Accordion', Accordion)
@@ -223,5 +225,6 @@ app.component('Checkbox', Checkbox)
 app.component('ConfirmDialog', ConfirmDialog)
 app.component('ProgressSpinner', ProgressSpinner)
 app.component('PickList', PickList)
+app.component('SelectButton', SelectButton)
 
 app.mount('#app')

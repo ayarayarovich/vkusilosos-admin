@@ -32,12 +32,13 @@ const { isLoading, mutate } = useMutation<any, any, any>({
     isAuthenticated.value = true
     router.push({ name: 'dashboard' })
   },
-  onError(error) {
+  onError(error: any) {
     const body = error.response.data
     toast.add({
       severity: 'error',
       life: 3000,
-      summary: body.message
+      summary: body.message,
+      detail: error
     })
   }
 })

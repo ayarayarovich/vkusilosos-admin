@@ -41,7 +41,7 @@ const deleteMutation = reactive(
       })
       queryClient.invalidateQueries(['categories'])
     },
-    onError(error) {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,

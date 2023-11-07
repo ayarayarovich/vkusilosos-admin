@@ -7,7 +7,6 @@ import { axiosPrivate } from '@/network'
 
 import type { User } from '@/interfaces'
 import BlockUnblockUser from '@/components/BlockUnblockUser.vue'
-import { useTableSelectionStore } from '@/stores/table-selection-store'
 import GiftBonusesToUser from '@/components/GiftBonusesToUser.vue'
 
 const rowsPerPage = ref(20)
@@ -17,15 +16,7 @@ const limit = rowsPerPage
 const searchTerm = ref('')
 const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
-const tableSelectionStore = useTableSelectionStore()
 const selectedUser = ref()
-
-watch([selectedUser], () => {
-  if (selectedUser.value) {
-    tableSelectionStore.id = selectedUser.value.id
-    tableSelectionStore.name = selectedUser.value.name
-  }
-})
 
 const query = reactive(
   useQuery<{
@@ -100,8 +91,8 @@ const headingBounding = useElementBounding(heading)
               <InputText v-model="searchTerm" placeholder="Поиск" />
             </span>
 
-            <BlockUnblockUser :disabled="!selectedUser" />
-            <GiftBonusesToUser :disabled="!selectedUser" />
+            <BlockUnblockUser :disabled="!selectedUser" :user="selectedUser" />
+            <GiftBonusesToUser :disabled="!selectedUser" :user="selectedUser" />
           </div>
         </template>
 

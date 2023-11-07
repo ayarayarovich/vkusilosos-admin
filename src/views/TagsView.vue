@@ -101,15 +101,6 @@ const headingBounding = useElementBounding(heading)
             </div>
 
             <div class="flex gap-4">
-              <!-- <Button
-                label="Изменить"
-                icon="pi pi-external-link"
-                :disabled="!selectedTag"
-                @click="
-                  emitter.emit('Categories.Edit', { id: selectedTag!.id, name: selectedTag!.name })
-                "
-              /> -->
-              <!-- <UpdateTag /> -->
               <DeleteTag :disabled="!selectedTag" :tag="selectedTag" />
             </div>
           </div>

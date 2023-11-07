@@ -1,32 +1,31 @@
 <template>
-  <Dialog
-    v-model:visible="visible"
-    modal
-    :header="`Изменить ${categoryName} (id: ${categoryID})`"
-    class="max-w-4xl w-full m-4"
-  >
-    <form class="p-2" @submit.prevent="onSubmit">
-      <div class="grid grid-cols-3 items-center justify-items-center gap-4">
-        <div class="w-full">
-          <label for="id" class="block text-900 font-medium mb-2">ID</label>
-          <InputNumber id="id" v-model="form.id" disabled class="w-full" required />
-        </div>
+  <div>
+    <Button
+      label="Изменить"
+      icon="pi pi-external-link"
+      :disabled="disabled"
+      @click="visible = true"
+    />
+    <Dialog
+      v-model:visible="visible"
+      modal
+      :header="`Изменить категорию ${props.category?.name} (id: ${props.category?.id})`"
+      class="max-w-xl w-full m-4"
+    >
+      <form class="p-2" @submit.prevent="onSubmit">
+        <MyInputNumber name="id" label="ID" disabled :initial-value="props.category?.id" />
+        <MyInputText name="name" label="Название" />
 
-        <div class="w-full">
-          <label for="name" class="block text-900 font-medium mb-2">Название</label>
-          <InputText id="name" v-model="form.name" type="text" class="w-full" required />
-        </div>
-      </div>
-
-      <Button
-        class="w-full flex items-center p-4 mt-8"
-        type="submit"
-        label="Сохранить"
-        :loading="updateCategoryMutation.isLoading"
-        :disabled="updateCategoryMutation.isLoading"
-      />
-    </form>
-  </Dialog>
+        <Button
+          class="w-full flex items-center p-4 mt-8"
+          type="submit"
+          label="Сохранить"
+          :loading="updateCategoryMutation.isLoading"
+          :disabled="updateCategoryMutation.isLoading"
+        />
+      </form>
+    </Dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -34,24 +33,26 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import emitter from '@/emmiter'
+import MyInputNumber from './MyInputNumber.vue'
+import MyInputText from './MyInputText.vue'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import type { Category } from '@/interfaces'
+
+const props = defineProps<{
+  disabled?: boolean
+  category?: Category
+}>()
 
 const toast = useToast()
 const queryClient = useQueryClient()
-
-const form = reactive({
-  id: undefined as number | undefined,
-  name: undefined as string | undefined
-})
 const visible = ref(false)
 
-const categoryID = ref<number>()
-const categoryName = ref<string>()
-emitter.on('Categories.Edit', (e) => {
-  Object.assign(form, e)
-  categoryID.value = e.id
-  categoryName.value = e.name
-  visible.value = true
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    id: yup.number().required().label('ID категории'),
+    name: yup.string().required().label('Название категории')
+  })
 })
 
 const updateCategoryMutation = reactive(
@@ -69,17 +70,18 @@ const updateCategoryMutation = reactive(
       })
       queryClient.invalidateQueries(['categories'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось изменить категорию'
+        summary: 'Не удалось изменить категорию',
+        detail: error
       })
     }
   })
 )
 
-const onSubmit = (e: Event) => {
-  updateCategoryMutation.mutate(form)
-}
+const onSubmit = handleSubmit((vals) => {
+  updateCategoryMutation.mutate(vals)
+})
 </script>

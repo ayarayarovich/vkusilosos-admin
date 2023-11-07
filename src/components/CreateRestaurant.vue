@@ -6,59 +6,27 @@
 
     <Dialog v-model:visible="visible" modal header="Создать ресторан" class="max-w-4xl w-full m-4">
       <form class="p-2" @submit.prevent="onSubmit">
-        <h2 class="text-lg font-medium mb-4">Общая информация</h2>
+        <h2 class="text-lg font-bold mb-4">Общая информация</h2>
         <div class="flex gap-4 mb-8">
-          <div class="w-full">
-            <label for="name" class="block text-900 font-medium mb-2">Название</label>
-            <InputText v-bind="name" class="w-full" :class="{ 'p-invalid': errors.name }" />
-            <small class="p-error" id="text-error">{{ errors.name || '&nbsp;' }}</small>
-          </div>
+          <MyInputText name="name" label="Название" />
         </div>
 
-        <h2 class="text-lg font-medium mb-4">Локация</h2>
+        <h2 class="text-lg font-bold mb-4">Локация</h2>
         <div class="flex gap-4 mb-2">
-          <div class="w-full">
-            <label for="address" class="block text-900 font-medium mb-2">Адрес</label>
-            <InputText v-bind="address" class="w-full" :class="{ 'p-invalid': errors.address }" />
-            <small class="p-error" id="text-error">{{ errors.address || '&nbsp;' }}</small>
-          </div>
+          <MyInputText name="address" label="Адрес" />
         </div>
         <div class="flex gap-4 mb-8">
-          <div class="w-full">
-            <label for="lat" class="block text-900 font-medium mb-2">Широта</label>
-            <InputNumber
-              v-bind="lat"
-              class="w-full"
-              :class="{ 'p-invalid': errors.lat }"
-              :minFractionDigits="0"
-              :maxFractionDigits="100"
-            />
-            <small class="p-error" id="text-error">{{ errors.lat || '&nbsp;' }}</small>
-          </div>
-          <div class="w-full">
-            <label for="lon" class="block text-900 font-medium mb-2">Долгота</label>
-            <InputNumber
-              v-bind="lon"
-              class="w-full"
-              :class="{ 'p-invalid': errors.lon }"
-              :minFractionDigits="0"
-              :maxFractionDigits="100"
-            />
-            <small class="p-error" id="text-error">{{ errors.lon || '&nbsp;' }}</small>
-          </div>
+          <MyInputNumber name="lat" label="Широта" />
+          <MyInputNumber name="lon" label="Долгота" />
         </div>
 
-        <h2 class="text-lg font-medium mb-4">GeoJson</h2>
-        <div class="flex gap-4 mb-8 items-center">
-          <FileUpload
-            name="geojson"
-            :auto="true"
-            mode="basic"
-            customUpload
-            @uploader="fileUploader"
-          />
-          <small v-if="values.geojson">{{ values.geojson }}</small>
-        </div>
+        <h2 class="text-lg font-bold mb-4">GeoJson</h2>
+        <MyUploadFile
+          name="geojson"
+          uploadRoute="admin/geojson"
+          filenamePropInRequest="geojson"
+          filenamePropInResponse="geoJsonName"
+        />
 
         <Button
           class="w-full flex items-center p-4 mt-8"
@@ -73,13 +41,15 @@
 </template>
 
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive, watch, computed } from 'vue'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { ref, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import type { FileUploadUploaderEvent } from 'primevue/fileupload'
+import MyInputText from './MyInputText.vue'
+import MyInputNumber from './MyInputNumber.vue'
+import MyUploadFile from './MyUploadFile.vue'
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -92,17 +62,9 @@ const schema = yup.object({
   geojson: yup.string().required().label('GeoJson')
 })
 
-const { defineComponentBinds, handleSubmit, setFieldValue, errors, values } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: schema
 })
-
-const name = defineComponentBinds('name')
-const address = defineComponentBinds('address')
-const lat = defineComponentBinds('lat')
-const lon = defineComponentBinds('lon')
-
-const isFileUploading = ref(false)
-const isFileUploaded = ref(false)
 
 const createTagMutation = reactive(
   useMutation({
@@ -116,11 +78,12 @@ const createTagMutation = reactive(
       })
       queryClient.invalidateQueries(['rests'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось создать ресторан'
+        summary: 'Не удалось создать ресторан',
+        detail: error
       })
     }
   })
@@ -129,36 +92,6 @@ const createTagMutation = reactive(
 const onSubmit = handleSubmit((v) => {
   createTagMutation.mutate(v)
 })
-
-const fileUploader = (e: FileUploadUploaderEvent) => {
-  const files = e.files as any
-  const formData = new FormData()
-  formData.append('geojson', files[0])
-  isFileUploading.value = true
-  isFileUploaded.value = false
-  axiosPrivate
-    .post('admin/geojson', formData)
-    .then((response) => {
-      setFieldValue('geojson', response.data.geoJsonName)
-      isFileUploaded.value = true
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: `GeoJson загружен (${response.data.geoJsonName})`
-      })
-    })
-    .catch((error) => {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось загрузить файл',
-        detail: error
-      })
-    })
-    .finally(() => {
-      isFileUploading.value = false
-    })
-}
 
 const visible = ref(false)
 </script>

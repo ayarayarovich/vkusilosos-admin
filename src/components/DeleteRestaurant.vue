@@ -44,11 +44,12 @@ const deleteMutation = reactive(
       })
       queryClient.invalidateQueries(['rests'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось удалить ресторан'
+        summary: 'Не удалось удалить ресторан',
+        detail: error
       })
     }
   })

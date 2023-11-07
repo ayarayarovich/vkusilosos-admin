@@ -4,20 +4,17 @@
       <Button label="Создать категорию" icon="pi pi-external-link" @click="visible = true" />
     </div>
 
-    <Dialog v-model:visible="visible" modal header="Создать блюдо" class="max-w-4xl w-full m-4">
+    <Dialog v-model:visible="visible" modal header="Создать категорию" class="max-w-xl w-full m-4">
       <form class="p-2" @submit.prevent="onSubmit">
-        <div class="grid grid-cols-3 items-center justify-items-center gap-4">
-          <div class="w-full">
-            <label for="name" class="block text-900 font-medium mb-2">Название</label>
-            <InputText id="name" v-model="form.name" type="text" class="w-full" required />
-          </div>
+        <div>
+          <MyInputText name="name" label="Название" />
         </div>
         <Button
           class="w-full flex items-center p-4 mt-8"
           type="submit"
           label="Создать"
-          :loading="createDishMutation.isLoading"
-          :disabled="createDishMutation.isLoading"
+          :loading="createCategoryMutation.isLoading"
+          :disabled="createCategoryMutation.isLoading"
         />
       </form>
     </Dialog>
@@ -25,50 +22,49 @@
 </template>
 
 <script setup lang="ts">
-import type { CreateCategory } from '@/interfaces'
-import { useMutation } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { ref, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
+import MyInputText from './MyInputText.vue'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const toast = useToast()
+const queryCLient = useQueryClient()
 
-const possibleCardColors = ref([
-  { label: 'Белый', code: 'white' },
-  { label: 'Оранжевый', code: 'orange' },
-  { label: 'Желтый', code: 'yellow' },
-  { label: 'Желтозеленый', code: 'yellowgreen' },
-  { label: 'Синий', code: 'blue' }
-])
-
-const form = reactive<CreateCategory>({
-  name: ''
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    name: yup.string().required().label('Название')
+  })
 })
 
-const createDishMutation = reactive(
+const createCategoryMutation = reactive(
   useMutation({
-    mutationFn: (payload: any) => axiosPrivate.put('admin/dish', payload),
+    mutationFn: (payload: any) => axiosPrivate.post('admin/category', payload),
     onSuccess(data, variables) {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Добавлено блюдо ${variables.name}`
+        detail: `Добавлена категория ${variables.name}`
       })
+      queryCLient.invalidateQueries(['categories'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось создать блюдо'
+        summary: 'Не удалось создать категорию',
+        detail: error
       })
     }
   })
 )
 
-const onSubmit = (e: Event) => {
-  createDishMutation.mutate(form)
-}
+const onSubmit = handleSubmit((vals) => {
+  createCategoryMutation.mutate(vals)
+})
 
 const visible = ref(false)
 </script>

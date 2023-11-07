@@ -5,9 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
 
 import type { Restaurant } from '@/interfaces'
-import UpdateCategory from '@/components/UpdateCategory.vue'
 import { useElementBounding } from '@vueuse/core'
-import emitter from '@/emmiter'
 import CreateRestaurant from '@/components/CreateRestaurant.vue'
 import UpdateRestaurant from '@/components/UpdateRestaurant.vue'
 import DeleteRestaurant from '@/components/DeleteRestaurant.vue'
@@ -101,18 +99,8 @@ const headingBounding = useElementBounding(heading)
             </div>
 
             <div class="flex gap-4">
-              <Button
-                label="Изменить"
-                icon="pi pi-external-link"
-                :disabled="!selectedRestaurant"
-                @click="
-                  emitter.emit('Restaurants.Edit', {
-                    id: selectedRestaurant!.id,
-                    name: selectedRestaurant!.name
-                  })
-                "
-              />
-              <UpdateRestaurant />
+              
+              <UpdateRestaurant :disabled="!selectedRestaurant" :restaurant="selectedRestaurant"/>
               <DeleteRestaurant :disabled="!selectedRestaurant" :restaurant="selectedRestaurant" />
             </div>
           </div>

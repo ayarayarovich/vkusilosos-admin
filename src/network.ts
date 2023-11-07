@@ -43,7 +43,7 @@ axiosPrivate.interceptors.response.use(
           const { accessToken, refreshToken } = rs.data
           userStore.accessToken = accessToken
           userStore.refreshToken = refreshToken
-        
+
           axiosPrivate.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
           return axiosPrivate(originalConfig)
@@ -58,5 +58,17 @@ axiosPrivate.interceptors.response.use(
         }
       }
     }
+
+    return Promise.reject(err)
   }
+)
+
+axiosPrivate.interceptors.response.use(
+  (res) => res,
+  (error) => Promise.reject(error)
+)
+
+axiosPublic.interceptors.response.use(
+  (res) => res,
+  (error) => Promise.reject(error)
 )

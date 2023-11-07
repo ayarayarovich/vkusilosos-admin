@@ -2,7 +2,7 @@
   <div>
     <div class="flex justify-end gap-4">
       <Button
-        label="Удалить"
+        label="Удалить блюдо"
         :disabled="disabled"
         icon="pi pi-times"
         severity="danger"
@@ -13,47 +13,44 @@
 </template>
 
 <script setup lang="ts">
-import type { UpdateDish } from '@/interfaces'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive, watch, computed } from 'vue'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useTableSelectionStore } from '@/stores/table-selection-store'
 import { useConfirm } from 'primevue/useconfirm'
+import type { Dish } from '@/interfaces'
 
 const props = defineProps<{
   disabled?: boolean
+  dish?: Dish
 }>()
 
 const toast = useToast()
 const confirm = useConfirm()
 const queryClient = useQueryClient()
 
-const tableSelectionStore = useTableSelectionStore()
-
-const deleteDishMutation = reactive(
+const deleteMutation = reactive(
   useMutation({
-    mutationFn: () =>
-      axiosPrivate
-        .delete('admin/dish', {
-          params: {
-            id: tableSelectionStore.id!
-          }
-        }),
+    mutationFn: () => axiosPrivate.delete('admin/dish', {
+      params: {
+        id: props.dish?.id
+      }
+    }),
     onSuccess() {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удалено блюдо ${tableSelectionStore.name} (id: ${tableSelectionStore.id})`
+        detail: `Удалено блюдо ${props.dish?.name} (id: ${props.dish?.id})`
       })
       queryClient.invalidateQueries(['dishes'])
     },
-    onError() {
+    onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось удалить блюдо'
+        summary: 'Не удалось удалить блюдо',
+        detail: error
       })
     }
   })
@@ -61,12 +58,12 @@ const deleteDishMutation = reactive(
 
 const confirmDelete = () => {
   confirm.require({
-    message: 'Вы уверены, что хотите удалить это блюдо?',
+    message: `Вы уверены, что хотите удалить категорию ${props.dish?.name} (id: ${props.dish?.id}) ?`,
     header: 'Подтверждение',
     icon: 'pi pi-info-circle',
     acceptClass: 'p-button-danger',
     accept: () => {
-      deleteDishMutation.mutate()
+      deleteMutation.mutate()
     },
     reject: () => {}
   })
