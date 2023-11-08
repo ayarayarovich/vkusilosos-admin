@@ -2,11 +2,11 @@
   <div>
     <div class="flex justify-end gap-4">
       <Button
-        label="Удалить"
+        label="Удалить баннер"
         :disabled="disabled"
-        icon="pi pi-user"
-        severity="warning"
-        @click="confirmStatusChange"
+        icon="pi pi-times"
+        severity="danger"
+        @click="confirmDelete"
       />
     </div>
   </div>
@@ -18,53 +18,51 @@ import { reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
-import type { User } from '@/interfaces'
 
 const props = defineProps<{
   disabled?: boolean
-  user?: User
+  banner?: any
 }>()
 
 const toast = useToast()
 const confirm = useConfirm()
 const queryClient = useQueryClient()
 
-const deleteDishMutation = reactive(
+const deleteMutation = reactive(
   useMutation({
-    mutationFn: () =>
-      axiosPrivate.delete('admin/user', {
-        params: {
-          id: props.user?.id
-        }
-      }),
+    mutationFn: () => axiosPrivate.delete('admin/banner', {
+      params: {
+        id: props.banner?.id
+      }
+    }),
     onSuccess() {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Статус пользователя ${props.user?.name} (id: ${props.user?.id}) изменён`
+        detail: `Удален баннер (id: ${props.banner?.id})`
       })
-      queryClient.invalidateQueries(['users'])
+      queryClient.invalidateQueries(['banners'])
     },
     onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось изменить статус пользователя',
+        summary: 'Не удалось удалить баннер',
         detail: error
       })
     }
   })
 )
 
-const confirmStatusChange = () => {
+const confirmDelete = () => {
   confirm.require({
-    message: `Вы уверены, что хотите изменить статус пользователя ${props.user?.name} (id: ${props.user?.id}) ?`,
+    message: `Вы уверены, что хотите удалить баннер (id: ${props.banner?.id}) ?`,
     header: 'Подтверждение',
     icon: 'pi pi-info-circle',
     acceptClass: 'p-button-danger',
     accept: () => {
-      deleteDishMutation.mutate()
+      deleteMutation.mutate()
     },
     reject: () => {}
   })

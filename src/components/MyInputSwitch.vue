@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div>
     <div class="flex items-center gap-4">
       <InputSwitch
         :id="inputID"

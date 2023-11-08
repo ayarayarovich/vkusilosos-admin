@@ -62,7 +62,7 @@ const visible = ref(false)
 const updateBonusMutation = reactive(
   useMutation({
     mutationFn: (payload: any) => axiosPrivate.post('admin/user/gift', payload),
-    onSuccess(data, variables) {
+    onSuccess() {
       toast.add({
         severity: 'success',
         life: 3000,

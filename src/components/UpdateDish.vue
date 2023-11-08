@@ -114,7 +114,7 @@ const props = defineProps<{
 
 const visible = ref(false)
 
-const { disabled, dish } = toRefs(props)
+const { disabled } = toRefs(props)
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -171,6 +171,7 @@ const updateDishMutation = reactive(
         summary: 'Успешно',
         detail: `Обновлено блюдо ${variables.name}`
       })
+      queryClient.invalidateQueries(['dishes'])
     },
     onError(error: any) {
       toast.add({

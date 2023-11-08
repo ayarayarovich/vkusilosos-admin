@@ -6,12 +6,12 @@
       'border-gray': !errorMessage
     }"
   >
-    <div class="grow h-0 flex items-center justify-center">
+    <div class="grow basis-0 min-h-[10rem] flex items-center justify-center">
       <Transition name="fade" mode="out-in">
         <div v-if="isUploading">Загружаем...</div>
         <img
           v-else-if="isSelected"
-          class="rounded-md aspect-square object-contain object-center drop-shadow-md"
+          class="h-full w-full rounded-md object-contain object-center drop-shadow-md"
           :src="value"
           alt=""
         />

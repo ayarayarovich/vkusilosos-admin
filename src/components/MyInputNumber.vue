@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { computed, ref, toRefs, watch } from 'vue'
+import { computed, toRefs } from 'vue'
 
 const props = defineProps<{
   label: string
@@ -34,7 +34,7 @@ const props = defineProps<{
 
 const { initialValue } = toRefs(props)
 
-const { setValue, errorMessage, value } = useField<any>(
+const { errorMessage, value } = useField<any>(
   () => props.name,
   {},
   {

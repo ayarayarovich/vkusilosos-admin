@@ -35,6 +35,8 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import PickList from 'primevue/picklist'
 import SelectButton from 'primevue/selectbutton'
+import Image from 'primevue/image'
+import Tag from 'primevue/tag'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -226,5 +228,7 @@ app.component('ConfirmDialog', ConfirmDialog)
 app.component('ProgressSpinner', ProgressSpinner)
 app.component('PickList', PickList)
 app.component('SelectButton', SelectButton)
+app.component('Image', Image)
+app.component('Tag', Tag)
 
 app.mount('#app')

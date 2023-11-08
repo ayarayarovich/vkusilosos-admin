@@ -8,8 +8,6 @@
       <form class="p-2" @submit="onSubmit">
         <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
           <MyInputText name="name" label="Название" />
-          <MyInputNumber name="price" label="Цена" mode="currency" currency="RUB" />
-          <MyInputNumber label="Цена продажи" name="sale_price" />
           <MyInputNumber label="IIKO ID" name="iiko_id" />
           <MyInputNumber label="Вес" name="weight" />
           <MyInputNumber label="Пищевая ценность" name="energy" />
@@ -47,8 +45,14 @@
 
         <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
         <div class="mb-8">
-          <fieldset v-for="(field, idx) in fields" :key="field.key" class="relative border-2 border-gray-200 rounded-lg p-4 mb-4">
-            <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">"{{ field.value.name }}" - {{ field.value.address }}</h3>
+          <fieldset
+            v-for="(field, idx) in fields"
+            :key="field.key"
+            class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
+          >
+            <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
+              "{{ field.value.name }}" - {{ field.value.address }}
+            </h3>
             <div class="flex gap-4">
               <MyInputNumber
                 disabled
@@ -66,13 +70,12 @@
                 currency="RUB"
               />
             </div>
+            <div class="flex items-center justify-center gap-12 flex-wrap">
+              <MyInputSwitch label="В наличии" name="have" />
+              <MyInputSwitch label="Можно доставить" name="can_deliver" />
+              <MyInputSwitch label="Активно" name="active" />
+            </div>
           </fieldset>
-        </div>
-
-        <div>
-          <MyInputSwitch label="В наличии" name="have" />
-          <MyInputSwitch label="Можно доставить" name="can_deliver" />
-          <MyInputSwitch label="Активно" name="active" />
         </div>
 
         <Button
@@ -113,7 +116,7 @@ const possibleCardColors = ref([
   { label: 'Синий', code: 'blue' }
 ])
 
-const { handleSubmit, setValues } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: yup.object({
     name: yup.string().required().label('Название'),
     img: yup.string().required().label('Изображение'),
@@ -125,18 +128,16 @@ const { handleSubmit, setValues } = useForm({
     ziri: yup.number().required().label('Количество жиров'),
     weight: yup.number().required().label('Вес'),
     size: yup.number().required().label('Количество'),
-    active: yup.boolean().label('Активно'),
-    can_deliver: yup.boolean().label('Можно доставить'),
-    have: yup.boolean().label('В наличии'),
     description: yup.string().label('Описание'),
-    price: yup.number().required().label('Цена'),
-    sale_price: yup.number().required().label('Цена продажи'),
     iiko_id: yup.number().required().label('IIKO ID'),
     restaurants: yup.array().of(
       yup.object({
         restaurant_id: yup.number().required().label('ID ресторана'),
         iiko_id: yup.number().required().label('IIKO ID блюда'),
-        price: yup.number().required().label('Цена')
+        price: yup.number().required().label('Цена'),
+        active: yup.boolean().label('Активно'),
+        can_deliver: yup.boolean().label('Можно доставить'),
+        have: yup.boolean().label('В наличии')
       })
     )
   })
