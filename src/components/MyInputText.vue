@@ -6,7 +6,7 @@
       v-model="value"
       :name="props.name"
       :label="props.label"
-      type="text"
+      :type="props.type || 'text'"
       class="w-full"
       :class="{
         'p-invalid': errorMessage
@@ -26,6 +26,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   label: string
   name: string
+  type?: string
   initialValue?: string
 }>()
 
