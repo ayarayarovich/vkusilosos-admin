@@ -25,7 +25,7 @@
             <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'stories'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-instagram" /> Истории</span></RouterLink></li>
             <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'banners'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-images" /> Баннеры</span></RouterLink></li>
             <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'promotions'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-percentage" /> Акции</span></RouterLink></li>
-            <li class="grow flex flex-col justify-end mb-4 mt-8"><button @click="userStore.signOut" class="px-3 py-3 hover:bg-gray-100 block rounded-lg transition-all text-start"><i class="pi pi-fw pi-sign-out" /> Выйти</button></li>
+            <li class="grow flex flex-col justify-end mb-4 mt-8"><button @click="userStore.signOut" class="p-3 mb-4 hover:bg-gray-100 block rounded-lg transition-all text-start"><i class="pi pi-fw pi-sign-out" /> Выйти</button></li>
           </ul>
         </div>
       </ScrollPanel>
