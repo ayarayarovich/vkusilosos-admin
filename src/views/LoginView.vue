@@ -9,6 +9,9 @@ import { useToast } from 'primevue/usetoast'
 
 import { useMutation } from '@tanstack/vue-query'
 import { axiosPublic } from '@/network'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import MyInputText from '@/components/MyInputText.vue'
 
 const toast = useToast()
 
@@ -16,9 +19,11 @@ const router = useRouter()
 const userStore = useUserStore()
 const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userStore)
 
-const form = reactive({
-  password: '',
-  phone: ''
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    phone: yup.string().required().label('Логин'),
+    password: yup.string().required().label('Пароль')
+  })
 })
 
 const { isLoading, mutate } = useMutation<any, any, any>({
@@ -43,15 +48,15 @@ const { isLoading, mutate } = useMutation<any, any, any>({
   }
 })
 
-const signIn = () => {
-  mutate(form)
-}
+const signIn = handleSubmit((vals) => {
+  mutate(vals)
+})
 </script>
 
 <template>
   <main class="p-4 min-h-screen flex items-center justify-center">
-    <div class="min-w-fit">
-      <div class="text-center mb-4 flex justify-center flex-col">
+    <div class="flex flex-col items-center">
+      <div class="w-full text-center mb-4 flex justify-center flex-col">
         <img :src="logoSrc" alt="Image" class="mb-12 h-12" />
         <div class="text-900 text-3xl font-medium mb-3">
           Вход <br />
@@ -59,37 +64,19 @@ const signIn = () => {
         </div>
       </div>
 
-      <div>
-        <form @submit.prevent="signIn">
-          <InputText
-            id="login"
-            :disabled="isLoading"
-            type="text"
-            placeholder="Логин"
-            v-model="form.phone"
-            class="w-full mb-8 text-center"
-            required
-          />
-          <InputText
-            id="password"
-            :disabled="isLoading"
-            type="password"
-            placeholder="Пароль"
-            v-model="form.password"
-            class="w-full mb-8 text-center"
-            required
-          />
+      <form class="w-full max-w-sm" @submit="signIn">
+        <MyInputText label="Логин" type="text" name="phone" />
+        <MyInputText label="Пароль" type="password" name="password" />
 
-          <Button
-            icon="pi pi-user"
-            class="w-full flex items-center p-4"
-            label="Войти"
-            type="submit"
-            :loading="isLoading"
-            :disabled="isLoading"
-          />
-        </form>
-      </div>
+        <Button
+          icon="pi pi-user"
+          class="w-full flex items-center mt-4 p-4"
+          label="Войти"
+          type="submit"
+          :loading="isLoading"
+          :disabled="isLoading"
+        />
+      </form>
     </div>
   </main>
 </template>
