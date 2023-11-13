@@ -1,46 +1,43 @@
 <template>
   <div>
+    <p class="my-8 text-lg leading-loose">
+      Вы уверены, что хотите удалить ресторан
+      <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
+        >{{ restaurant.name }} (id: {{ restaurant.id }})</span
+      >
+    </p>
     <div class="flex justify-end gap-4">
-      <Button
-        label="Удалить"
-        :disabled="disabled"
-        icon="pi pi-times"
-        severity="danger"
-        @click="confirmDelete"
-      />
+      <Button label="Нет" severity="secondary" @click="dialogRef.close()" />
+      <Button label="Да" severity="danger" @click="deleteRestaurant()" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { reactive } from 'vue'
+import { inject, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
 import type { Restaurant } from '@/interfaces'
 
-const props = defineProps<{
-  disabled?: boolean
-  restaurant?: Restaurant
-}>()
+const dialogRef = inject('dialogRef') as any
+const restaurant = dialogRef.value.data.restaurant as Restaurant
 
 const toast = useToast()
-const confirm = useConfirm()
 const queryClient = useQueryClient()
 
 const deleteMutation = reactive(
   useMutation({
     mutationFn: () =>
       axiosPrivate.delete('admin/rest', {
-        params: { id: props.restaurant?.id }
+        params: { id: restaurant.id }
       }),
     onSuccess() {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удален ресторан ${props.restaurant?.name} (id: ${props.restaurant?.id})`
+        detail: `Удален ресторан ${restaurant.name} (id: ${restaurant.id})`
       })
       queryClient.invalidateQueries(['rests'])
     },
@@ -55,16 +52,8 @@ const deleteMutation = reactive(
   })
 )
 
-const confirmDelete = () => {
-  confirm.require({
-    message: `Вы уверены, что хотите удалить этот ресторан ${props.restaurant?.name} (id: ${props.restaurant?.id}) ?`,
-    header: 'Подтверждение',
-    icon: 'pi pi-info-circle',
-    acceptClass: 'p-button-danger',
-    accept: () => {
-      deleteMutation.mutate()
-    },
-    reject: () => {}
-  })
+const deleteRestaurant = () => {
+  deleteMutation.mutate()
+  dialogRef.value.close()
 }
 </script>

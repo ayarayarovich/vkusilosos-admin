@@ -10,7 +10,7 @@
       <Transition name="fade" mode="out-in">
         <div v-if="isUploading">Загружаем...</div>
         <img
-          v-else-if="isSelected"
+          v-else-if="value"
           class="h-full w-full rounded-md object-contain object-center drop-shadow-md"
           :src="value"
           alt=""

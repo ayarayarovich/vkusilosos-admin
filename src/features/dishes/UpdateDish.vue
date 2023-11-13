@@ -1,120 +1,105 @@
 <template>
-  <div>
-    <div class="flex justify-end gap-4">
-      <Button label="Изменить блюдо" :disabled="disabled" icon="pi pi-external-link" @click="visible = true" />
+  <form class="p-2" @submit="onSubmit">
+    <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
+      <MyInputText name="name" label="Название" />
+      <MyInputNumber name="price" label="Цена" mode="currency" currency="RUB" />
+      <MyInputNumber label="Цена продажи" name="sale_price" />
+      <MyInputNumber label="IIKO ID" name="iiko_id" />
+      <MyInputNumber label="Вес" name="weight" />
+      <MyInputNumber label="Пищевая ценность" name="energy" />
+      <MyInputNumber label="Белки" name="belki" />
+      <MyInputNumber label="Жиры" name="ziri" />
+      <MyInputNumber label="Углеводы" name="uglevodi" />
+      <MyInputNumber label="Количество" name="size" />
+
+      <DropdownSelect
+        class="w-full"
+        name="color"
+        label="Цвет карточки"
+        placeholder="Выберите"
+        :options="possibleCardColors"
+      />
+
+      <DropdownSelect
+        class="w-full"
+        name="category_id"
+        label="Категория"
+        placeholder="Выберите"
+        :options="possibleCategories"
+      />
+
+      <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full h-full">
+        <MyUploadImage
+          class="rounded-lg"
+          name="img"
+          filename-prop-in-request="image"
+          filename-prop-in-response="fileLink"
+          upload-route="admin/upload"
+        />
+      </div>
     </div>
 
-    <Dialog v-model:visible="visible" modal header="Изменить блюдо" class="max-w-4xl w-full m-4">
-      <form class="p-2" @submit="onSubmit">
-        <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
-          <MyInputText name="name" label="Название" />
-          <MyInputNumber name="price" label="Цена" mode="currency" currency="RUB" />
-          <MyInputNumber label="Цена продажи" name="sale_price" />
-          <MyInputNumber label="IIKO ID" name="iiko_id" />
-          <MyInputNumber label="Вес" name="weight" />
-          <MyInputNumber label="Пищевая ценность" name="energy" />
-          <MyInputNumber label="Белки" name="belki" />
-          <MyInputNumber label="Жиры" name="ziri" />
-          <MyInputNumber label="Углеводы" name="uglevodi" />
-          <MyInputNumber label="Количество" name="size" />
-
-          <DropdownSelect
-            class="w-full"
-            name="color"
-            label="Цвет карточки"
-            placeholder="Выберите"
-            :options="possibleCardColors"
+    <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
+    <div class="mb-8">
+      <fieldset
+        v-for="(field, idx) in fields"
+        :key="field.key"
+        class="relative border-2 border-gray-200 rounded-lg p-4 mb-8"
+      >
+        <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
+          "{{ field.value.name }}" - {{ field.value.address }}
+        </h3>
+        <div class="flex gap-4">
+          <MyInputNumber
+            disabled
+            class="flex-1"
+            :name="`restaurants[${idx}].restaurant_id`"
+            label="ID ресторана"
+            :initial-value="field.value.id"
           />
-
-          <DropdownSelect
-            class="w-full"
-            name="category_id"
-            label="Категория"
-            placeholder="Выберите"
-            :options="possibleCategories"
+          <MyInputNumber class="flex-1" :name="`restaurants[${idx}].iiko_id`" label="IIKO ID" />
+          <MyInputNumber
+            class="flex-1"
+            :name="`restaurants[${idx}].price`"
+            label="Цена"
+            mode="currency"
+            currency="RUB"
           />
-
-          <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full h-full">
-            <MyUploadImage
-              class="rounded-lg"
-              name="img"
-              filename-prop-in-request="image"
-              filename-prop-in-response="fileLink"
-              upload-route="admin/upload"
-            />
-          </div>
         </div>
-
-        <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
-        <div class="mb-8">
-          <fieldset
-            v-for="(field, idx) in fields"
-            :key="field.key"
-            class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
-          >
-            <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
-              "{{ field.value.name }}" - {{ field.value.address }}
-            </h3>
-            <div class="flex gap-4">
-              <MyInputNumber
-                disabled
-                class="flex-1"
-                :name="`restaurants[${idx}].restaurant_id`"
-                label="ID ресторана"
-                :initial-value="field.value.id"
-              />
-              <MyInputNumber class="flex-1" :name="`restaurants[${idx}].iiko_id`" label="IIKO ID" />
-              <MyInputNumber
-                class="flex-1"
-                :name="`restaurants[${idx}].price`"
-                label="Цена"
-                mode="currency"
-                currency="RUB"
-              />
-            </div>
-          </fieldset>
+        <div class="flex items-center justify-center gap-12 flex-wrap">
+          <MyInputSwitch label="В наличии" :name="`restaurants[${idx}].have`" />
+          <MyInputSwitch label="Можно доставить" :name="`restaurants[${idx}].can_deliver`" />
+          <MyInputSwitch label="Активно" :name="`restaurants[${idx}].active`" />
         </div>
+      </fieldset>
+    </div>
 
-        <div>
-          <MyInputSwitch label="В наличии" name="have" />
-          <MyInputSwitch label="Можно доставить" name="can_deliver" />
-          <MyInputSwitch label="Активно" name="active" />
-        </div>
-
-        <Button
-          class="w-full flex items-center p-4 mt-8"
-          type="submit"
-          label="Создать"
-          :loading="updateDishMutation.isLoading"
-          :disabled="updateDishMutation.isLoading"
-        />
-      </form>
-    </Dialog>
-  </div>
+    <Button
+      class="w-full flex items-center p-4 mt-8"
+      type="submit"
+      label="Создать"
+      :loading="updateDishMutation.isLoading"
+      :disabled="updateDishMutation.isLoading"
+    />
+  </form>
 </template>
 
 <script setup lang="ts">
 import type { Dish, Category, Restaurant } from '@/interfaces'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive, watch, toRefs, computed } from 'vue'
+import { ref, reactive, watch, computed, inject } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import * as yup from 'yup'
 import { useForm, useFieldArray } from 'vee-validate'
-import MyInputNumber from './MyInputNumber.vue'
-import MyInputSwitch from './MyInputSwitch.vue'
-import MyInputText from './MyInputText.vue'
-import MyUploadImage from './MyUploadImage.vue'
-import DropdownSelect from './DropdownSelect.vue'
+import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputSwitch from '@/components/MyInputSwitch.vue'
+import MyInputText from '@/components/MyInputText.vue'
+import MyUploadImage from '@/components/MyUploadImage.vue'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 
-const props = defineProps<{
-  disabled?: boolean
-  dish?: Dish
-}>()
-
-const visible = ref(false)
-
-const { disabled } = toRefs(props)
+const dialogRef = inject('dialogRef') as any
+const dish = dialogRef.value.data.dish as Dish
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -125,6 +110,11 @@ const possibleCardColors = ref([
   { label: 'Желтозеленый', code: 'yellowgreen' },
   { label: 'Синий', code: 'blue' }
 ])
+
+const { data: dishData } = useQuery<Dish>({
+  queryKey: ['dishes', dish.id],
+  queryFn: () => axiosPrivate.get('admin/dish', { params: { id: dish.id } }).then((res) => res.data)
+})
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -152,7 +142,8 @@ const { handleSubmit } = useForm({
         price: yup.number().required().label('Цена')
       })
     )
-  })
+  }),
+  initialValues: dishData
 })
 
 const { replace, fields } = useFieldArray<Restaurant>('restaurants')
@@ -197,8 +188,7 @@ const { data: categoriesData } = useQuery<{
       }
     })
     return response.data
-  },
-  enabled: visible
+  }
 })
 
 const possibleCategories = computed(() => {
@@ -224,8 +214,7 @@ const { data: restaurantsData } = useQuery<{
       }
     })
     return response.data
-  },
-  enabled: visible
+  }
 })
 watch([restaurantsData], () => {
   if (restaurantsData.value) {

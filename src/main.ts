@@ -37,9 +37,14 @@ import PickList from 'primevue/picklist'
 import SelectButton from 'primevue/selectbutton'
 import Image from 'primevue/image'
 import Tag from 'primevue/tag'
+import MultiSelect from 'primevue/multiselect'
+import ProgressBar from 'primevue/progressbar'
+import ContextMenu from 'primevue/contextmenu'
+import Toolbar from 'primevue/toolbar'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
+import DialogService from 'primevue/dialogservice'
 
 import App from '@/App.vue'
 import router from '@/router'
@@ -199,6 +204,7 @@ app.use(PrimeVue, {
 })
 app.use(ToastService)
 app.use(ConfirmationService)
+app.use(DialogService)
 app.use(pinia)
 app.use(router)
 app.use(VueQueryPlugin)
@@ -230,5 +236,9 @@ app.component('PickList', PickList)
 app.component('SelectButton', SelectButton)
 app.component('Image', Image)
 app.component('Tag', Tag)
+app.component('MultiSelect', MultiSelect)
+app.component('ProgressBar', ProgressBar)
+app.component('ContextMenu', ContextMenu)
+app.component('Toolbar', Toolbar)
 
 app.mount('#app')

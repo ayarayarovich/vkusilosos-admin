@@ -7,7 +7,7 @@ const number = ref(0)
 <template>
   <main class="mx-4 min-h-full flex flex-col items-stretch">
     <div class="h-24 flex items-center justify-between" ref="heading">
-      <h1 class="text-3xl font-semibold leading-none">Статистика</h1>
+      <h1 class="text-3xl text-center font-semibold leading-none text-black">Статистика</h1>
     </div>
   </main>
 </template>

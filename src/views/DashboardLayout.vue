@@ -1,21 +1,34 @@
 <template>
   <Splitter class="min-h-screen border-0">
-    <SplitterPanel :size="20" class="px-4 flex flex-col items-stretch">
-        <img :src="logoSrc" class="h-8 w-full object-contain object-center my-6" alt="" />
-        <ul class="flex flex-col gap-1 grow">
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'users'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Пользователи</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'feedback'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Отзывы</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'dishes'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Блюда</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'stats'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Статистика</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'categories'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Категории</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'tags'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Теги</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'stories'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Истории</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'banners'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Баннеры</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'promotions'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Акции</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'restaurants'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Рестораны</span></RouterLink></li>
-          <li><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'orders'}"><span class="px-6 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-200 font-medium' : ''">Заказы</span></RouterLink></li>
-          <li class="grow flex flex-col justify-end mb-4"><button @click="userStore.signOut" class="px-6 py-3 hover:bg-gray-100 block rounded-lg transition-all text-start">Выйти</button></li>
-        </ul>
+    <SplitterPanel :size="20" class="px-2">
+      <ScrollPanel class="h-screen">
+        <div class="h-full px-6 flex flex-col items-stretch text-black">
+          <img :src="logoSrc" class="h-8 w-full object-contain object-center my-6" alt="" />
+          <ul class="flex flex-col gap-1 grow ">
+            <li class="font-bold mt-2 text-sm mb-1">Главная</li>
+            <li class="min-w-max"><RouterLink v-slot="{isExactActive}" class="w-full rounded-lg" :to="{name: 'dashboard'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isExactActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-home" /> Dashboard</span></RouterLink></li>
+            
+            <li class="font-bold mt-2 text-sm mb-1">Пользователи</li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'users'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-user" /> Пользователи</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'feedback'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-comments" /> Отзывы</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'orders'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-shopping-cart" /> Заказы</span></RouterLink></li>
+            
+            <li class="font-bold mt-2 text-sm mb-1">Еда</li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'categories'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-sitemap" /> Категории</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'dishes'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-book" /> Блюда</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'tags'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-hashtag" /> Теги</span></RouterLink></li>
+
+            <li class="font-bold mt-2 text-sm mb-1">Точки</li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'restaurants'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-building" /> Рестораны</span></RouterLink></li>
+
+            <li class="font-bold mt-2 text-sm mb-1">Маркетинг</li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'stories'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-instagram" /> Истории</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'banners'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-images" /> Баннеры</span></RouterLink></li>
+            <li class="min-w-max"><RouterLink v-slot="{isActive}" class="w-full rounded-lg" :to="{name: 'promotions'}"><span class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all" :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"><i class="pi pi-fw pi-percentage" /> Акции</span></RouterLink></li>
+            <li class="grow flex flex-col justify-end mb-4 mt-8"><button @click="userStore.signOut" class="px-3 py-3 hover:bg-gray-100 block rounded-lg transition-all text-start"><i class="pi pi-fw pi-sign-out" /> Выйти</button></li>
+          </ul>
+        </div>
+      </ScrollPanel>
     </SplitterPanel>
     <SplitterPanel :size="80" class="">
       <RouterView />

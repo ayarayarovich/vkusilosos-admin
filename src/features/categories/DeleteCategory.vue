@@ -1,12 +1,16 @@
 <template>
   <div>
+    <p class="my-8 text-lg leading-loose">Вы уверены, что хотите удалить категорию <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-purple-200 whitespace-nowrap">{{ category.name }} (id: {{ category.id }})</span></p>
     <div class="flex justify-end gap-4">
       <Button
-        label="Удалить"
-        :disabled="disabled"
-        icon="pi pi-times"
+        label="Нет"
+        severity="secondary"
+        @click="dialogRef.close()"
+      />
+      <Button
+        label="Да"
         severity="danger"
-        @click="confirmDelete"
+        @click="deleteCategory()"
       />
     </div>
   </div>
@@ -14,19 +18,16 @@
 
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { reactive } from 'vue'
+import { inject, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
 import type { Category } from '@/interfaces'
 
-const props = defineProps<{
-  disabled?: boolean
-  category?: Category
-}>()
+const dialogRef = inject('dialogRef') as any
+const category = dialogRef.value.data.category as Category
+console.log(dialogRef.value.data.category.id)
 
 const toast = useToast()
-const confirm = useConfirm()
 const queryClient = useQueryClient()
 
 const deleteMutation = reactive(
@@ -37,7 +38,7 @@ const deleteMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удалена категория ${props.category?.name} (id: ${props.category?.id})`
+        detail: `Удалена категория ${dialogRef.value.data.category.name} (id: ${dialogRef.value.data.category.id})`
       })
       queryClient.invalidateQueries(['categories'])
     },
@@ -52,16 +53,9 @@ const deleteMutation = reactive(
   })
 )
 
-const confirmDelete = () => {
-  confirm.require({
-    message: `Вы уверены, что хотите удалить категорию ${props.category?.name} (id: ${props.category?.id}) ?`,
-    header: 'Подтверждение',
-    icon: 'pi pi-info-circle',
-    acceptClass: 'p-button-danger',
-    accept: () => {
-      deleteMutation.mutate()
-    },
-    reject: () => {}
-  })
+const deleteCategory = () => {
+  deleteMutation.mutate()
+  dialogRef.value.close()
 }
+
 </script>

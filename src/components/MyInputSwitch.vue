@@ -3,7 +3,7 @@
     <div class="flex items-center gap-4">
       <InputSwitch
         :id="inputID"
-        v-model="inputValue"
+        v-model="value"
         :name="props.name"
         :label="props.label"
         :class="{
@@ -19,25 +19,18 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   label: string
   name: string
 }>()
 
-const { setValue, errorMessage } = useField(() => props.name)
+const { errorMessage, value } = useField<boolean>(() => props.name, {}, {
+  initialValue: false
+})
 
-const inputValue = ref<boolean>()
-watch(
-  [inputValue],
-  () => {
-    setValue(inputValue.value)
-  },
-  {
-    immediate: true
-  }
-)
+// const inputValue = ref<boolean>()
 
 const inputID = computed(() => `input-number-${props.name}`)
 </script>

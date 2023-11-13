@@ -1,33 +1,30 @@
 <template>
   <div>
+    <p class="my-8 text-lg leading-loose">
+      Вы уверены, что хотите удалить тег
+      <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
+        >{{ tag.name }} (id: {{ tag.id }})</span
+      >
+    </p>
     <div class="flex justify-end gap-4">
-      <Button
-        label="Удалить"
-        :disabled="disabled"
-        icon="pi pi-times"
-        severity="danger"
-        @click="confirmDelete"
-      />
+      <Button label="Нет" severity="secondary" @click="dialogRef.close()" />
+      <Button label="Да" severity="danger" @click="deleteTag()" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { reactive } from 'vue'
+import { inject, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
 import type { Tag } from '@/interfaces'
 
-const props = defineProps<{
-  disabled?: boolean
-  tag?: Tag
-}>()
-
 const toast = useToast()
-const confirm = useConfirm()
 const queryClient = useQueryClient()
+
+const dialogRef = inject('dialogRef') as any
+const tag = dialogRef.value.data.tag as Tag
 
 const deleteMutation = reactive(
   useMutation({
@@ -37,7 +34,7 @@ const deleteMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удален ресторан ${props.tag?.name} (id: ${props.tag?.id})`
+        detail: `Удален ресторан ${tag.name} (id: ${tag.id})`
       })
       queryClient.invalidateQueries(['tags'])
     },
@@ -52,16 +49,8 @@ const deleteMutation = reactive(
   })
 )
 
-const confirmDelete = () => {
-  confirm.require({
-    message: `Вы уверены, что хотите удалить этот тег ${props.tag?.name} (id: ${props.tag?.id}) ?`,
-    header: 'Подтверждение',
-    icon: 'pi pi-info-circle',
-    acceptClass: 'p-button-danger',
-    accept: () => {
-      deleteMutation.mutate()
-    },
-    reject: () => {}
-  })
+const deleteTag = () => {
+  deleteMutation.mutate()
+  dialogRef.value.close()
 }
 </script>

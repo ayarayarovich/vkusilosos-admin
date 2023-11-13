@@ -30,9 +30,13 @@ const props = defineProps<{
 const inputID = computed(() => `select-${props.name}`)
 const selected = ref<(typeof props.options)[0]>()
 
-const { setValue, errorMessage, handleBlur, handleChange } = useField(() => props.name)
+const { setValue, errorMessage, handleBlur, handleChange, value } = useField(() => props.name)
 
 watch([selected], () => {
   setValue(selected.value?.code)
+})
+watch([value], () => {
+  console.log('value changed: ', value)
+  selected.value = props.options.find((opt) => opt.code === value.value)
 })
 </script>

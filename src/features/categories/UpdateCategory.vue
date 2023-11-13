@@ -1,52 +1,34 @@
 <template>
-  <div>
-    <Button
-      label="Изменить"
-      icon="pi pi-external-link"
-      :disabled="disabled"
-      @click="visible = true"
-    />
-    <Dialog
-      v-model:visible="visible"
-      modal
-      :header="`Изменить категорию ${props.category?.name} (id: ${props.category?.id})`"
-      class="max-w-xl w-full m-4"
-    >
-      <form class="p-2" @submit.prevent="onSubmit">
-        <MyInputNumber name="id" label="ID" disabled :initial-value="props.category?.id" />
-        <MyInputText name="name" label="Название" />
+  <form class="mt-8" @submit.prevent="onSubmit">
+    <MyInputNumber name="id" label="ID" disabled :initial-value="category.id" />
+    <MyInputText name="name" label="Название" :initial-value="category.name" />
 
-        <Button
-          class="w-full flex items-center p-4 mt-8"
-          type="submit"
-          label="Сохранить"
-          :loading="updateCategoryMutation.isLoading"
-          :disabled="updateCategoryMutation.isLoading"
-        />
-      </form>
-    </Dialog>
-  </div>
+    <Button
+      class="w-full flex items-center p-4 mt-8"
+      type="submit"
+      label="Сохранить"
+      :loading="updateCategoryMutation.isLoading"
+      :disabled="updateCategoryMutation.isLoading"
+    />
+  </form>
 </template>
 
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive } from 'vue'
+import { reactive, inject } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import MyInputNumber from './MyInputNumber.vue'
-import MyInputText from './MyInputText.vue'
+import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputText from '@/components/MyInputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import type { Category } from '@/interfaces'
 
-const props = defineProps<{
-  disabled?: boolean
-  category?: Category
-}>()
-
 const toast = useToast()
 const queryClient = useQueryClient()
-const visible = ref(false)
+
+const dialogRef = inject('dialogRef') as any
+const category = dialogRef.value.data.category as Category
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({

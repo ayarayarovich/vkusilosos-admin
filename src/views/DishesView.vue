@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, toRefs, watch } from 'vue'
-import type { DataTablePageEvent, DataTableRowEditSaveEvent } from 'primevue/datatable'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
+import { ref, reactive, watch, onMounted } from 'vue'
+import type { DataTablePageEvent } from 'primevue/datatable'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
-import CreateDish from '@/components/CreateDish.vue'
 
 import type { Dish } from '@/interfaces'
 import { useDebounce, useElementBounding } from '@vueuse/core'
-import { useToast } from 'primevue/usetoast'
-import UpdateDish from '@/components/UpdateDish.vue'
-import DeleteDish from '@/components/DeleteDish.vue'
+
+import { CreateDish, DeleteDish, UpdateDish } from '@/features/dishes'
+import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
@@ -19,9 +18,6 @@ const searchTerm = ref('')
 const selectedDish = ref<Dish>()
 const debouncedSearchTerm = useDebounce(searchTerm, 500)
 const totalRecords = ref<number>()
-
-const queryClient = useQueryClient()
-const toast = useToast()
 
 const query = reactive(
   useQuery({
@@ -36,7 +32,7 @@ const query = reactive(
       })
       return response.data
     },
-    placeholderData: (previousData: any) => previousData,
+    placeholderData: (previousData: any) => previousData
   })
 )
 
@@ -46,61 +42,127 @@ watch([query], () => {
   }
 })
 
-const mutateDishQuery = reactive(
-  useMutation({
-    mutationFn: async (payload: any) => await axiosPrivate.put('admin/dish', payload),
-    onSuccess(data, variables) {
-      queryClient.invalidateQueries(['dishes'])
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Данные блюда (id = ${variables.id}) обновлены`
-      })
-    },
-    onError(error: any) {
-      const body = error.response.data
-      if (error.response.status === 400) {
-        toast.add({
-          severity: 'error',
-          life: 3000,
-          summary: body.message
-        })
-      }
-    }
-  })
-)
-
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
   limit.value = e.rows
 }
 
-const onSort = (e: any) => {
-  console.log('onSort', e)
+const dialog = useDialog()
+const beginCreateDishInteraction = () => {
+  dialog.open(CreateDish, {
+    props: {
+      class: 'w-full max-w-4xl',
+      modal: true,
+      header: 'Новое блюдо'
+    } as any
+  })
+}
+const beginUpdateDishInteraction = (dish: Dish) => {
+  dialog.open(UpdateDish, {
+    props: {
+      class: 'w-full max-w-4xl',
+      modal: true,
+      header: 'Изменить блюдо'
+    } as any,
+    data: {
+      dish
+    }
+  })
 }
 
-const onUpload = (e: any) => {
-  console.log('onUpload', e)
+const beginDeleteDishInteraction = (dish: Dish) => {
+  dialog.open(DeleteDish, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Изменить блюдо'
+    } as any,
+    data: {
+      dish
+    }
+  })
 }
 
-const heading = ref()
-
-const headingBounding = useElementBounding(heading)
-
-const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
-  mutateDishQuery.mutate(a.newData)
+const refresh = () => {
+  query.refetch()
 }
+
+const cm = ref()
+const onRowContextMenu = (event: any) => {
+  cm.value.show(event.originalEvent)
+}
+const menuModel = ref([
+  {
+    label: 'Обновить',
+    icon: 'pi pi-fw pi-refresh',
+    command: () => refresh()
+  },
+  {
+    label: 'Создать',
+    icon: 'pi pi-fw pi-plus',
+    command: () => beginCreateDishInteraction()
+  },
+  {
+    label: 'Изменить',
+    icon: 'pi pi-fw pi-pencil',
+    command: () => beginUpdateDishInteraction(selectedDish.value!)
+  },
+  {
+    label: 'Удалить',
+    icon: 'pi pi-fw pi-times',
+    command: () => beginDeleteDishInteraction(selectedDish.value!)
+  }
+])
+
+const root = ref<HTMLElement>()
+const scrollHeight = ref()
+onMounted(() => {
+  if (root.value) {
+    const pagginatorHeight = root.value.querySelector('.p-paginator-bottom')?.clientHeight
+    scrollHeight.value = `calc(100% - ${pagginatorHeight}px)`
+  }
+})
 </script>
 
 <template>
-  <main class="mx-4 h-screen flex flex-col items-stretch">
-    <div class="h-24 flex items-center justify-between" ref="heading">
-      <h1 class="text-3xl font-semibold leading-none">Блюда</h1>
-      <CreateDish />
-    </div>
+  <main class="mx-4 h-screen flex flex-col items-stretch" ref="root">
+    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Блюда</h1>
 
-    <div>
+    <ContextMenu ref="cm" :model="menuModel" @hide="selectedDish = undefined" />
+
+    <Toolbar>
+      <template #center>
+        <div class="w-full flex">
+          <div class="flex-1 flex justify-start gap-2">
+            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-plus" @click="beginCreateDishInteraction()" />
+          </div>
+
+          <div class="flex-1 flex justify-center">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText placeholder="Поиск" v-model="searchTerm" />
+            </span>
+          </div>
+
+          <div class="flex-1 flex justify-end gap-2">
+            <Button
+              icon="pi pi-pencil"
+              :disabled="!selectedDish"
+              @click="beginUpdateDishInteraction(selectedDish!)"
+            />
+            <Button
+              :disabled="!selectedDish"
+              icon="pi pi-times"
+              severity="danger"
+              @click="beginDeleteDishInteraction(selectedDish!)"
+            />
+          </div>
+        </div>
+      </template>
+    </Toolbar>
+
+    <div class="flex-1 min-h-0 py-6">
       <Message v-if="query.isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
@@ -108,11 +170,14 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
         v-else
         size="small"
         scrollable
-        :scroll-height="`calc(100vh - ${headingBounding.height.value + 250}px)`"
+        :scroll-height="scrollHeight"
         v-model:selection="selectedDish"
         selection-mode="single"
+        contextMenu
+        v-model:contextMenuSelection="selectedDish"
+        @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
-        class="rounded-xl grow overflow-hidden mt-6"
+        class="border rounded-lg h-full overflow-hidden"
         :value="query.data?.items"
         lazy
         paginator
@@ -122,7 +187,6 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
         :totalRecords="totalRecords"
-        :loading="query.isLoading"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
@@ -138,29 +202,16 @@ const onRowEditSave = (a: DataTableRowEditSaveEvent) => {
         </Column>
         <Column field="price" header="Цена" />
         <Column field="sale_price" header="Цена продажи" />
-        <template #header>
-          <div class="flex justify-between items-center">
-            <div>
-              <Button
-                icon="pi pi-refresh"
-                :disabled="query.isFetching"
-                @click="queryClient.invalidateQueries(['dishes'])"
-              />
-            </div>
-
-            <div class="flex gap-4">
-              <span class="p-input-icon-left">
-                <i class="pi pi-search" />
-                <InputText v-model="searchTerm" placeholder="Поиск" />
-              </span>
-              <UpdateDish :disabled="!selectedDish" :dish="selectedDish" />
-              <DeleteDish :disabled="!selectedDish" :dish="selectedDish" />
-            </div>
-          </div>
-        </template>
 
         <template #loading>
           <ProgressSpinner class="h-8" />
+        </template>
+
+        <template #empty>
+          <div class="py-12 flex flex-col items-center gap-4">
+            <img class="h-36" src="/empty.svg" alt="">
+            <span>Нет данных</span>
+          </div>
         </template>
       </DataTable>
     </div>

@@ -5,7 +5,7 @@ import DashboardLayout from '@/views/DashboardLayout.vue'
 import UsersView from '@/views/UsersView.vue'
 import FeedbackView from '@/views/FeedbackView.vue'
 import DishesView from '@/views/DishesView.vue'
-import StatsView from '@/views/StatsView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
 import TagsView from '@/views/TagsView.vue'
 import StoriesView from '@/views/StoriesView.vue'
@@ -21,10 +21,13 @@ const router = createRouter({
   routes: [
     {
       path: '/dashboard',
-      name: 'dashboard',
       component: DashboardLayout,
-      redirect: '/dashboard/users',
       children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: DashboardView
+        },
         {
           path: 'users',
           name: 'users',
@@ -39,11 +42,6 @@ const router = createRouter({
           path: 'dishes',
           name: 'dishes',
           component: DishesView
-        },
-        {
-          path: 'stats',
-          name: 'stats',
-          component: StatsView
         },
         {
           path: 'categories',

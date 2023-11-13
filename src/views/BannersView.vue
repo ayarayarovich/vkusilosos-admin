@@ -55,7 +55,7 @@ const headingBounding = useElementBounding(heading)
 <template>
   <main class="mx-4 h-screen flex flex-col items-stretch">
     <div class="h-24 flex items-center justify-between" ref="heading">
-      <h1 class="text-3xl font-semibold leading-none">Баннеры</h1>
+      <h1 class="text-3xl font-semibold leading-none text-black">Баннеры</h1>
       <CreateBanner />
     </div>
 
@@ -81,7 +81,6 @@ const headingBounding = useElementBounding(heading)
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
         :totalRecords="totalRecords"
-        :loading="query.isLoading"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
@@ -115,6 +114,12 @@ const headingBounding = useElementBounding(heading)
 
         <template #loading>
           <ProgressSpinner class="h-8" />
+        </template>
+        <template #empty>
+          <div class="py-12 flex flex-col items-center gap-4">
+            <img class="h-36" src="/empty.svg" alt="">
+            <span>Нет данных</span>
+          </div>
         </template>
       </DataTable>
     </div>
