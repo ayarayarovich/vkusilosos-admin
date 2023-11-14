@@ -15,7 +15,7 @@
           :src="value"
           alt=""
         />
-        <div v-else class="w-full aspect-square flex items-center justify-center">
+        <div v-else class="w-full aspect-square flex items-center text-center justify-center">
           Выберите картинку
         </div>
       </Transition>
