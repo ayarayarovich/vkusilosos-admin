@@ -52,7 +52,7 @@ const headingBounding = useElementBounding(heading)
 </script>
 
 <template>
-  <main class="mx-4 h-screen flex flex-col items-stretch">
+  <main class="px-4 h-screen flex flex-col items-stretch">
     <div class="h-24 flex items-center justify-between" ref="heading">
       <h1 class="text-3xl font-semibold leading-none text-black">Баннеры</h1>
       <CreateBanner />

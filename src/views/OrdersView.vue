@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="mx-4 h-screen flex flex-col items-stretch" ref="root">
+  <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
     <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Заказы</h1>
 
     <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
