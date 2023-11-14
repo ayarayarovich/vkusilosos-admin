@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
 
 import type { Category } from '@/interfaces'
 import { CreateCategory, DeleteCategory, UpdateCategory } from '@/features/categories'
-import { useElementBounding } from '@vueuse/core'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -15,8 +14,6 @@ const offset = ref(0)
 const limit = rowsPerPage
 const selectedCategory = ref<Category>()
 const totalRecords = ref<number>()
-
-const queryClient = useQueryClient()
 
 const query = reactive(
   useQuery<{
@@ -46,10 +43,6 @@ const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
   limit.value = e.rows
 }
-
-const heading = ref()
-
-const headingBounding = useElementBounding(heading)
 
 const dialog = useDialog()
 
@@ -198,13 +191,13 @@ onMounted(() => {
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
         <Column field="count_dishes" header="Количество блюд" />
-      
+
         <template #loading>
           <ProgressSpinner class="h-8" />
         </template>
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">
-            <img class="h-36" src="/empty.svg" alt="">
+            <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>
         </template>

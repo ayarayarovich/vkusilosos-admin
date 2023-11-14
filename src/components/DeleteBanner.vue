@@ -30,11 +30,12 @@ const queryClient = useQueryClient()
 
 const deleteMutation = reactive(
   useMutation({
-    mutationFn: () => axiosPrivate.delete('admin/banner', {
-      params: {
-        id: props.banner?.id
-      }
-    }),
+    mutationFn: () =>
+      axiosPrivate.delete('admin/banner', {
+        params: {
+          id: props.banner?.id
+        }
+      }),
     onSuccess() {
       toast.add({
         severity: 'success',

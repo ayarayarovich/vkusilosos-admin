@@ -66,7 +66,7 @@ const { handleSubmit } = useForm({
   }),
   initialValues: {
     slides: []
-  },
+  }
 })
 
 const { push, remove, fields } = useFieldArray('slides')

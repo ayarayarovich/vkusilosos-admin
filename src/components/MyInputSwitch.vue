@@ -26,9 +26,13 @@ const props = defineProps<{
   name: string
 }>()
 
-const { errorMessage, value } = useField<boolean>(() => props.name, {}, {
-  initialValue: false
-})
+const { errorMessage, value } = useField<boolean>(
+  () => props.name,
+  {},
+  {
+    initialValue: false
+  }
+)
 
 // const inputValue = ref<boolean>()
 

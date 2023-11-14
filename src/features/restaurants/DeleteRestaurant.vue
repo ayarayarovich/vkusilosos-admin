@@ -1,14 +1,14 @@
 <template>
   <div>
-    <p class="my-8 text-lg leading-loose">
+    <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить ресторан
       <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
         >{{ restaurant.name }} (id: {{ restaurant.id }})</span
       >
     </p>
     <div class="flex justify-end gap-4">
-      <Button label="Нет" severity="secondary" @click="dialogRef.close()" />
-      <Button label="Да" severity="danger" @click="deleteRestaurant()" />
+      <Button label="Нет" class="flex-1" severity="secondary" @click="dialogRef.close()" />
+      <Button label="Да" class="flex-1" severity="danger" @click="deleteRestaurant()" />
     </div>
   </div>
 </template>

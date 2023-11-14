@@ -1,11 +1,9 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <main class="mx-4 min-h-screen flex flex-col items-stretch">
     <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Дашборд</h1>
     <div class="flex items-stretch gap-4">
-
       <div class="flex-1 bg-white rounded-lg p-8 border">
         <div class="flex items-start justify-between text-black mb-4">
           <div>
@@ -61,11 +59,8 @@
             <i class="pi pi-fw pi-comments" />
           </div>
         </div>
-        <div class="text-sm">
-          <span class="text-green-500 font-medium">46</span> отвеченных
-        </div>
+        <div class="text-sm"><span class="text-green-500 font-medium">46</span> отвеченных</div>
       </div>
-
     </div>
   </main>
 </template>

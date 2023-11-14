@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
 
 import type { Dish } from '@/interfaces'
-import { useDebounce, useElementBounding } from '@vueuse/core'
+import { useDebounce } from '@vueuse/core'
 
 import { CreateDish, DeleteDish, UpdateDish } from '@/features/dishes'
 import { useDialog } from 'primevue/usedialog'
@@ -209,7 +209,7 @@ onMounted(() => {
 
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">
-            <img class="h-36" src="/empty.svg" alt="">
+            <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>
         </template>

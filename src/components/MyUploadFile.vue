@@ -25,19 +25,18 @@
         </button>
         <div class="h-4 aspect-square relative">
           <Transition name="fade" mode="default">
-          <i
-            v-if="isUploading"
-            class="pi pi-spin pi-spinner absolute inset-0"
-            style="font-size: 100%"
-          ></i>
-          <i
-            v-else-if="isUploaded"
-            class="pi pi-check-circle text-green-500 absolute inset-0"
-            style="font-size: 100%"
-          ></i>
-        </Transition>
+            <i
+              v-if="isUploading"
+              class="pi pi-spin pi-spinner absolute inset-0"
+              style="font-size: 100%"
+            ></i>
+            <i
+              v-else-if="isUploaded"
+              class="pi pi-check-circle text-green-500 absolute inset-0"
+              style="font-size: 100%"
+            ></i>
+          </Transition>
         </div>
-        
       </div>
     </div>
   </div>

@@ -7,7 +7,12 @@
     <Dialog v-model:visible="visible" modal header="Создать баннер" class="max-w-4xl w-full m-4">
       <form class="p-2" @submit="onSubmit">
         <MyInputText class="mb-4" name="link" label="Ссылка на акцию" />
-        <MyInputNumber class="mb-4" name="acc_id" label="ID акции" :initial-value="schemaDefaults.acc_id" />
+        <MyInputNumber
+          class="mb-4"
+          name="acc_id"
+          label="ID акции"
+          :initial-value="schemaDefaults.acc_id"
+        />
 
         <MyUploadImage
           class="rounded-lg"
@@ -45,19 +50,18 @@ const toast = useToast()
 const visible = ref(false)
 
 const schema = yup.object({
-    src: yup.string().required().label('Баннер'),
-    // TODO: add conditional validation. Only one of the bottom properties could be specified.
-    // Also check about default values for fields.
-    acc_id: yup.number().label('ID акции').default(-1),
-    link: yup.string().label('Ссылка на акцию')
-  })
+  src: yup.string().required().label('Баннер'),
+  // TODO: add conditional validation. Only one of the bottom properties could be specified.
+  // Also check about default values for fields.
+  acc_id: yup.number().label('ID акции').default(-1),
+  link: yup.string().label('Ссылка на акцию')
+})
 
 const { handleSubmit } = useForm({
   validationSchema: schema
 })
 
 const schemaDefaults = schema.getDefault()
-
 
 const createMutation = reactive(
   useMutation({

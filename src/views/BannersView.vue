@@ -8,7 +8,6 @@ import { useElementBounding } from '@vueuse/core'
 import CreateBanner from '@/components/CreateBanner.vue'
 import DeleteBanner from '@/components/DeleteBanner.vue'
 
-
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
@@ -117,7 +116,7 @@ const headingBounding = useElementBounding(heading)
         </template>
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">
-            <img class="h-36" src="/empty.svg" alt="">
+            <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>
         </template>

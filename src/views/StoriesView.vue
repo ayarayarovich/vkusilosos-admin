@@ -4,9 +4,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { useQuery } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
 
-import type { Category } from '@/interfaces'
 import { CreateStory } from '@/features/stories'
-import { useElementBounding } from '@vueuse/core'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -75,7 +73,7 @@ const menuModel = ref([
     label: 'Создать',
     icon: 'pi pi-fw pi-plus',
     command: () => beginCreateStoryInteraction()
-  },
+  }
 ])
 
 const root = ref<HTMLElement>()

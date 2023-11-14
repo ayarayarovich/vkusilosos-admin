@@ -194,7 +194,7 @@ onMounted(() => {
         </template>
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">
-            <img class="h-36" src="/empty.svg" alt="">
+            <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>
         </template>

@@ -57,5 +57,4 @@ const createCategoryMutation = reactive(
 const onSubmit = handleSubmit((vals) => {
   createCategoryMutation.mutate(vals)
 })
-
 </script>

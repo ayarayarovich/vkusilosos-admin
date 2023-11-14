@@ -69,7 +69,7 @@ const { data: availableDishes, isSuccess: areAvailableDishesLoaded } = useQuery<
       }
     })
     return response.data
-  },
+  }
 })
 
 watch([availableDishes], () => {

@@ -1,17 +1,14 @@
 <template>
   <div>
-    <p class="my-8 text-lg leading-loose">Вы уверены, что хотите удалить категорию <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-purple-200 whitespace-nowrap">{{ category.name }} (id: {{ category.id }})</span></p>
+    <p class="mb-8 text-lg leading-loose">
+      Вы уверены, что хотите удалить категорию
+      <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-purple-200 whitespace-nowrap"
+        >{{ category.name }} (id: {{ category.id }})</span
+      >
+    </p>
     <div class="flex justify-end gap-4">
-      <Button
-        label="Нет"
-        severity="secondary"
-        @click="dialogRef.close()"
-      />
-      <Button
-        label="Да"
-        severity="danger"
-        @click="deleteCategory()"
-      />
+      <Button label="Нет" severity="secondary" @click="dialogRef.close()" />
+      <Button label="Да" severity="danger" @click="deleteCategory()" />
     </div>
   </div>
 </template>
@@ -57,5 +54,4 @@ const deleteCategory = () => {
   deleteMutation.mutate()
   dialogRef.value.close()
 }
-
 </script>

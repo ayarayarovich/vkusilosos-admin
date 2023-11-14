@@ -9,7 +9,6 @@
   @tailwind utilities;
 }
 
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
@@ -24,7 +23,7 @@
   position: absolute;
   width: 100%;
   bottom: 0;
-  border: 0
+  border: 0;
 }
 
 .p-toolbar .p-toolbar-group-center {

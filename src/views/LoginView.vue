@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
 import logoSrc from '@/assets/logo.svg'
 
 import { useRouter } from 'vue-router'

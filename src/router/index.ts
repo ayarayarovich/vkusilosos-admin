@@ -86,14 +86,14 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: "/",
+      path: '/',
       name: 'root',
       redirect: '/dashboard'
     }
   ]
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   const userStore = useUserStore()
   if (
     // make sure the user is authenticated

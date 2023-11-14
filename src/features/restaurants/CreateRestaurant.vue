@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
@@ -84,5 +84,4 @@ const createRestaurantMutation = reactive(
 const onSubmit = handleSubmit((v) => {
   createRestaurantMutation.mutate(v)
 })
-
 </script>

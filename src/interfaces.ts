@@ -81,11 +81,11 @@ export interface UpdateCategory {
 }
 
 export interface CreateRestaurant {
-    name: string,
-    address: string,
-    lat: number,
-    lon: number,
-    geojson: string
+  name: string
+  address: string
+  lat: number
+  lon: number
+  geojson: string
 }
 
 export interface Restaurant {
@@ -95,28 +95,27 @@ export interface Restaurant {
 }
 
 export interface UpdateRestaurant {
-  name: string,
-  address: string,
-  lat: number,
-  lon: number,
+  name: string
+  address: string
+  lat: number
+  lon: number
   geojson: string
 }
 
-
 export interface CreateTag {
-  name: string;
-  dishes: number[];
+  name: string
+  dishes: number[]
 }
 
 export interface UpdateTag {
-  id: number;
-  name: string;
-  dishes: number[];
+  id: number
+  name: string
+  dishes: number[]
 }
 
 export interface Tag {
-  id: number;
-  name: string;
-  count_dishes: number;
-  dishes: Category[];
+  id: number
+  name: string
+  count_dishes: number
+  dishes: Category[]
 }
