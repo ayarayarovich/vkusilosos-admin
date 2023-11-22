@@ -6,7 +6,7 @@ import { useDebounce } from '@vueuse/core'
 import { axiosPrivate } from '@/network'
 
 import type { User } from '@/interfaces'
-import { BlockUnblockUser, GiftBonusesToUser } from '@/features/users'
+import { ChangeStatus, GiftBonusesToUser, SendNotification } from '@/features/users'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -44,7 +44,7 @@ const onPage = (e: DataTablePageEvent) => {
 
 const dialog = useDialog()
 const beginBlockUnblockUserInteraction = (user: User) => {
-  dialog.open(BlockUnblockUser, {
+  dialog.open(ChangeStatus, {
     props: {
       class: 'w-full max-w-xl',
       modal: true,
@@ -62,6 +62,19 @@ const beginGiftBonusesToUserInteraction = (user: User) => {
       class: 'w-full max-w-xl',
       modal: true,
       header: 'Подарить бонусы пользователю'
+    } as any,
+    data: {
+      user
+    }
+  })
+}
+
+const beginSendNotificationInteraction = (user: User) => {
+  dialog.open(SendNotification, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Отправить уведомление'
     } as any,
     data: {
       user
@@ -92,6 +105,11 @@ const menuModel = ref([
     label: 'Подарить бонусы',
     icon: 'pi pi-fw pi-gift',
     command: () => beginGiftBonusesToUserInteraction(selectedUser.value!)
+  },
+  {
+    label: 'Отправить уведомление',
+    icon: 'pi pi-fw pi-bell',
+    command: () => beginSendNotificationInteraction(selectedUser.value!)
   }
 ])
 
@@ -136,6 +154,12 @@ onMounted(() => {
               icon="pi pi-gift"
               severity="primary"
               @click="beginGiftBonusesToUserInteraction(selectedUser!)"
+            />
+            <Button
+              :disabled="!selectedUser"
+              icon="pi pi-bell"
+              severity="primary"
+              @click="beginSendNotificationInteraction(selectedUser!)"
             />
           </div>
         </div>

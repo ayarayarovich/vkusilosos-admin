@@ -8,7 +8,7 @@ function getGradient(ctx: any, chartArea: any) {
 </script>
 
 <template>
-  <main class="px-4 h-screen overflow-y-auto flex flex-col items-stretch">
+  <main class="px-4 flex flex-col items-stretch">
     <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Дашборд</h1>
     <div class="flex items-stretch gap-4 mb-8">
       <div class="flex-1 bg-white rounded-lg p-8 border">
@@ -72,7 +72,7 @@ function getGradient(ctx: any, chartArea: any) {
 
     <div class="flex gap-4 mb-8">
       <Chart
-        class="flex-1"
+        class="w-full"
         type="line"
         :options="{
           aspectRatio: 3 / 1

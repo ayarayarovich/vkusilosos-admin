@@ -8,6 +8,7 @@ import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { ru } from 'yup-locales'
 import { setLocale as YupSetLocale } from 'yup'
+import * as yup from 'yup'
 
 import PrimeVue from 'primevue/config'
 import InputNumber from 'primevue/inputnumber'
@@ -203,6 +204,7 @@ app.use(PrimeVue, {
     }
   }
 })
+
 app.use(ToastService)
 app.use(ConfirmationService)
 app.use(DialogService)

@@ -1,95 +1,286 @@
 <template>
   <div
-    class="w-full h-full flex flex-col items-center border-2 p-4 transition-colors"
+    class="w-full h-full relative flex flex-col border-2 overflow-hidden items-center transition-colors"
     :class="{
       'border-red-400': errorMessage,
-      'border-gray': !errorMessage
+      'border-gray': !errorMessage,
+      'border-black': isDragging
     }"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
   >
-    <div class="grow basis-0 min-h-[10rem] flex items-center justify-center">
+    <div
+      class="w-full h-full relative z-0"
+      :style="{
+        aspectRatio: props.aspectRatio
+      }"
+    >
       <Transition name="fade" mode="out-in">
-        <div v-if="isUploading">Загружаем...</div>
-        <img
-          v-else-if="value"
-          class="h-full w-full rounded-md object-contain object-center drop-shadow-md"
-          :src="value"
-          alt=""
-        />
-        <div v-else class="w-full aspect-square flex items-center text-center justify-center">
-          Выберите картинку
+        <div v-if="isSelected" class="w-full h-full rounded-md overflow-hidden">
+          <div>
+            <Cropper
+              :style="{
+                aspectRatio: props.aspectRatio
+              }"
+              ref="cropper"
+              :src="editingFileUrl || value"
+              :stencil-props="{
+                handlers: {},
+                movable: false,
+                resizable: false,
+                aspectRatio: props.aspectRatio
+              }"
+              :moveImage="isEditingImage"
+              defaultBoundaries="fill"
+              :stencil-size="stencilSize"
+              :resize-image="{
+                touch: isEditingImage,
+                wheel: isEditingImage,
+                adjustStencil: false
+              }"
+              image-restriction="stencil"
+            />
+          </div>
+        </div>
+        <div v-else class="w-full h-full">
+          <input
+            type="file"
+            :id="inputID"
+            @change="onChange"
+            class="absolute h-px w-px opacity-0 peer"
+            ref="inputRef"
+          />
+          <label
+            :for="inputID"
+            class="cursor-pointer text-center p-4 flex items-center justify-center w-full h-full rounded-md peer-focus:ring-2 ring-indigo-300 transition-shadow"
+          >
+            <span> Перетащите сюда картику, либо выберите кликнув <u>здесь</u> </span>
+          </label>
         </div>
       </Transition>
     </div>
 
-    <small class="p-error my-2">{{ errorMessage || '&nbsp;' }}</small>
+    <Transition name="fade" mode="out-in">
+      <div
+        v-if="isSelected"
+        class="absolute z-20 top-0 left-0 w-full p-2 flex gap-2 items-center justify-center text-white"
+      >
+        <button
+          type="button"
+          class="h-8 max-w-[10rem] px-2 flex-1 basis-0 leading-none flex text-sm rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          @click="reset()"
+        >
+          <i class="pi pi-times text-sm mr-1"></i> Удалить
+        </button>
 
-    <FileUpload
-      name="image"
-      :auto="true"
-      mode="basic"
-      customUpload
-      @uploader="fileUploader"
-      @select="onSelect"
-      accept="image/*"
-      :maxFileSize="10000000"
-    >
-      <template #empty>
-        <p>Перетащите сюда картинку, которую хотите загрузить</p>
-      </template>
-    </FileUpload>
+        <button
+          type="button"
+          :disabled="isUploading"
+          class="h-8 max-w-[10rem] px-2 flex-1 basis-0 leading-none text-sm flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          @click="saveOrEditAction()"
+        >
+          <Transition name="fade" mode="out-in" :duration="200">
+            <span v-if="isUploading"><i class="pi pi-spin pi-spinner"></i></span>
+            <span v-else-if="isEditingImage"
+              ><i class="pi pi-check text-sm mr-1"></i> Сохранить</span
+            >
+            <span v-else><i class="pi pi-pencil text-sm mr-1"></i> Обрезать</span>
+          </Transition>
+        </button>
+      </div>
+    </Transition>
+
+    <Transition name="fade" mode="out-in">
+      <div
+        v-if="isEditingImage"
+        class="absolute top-2 bottom-2 left-2 flex flex-col items-center justify-center gap-2"
+      >
+        <button
+          type="button"
+          class="aspect-square h-8 flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          @click="rotate(90)"
+        >
+          <i class="pi pi-refresh text-white text-lg"></i>
+        </button>
+        <button
+          type="button"
+          class="aspect-square h-8 flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          @click="rotate(-90)"
+        >
+          <i class="pi pi-replay text-white text-lg"></i>
+        </button>
+      </div>
+    </Transition>
+
+    <small class="absolute p-error bottom-2 font-medium text-center px-4 max-w-full z-20">
+      {{ errorMessage || '&nbsp;' }}
+    </small>
   </div>
 </template>
 
 <script setup lang="ts">
 import { axiosPrivate } from '@/network'
-import type { FileUploadSelectEvent, FileUploadUploaderEvent } from 'primevue/fileupload'
 import { useToast } from 'primevue/usetoast'
 import { useField } from 'vee-validate'
-import { ref } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { Cropper } from 'vue-advanced-cropper'
+import { v4 as uuidv4 } from 'uuid'
+import 'vue-advanced-cropper/dist/style.css'
 
 const props = defineProps<{
   name: string
   uploadRoute: string
   filenamePropInRequest: string
   filenamePropInResponse: string
+  aspectRatio?: number
 }>()
 
-const toast = useToast()
-const { setValue, value, errorMessage } = useField<string>(() => props.name)
+const cropper = ref<any>()
 
-const fileBlobURL = ref<string>()
-const isSelected = ref(false)
-const isUploading = ref(false)
-const isUploaded = ref(false)
-
-const fileUploader = (e: FileUploadUploaderEvent) => {
-  const files = e.files as any
-  const formData = new FormData()
-  formData.append(props.filenamePropInRequest, files[0])
-  isUploading.value = true
-  isUploaded.value = false
-  axiosPrivate
-    .post(props.uploadRoute, formData)
-    .then((response) => {
-      setValue(response.data[props.filenamePropInResponse])
-      isUploaded.value = true
-    })
-    .catch((error) => {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось загрузить файл',
-        detail: error
-      })
-    })
-    .finally(() => {
-      isUploading.value = false
-    })
+const stencilSize = (v: any) => {
+  const boundaries = v.boundaries
+  return {
+    width: boundaries.width,
+    height: boundaries.height
+  }
 }
 
-const onSelect = (e: FileUploadSelectEvent) => {
-  isSelected.value = true
+const rotate = (angle: number) => {
+  if (cropper.value) {
+    cropper.value.rotate(angle)
+  }
+}
+
+const inputID = uuidv4()
+
+const toast = useToast()
+const { setValue, value, errorMessage, resetField } = useField<string>(() => props.name)
+
+const reset = () => {
+  if (editingFileUrl.value) {
+    URL.revokeObjectURL(editingFileUrl.value)
+    editingFileUrl.value = undefined
+  }
+  isUploading.value = false
   isUploaded.value = false
-  fileBlobURL.value = e.files[0].objectURL
+  isDragging.value = false
+  isEditingImage.value = false
+  files.value = []
+  if (inputRef.value) {
+    inputRef.value.files = [] as any
+  }
+  resetField({
+    value: undefined
+  })
+}
+
+const save = () => {
+  if (cropper.value) {
+    isUploading.value = true
+    isUploaded.value = false
+
+    const { canvas } = cropper.value.getResult()
+    if (canvas) {
+      const formData = new FormData()
+      canvas.toBlob((blob: any) => {
+        const file = new File([blob], 'img.png')
+        formData.append(props.filenamePropInRequest, file)
+        axiosPrivate
+          .post(props.uploadRoute, formData)
+          .then((response) => {
+            setValue(response.data[props.filenamePropInResponse])
+            isUploaded.value = true
+          })
+          .catch((error) => {
+            toast.add({
+              severity: 'error',
+              life: 3000,
+              summary: 'Не удалось загрузить файл',
+              detail: error
+            })
+          })
+          .finally(() => {
+            isUploading.value = false
+          })
+      }, 'image/png')
+    }
+  }
+}
+
+const saveOrEditAction = () => {
+  if (isEditingImage.value) {
+    // image is being edited - save it
+    isEditingImage.value = false
+    save()
+  } else {
+    // image is saved - edit it
+    isEditingImage.value = true
+  }
+}
+
+const editingFileUrl = ref<string>()
+const isSelected = computed(() => !!editingFileUrl.value || !!value.value)
+const isUploading = ref(false)
+const isUploaded = ref(false)
+const isDragging = ref(false)
+const isEditingImage = ref(false)
+const inputRef = ref<HTMLInputElement>()
+const files = ref<File[]>([])
+
+watch(
+  [editingFileUrl, value.value],
+  () => {
+    if (!editingFileUrl.value) {
+      editingFileUrl.value = value.value
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
+onUnmounted(() => {
+  if (editingFileUrl.value) {
+    URL.revokeObjectURL(editingFileUrl.value)
+  }
+})
+
+const onChange = () => {
+  if (inputRef.value) {
+    files.value = [...(inputRef.value.files || [])]
+
+    if (files.value[0]) {
+      const file = files.value[0]
+      const fileSize = Math.round((file.size / 1024 / 1024) * 100) / 100
+      const fileExtention = file.name.split('.').pop()!
+      const fileName = file.name.split('.').shift()
+      const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtention)
+      console.log(fileSize, fileExtention, fileName, isImage)
+
+      // revoke previous blob url if one exists
+      if (editingFileUrl.value) {
+        console.log('revoked: ', editingFileUrl.value)
+        URL.revokeObjectURL(editingFileUrl.value)
+      }
+      editingFileUrl.value = URL.createObjectURL(file)
+      isEditingImage.value = true
+    }
+  }
+}
+const onDragOver = (e: Event) => {
+  e.preventDefault()
+  isDragging.value = true
+}
+const onDragLeave = () => {
+  isDragging.value = false
+}
+const onDrop = (e: DragEvent) => {
+  e.preventDefault()
+  if (inputRef.value) {
+    inputRef.value.files = e.dataTransfer?.files || null
+  }
+  onChange()
+  isDragging.value = false
 }
 </script>

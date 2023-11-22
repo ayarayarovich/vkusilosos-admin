@@ -1,7 +1,6 @@
 <template>
   <div>
     <p class="mb-8 text-lg leading-loose">
-      Вы уверены, что хотите изменить статус блокировки пользователя
       <span
         class="min-w-max inline-block font-bold px-2 rounded-lg bg-indigo-100 whitespace-nowrap"
       >
@@ -10,7 +9,7 @@
     </p>
     <div class="flex justify-end gap-4">
       <Button class="flex-1" label="Нет" severity="secondary" @click="dialogRef.close()" />
-      <Button class="flex-1" label="Да" severity="danger" @click="deleteUser()" />
+      <Button class="flex-1" label="Да" severity="danger" @click="changeStatus()" />
     </div>
   </div>
 </template>
@@ -28,7 +27,7 @@ const queryClient = useQueryClient()
 const dialogRef = inject('dialogRef') as any
 const user = dialogRef.value.data.user as User
 
-const deleteMutation = reactive(
+const changeStatusMutation = reactive(
   useMutation({
     mutationFn: () =>
       axiosPrivate.delete('admin/user', {
@@ -56,8 +55,8 @@ const deleteMutation = reactive(
   })
 )
 
-const deleteUser = () => {
-  deleteMutation.mutate()
+const changeStatus = () => {
+  changeStatusMutation.mutate()
   dialogRef.value.close()
 }
 </script>

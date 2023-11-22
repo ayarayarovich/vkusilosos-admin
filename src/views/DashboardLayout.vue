@@ -1,8 +1,8 @@
 <template>
-  <Splitter class="min-h-screen border-0">
-    <SplitterPanel :size="20" class="px-2">
-      <ScrollPanel class="h-screen">
-        <div class="h-full px-6 flex flex-col items-stretch text-black">
+  <Splitter class="h-screen border-0">
+    <SplitterPanel :size="1" class="px-2">
+      <ScrollPanel class="h-full">
+        <div class="px-6 py-4 flex flex-col items-stretch text-black">
           <img :src="logoSrc" class="h-8 w-full object-contain object-center my-6" alt="" />
           <ul class="flex flex-col gap-1 grow">
             <li class="font-bold mt-2 text-sm mb-1">Главная</li>
@@ -15,6 +15,18 @@
                   class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
                   :class="isExactActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"
                   ><i class="pi pi-fw pi-home" /> Дашборд</span
+                ></RouterLink
+              >
+            </li>
+            <li class="min-w-max">
+              <RouterLink
+                v-slot="{ isActive }"
+                class="w-full rounded-lg"
+                :to="{ name: 'settings' }"
+                ><span
+                  class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
+                  :class="isActive ? 'bg-gray-100 font-semibold text-indigo-500' : ''"
+                  ><i class="pi pi-fw pi-cog" /> Настройки</span
                 ></RouterLink
               >
             </li>
@@ -125,10 +137,10 @@
                 ></RouterLink
               >
             </li>
-            <li class="grow flex flex-col justify-end mb-4 mt-8">
+            <li class="grow flex flex-col justify-end mt-8">
               <button
                 @click="userStore.signOut"
-                class="p-3 mb-4 hover:bg-gray-100 block rounded-lg transition-all text-start"
+                class="p-3 hover:bg-gray-100 block rounded-lg transition-all text-start"
               >
                 <i class="pi pi-fw pi-sign-out" /> Выйти
               </button>
@@ -137,7 +149,7 @@
         </div>
       </ScrollPanel>
     </SplitterPanel>
-    <SplitterPanel :size="80" class="">
+    <SplitterPanel :size="99" class="h-screen overflow-y-auto">
       <RouterView />
     </SplitterPanel>
   </Splitter>

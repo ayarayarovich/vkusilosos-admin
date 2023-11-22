@@ -10,7 +10,7 @@
           'p-invalid': errorMessage
         }"
       />
-      <label :for="inputID" class="block text-900 font-medium">{{ props.label }}</label>
+      <label :for="inputID" @click="setValue(!value)" class="block text-900 font-medium">{{ props.label }}</label>
     </div>
 
     <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>
@@ -19,22 +19,23 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 
 const props = defineProps<{
   label: string
   name: string
+  initialValue?: boolean
 }>()
 
-const { errorMessage, value } = useField<boolean>(
+const { initialValue } = toRefs(props)
+
+const { errorMessage, value, setValue } = useField<boolean>(
   () => props.name,
   {},
   {
-    initialValue: false
+    initialValue
   }
 )
-
-// const inputValue = ref<boolean>()
 
 const inputID = computed(() => `input-number-${props.name}`)
 </script>

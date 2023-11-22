@@ -28,7 +28,7 @@
         :options="possibleCategories"
       />
 
-      <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full h-full">
+      <div class="col-start-1 col-span-1 row-start-1 row-span-2 w-full h-full">
         <MyUploadImage
           class="rounded-lg"
           name="img"

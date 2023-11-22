@@ -20,23 +20,9 @@ export interface Dish {
 
 export interface Review {
   id: number
-  user: {
-    id: number
-    name: string
-  }
+  user_id: number
   text: string
-  status: string
-  create_date: string
-}
-
-export interface Feedback {
-  id: number
-  user: {
-    id: number
-    name: string
-  }
-  text: string
-  status: string
+  status: boolean
   create_date: string
 }
 

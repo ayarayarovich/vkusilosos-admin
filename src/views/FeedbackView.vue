@@ -4,17 +4,19 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import { useQuery } from '@tanstack/vue-query'
 import { axiosPrivate } from '@/network'
 
-import type { Feedback } from '@/interfaces'
+import type { Review } from '@/interfaces'
+import { RespondToReview } from '@/features/reviews'
+import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
-const selected = ref<Feedback>()
+const selected = ref<Review>()
 const offset = ref(0)
 const limit = rowsPerPage
 
 const query = reactive(
   useQuery<{
-    items: Feedback[]
+    items: Review[]
     total: number
   }>({
     queryKey: ['feedbacks', { offset, limit }],
@@ -39,6 +41,8 @@ const refresh = () => {
   query.refetch()
 }
 
+const dialog = useDialog()
+
 const cm = ref()
 const onRowContextMenu = (event: any) => {
   cm.value.show(event.originalEvent)
@@ -48,8 +52,26 @@ const menuModel = ref([
     label: 'Обновить',
     icon: 'pi pi-fw pi-refresh',
     command: () => refresh()
+  },
+  {
+    label: 'Ответить',
+    icon: 'pi pi-fw pi-pencil',
+    command: () => beginRespondToReviewInteraction(selected.value!)
   }
 ])
+
+const beginRespondToReviewInteraction = (review: Review) => {
+  dialog.open(RespondToReview, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Ответить на отзыв'
+    } as any,
+    data: {
+      review
+    }
+  })
+}
 
 const root = ref<HTMLElement>()
 const scrollHeight = ref()
@@ -72,6 +94,7 @@ onMounted(() => {
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
             <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-pencil" :disabled="!selected" @click="beginRespondToReviewInteraction(selected!)" />
           </div>
 
           <div class="flex-1 flex justify-center">

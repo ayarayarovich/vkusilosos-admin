@@ -48,7 +48,7 @@ const dialog = useDialog()
 const beginCreateStoryInteraction = () => {
   dialog.open(CreateStory, {
     props: {
-      class: 'max-w-2xl w-full',
+      class: 'max-w-4xl w-full',
       modal: true,
       header: 'Новая история'
     } as any

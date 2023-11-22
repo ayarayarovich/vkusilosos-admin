@@ -13,6 +13,7 @@ import BannersView from '@/views/BannersView.vue'
 import PromotionsView from '@/views/PromotionsView.vue'
 import RestaurantsView from '@/views/RestaurantsView.vue'
 import OrdersView from '@/views/OrdersView.vue'
+import SettingsView from '@/views/SettingsView.vue'
 
 import { useUserStore } from '@/stores/user'
 
@@ -27,6 +28,11 @@ const router = createRouter({
           path: '',
           name: 'dashboard',
           component: DashboardView
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView
         },
         {
           path: 'users',

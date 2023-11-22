@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSubmit">
+  <form @submit="onSubmit" class="w-full">
     <div v-if="fields.length === 0" class="flex flex-col items-center gap-2">
       <p class="text-center">Создайте первый слайд истории</p>
       <i class="pi pi-arrow-down text-base"></i>
@@ -8,22 +8,23 @@
     <fieldset
       v-for="(field, idx) in fields"
       :key="field.key"
-      class="relative border-2 flex items-center gap-4 mb-4 p-2 rounded-lg border-gray-200 border-dashed"
+      class="relative border-2 flex items-center gap-8 w-full mb-4 p-4 rounded-lg border-gray-200 border-dashed"
     >
-      <div class="flex-1">
+      <div class="w-72 shrink-0">
         <MyUploadImage
           :name="`slides[${idx}].src`"
           class="rounded-lg"
           filename-prop-in-request="image"
           filename-prop-in-response="fileLink"
           upload-route="admin/upload"
+          :aspect-ratio="9/16"
         />
       </div>
 
-      <div class="flex-1">
-        <MyInputText :name="`slides[${idx}].text`" label="Текст" />
+      <div class="w-full">
+        <MyTextarea :name="`slides[${idx}].text`" label="Текст" />
       </div>
-      <button class="absolute top-2 right-2" type="button" @click="remove(idx)">
+      <button class="absolute top-4 right-4" type="button" @click="remove(idx)">
         <i class="pi pi-times-circle" style="font-size: 1rem"></i>
       </button>
     </fieldset>
@@ -41,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import MyInputText from '@/components/MyInputText.vue'
+import MyTextarea from '@/components/MyTextarea.vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useToast } from 'primevue/usetoast'
