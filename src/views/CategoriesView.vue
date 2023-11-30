@@ -168,7 +168,7 @@ onMounted(() => {
         :first="0"
         :rows="initialRowsPerPage"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        dataKey="ID"
+        dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
         :totalRecords="data?.total"
@@ -176,7 +176,6 @@ onMounted(() => {
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
-        <Column field="count_dishes" header="Количество блюд" />
 
         <template #loading>
           <ProgressSpinner class="h-8" />

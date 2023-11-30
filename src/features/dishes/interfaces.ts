@@ -1,8 +1,8 @@
 export interface IDish {
-  ID: number
-  CreatedAt: string
-  UpdatedAt: string
-  DeletedAt: string | null
+  id: number
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
   name: string
   img: string
   price: number
@@ -10,7 +10,7 @@ export interface IDish {
   active: boolean
 
   vars: {
-    ID: number
+    id: number
     rest_id: number
     price: number
     iiko_id: number

@@ -1,6 +1,6 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
-    <MyInputNumber name="user_id" label="ID пользователя" :initial-value="user.id" disabled />
+    <MyInputNumber name="user_id" label="id пользователя" :initial-value="user.id" disabled />
     <MyEditor name="title" label="Заголовок" class="mb-4" />
     <MyEditor name="text" label="Тело" class="mb-4" />
 
@@ -40,7 +40,7 @@ const user = dialogRef.value.data.user as User
 
 const { handleSubmit, errors } = useForm({
   validationSchema: (yup.object({
-    user_id: yup.number().required().label('ID пользователя'),
+    user_id: yup.number().required().label('id пользователя'),
     title: yup.string().required().label('Заголовок'),
     text: yup.string().required().label('Тело'),
     push: yup.boolean().label('Пуш-уведомление'),

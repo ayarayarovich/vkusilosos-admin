@@ -3,10 +3,10 @@ export interface ICreateCategory {
 }
 
 export interface ICategory {
-  ID: number,
-  CreatedAt: string,
-  UpdatedAt: string,
-  DeletedAt: string | null,
+  id: number,
+  created_at: string,
+  updated_at: string,
+  deleted_at: string | null,
   name: string,
   active: boolean
 }

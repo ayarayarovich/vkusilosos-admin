@@ -3,7 +3,7 @@
     <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить тег
       <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
-        >{{ tag.name }} (id: {{ tag.ID }})</span
+        >{{ tag.name }} (id: {{ tag.id }})</span
       >
     </p>
     <div class="flex justify-end gap-4">
@@ -40,7 +40,7 @@ const deleteMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удален тег ${tag.name} (id: ${tag.ID})`
+        detail: `Удален тег ${tag.name} (id: ${tag.id})`
       })
       queryClient.invalidateQueries(['tags'])
     },
@@ -56,7 +56,7 @@ const deleteMutation = reactive(
 )
 
 const deleteTag = () => {
-  deleteMutation.mutate({ id: tag.ID })
+  deleteMutation.mutate({ id: tag.id })
   dialogRef.value.close()
 }
 </script>

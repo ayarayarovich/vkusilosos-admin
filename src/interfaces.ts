@@ -11,10 +11,10 @@ export interface User {
 }
 
 export interface Dish {
-  CreatedAt: string
-  DeletedAt: string | null
-  ID: number
-  UpdatedAt: string
+  created_at: string
+  deleted_at: string | null
+  id: number
+  updated_at: string
   active: boolean
   have: boolean
   img: string
@@ -64,7 +64,7 @@ export interface CreateRestaurant {
 }
 
 export interface Restaurant {
-  ID: number
+  id: number
   name: string
   address: string
 }

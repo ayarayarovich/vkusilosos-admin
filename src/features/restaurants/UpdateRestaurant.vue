@@ -2,7 +2,7 @@
   <form class="p-2" @submit.prevent="onSubmit">
     <h2 class="text-lg font-bold mb-4">Общая информация</h2>
     <div class="flex gap-4 mb-8">
-      <MyInputNumber name="id" label="ID" disabled />
+      <MyInputNumber name="id" label="id" disabled />
       <MyInputText name="name" label="Название" />
     </div>
 
@@ -75,7 +75,7 @@ const updateRestaurantMutation = reactive(
 )
 
 const { data } = useQuery({
-  queryKey: ['rests', { id: restaurant.ID }],
+  queryKey: ['rests', { id: restaurant.id }],
   queryFn: async ({ queryKey }) => {
     const response = await axiosPrivate.get('admin/rest', {
       params: {
@@ -89,7 +89,7 @@ const { data } = useQuery({
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.string().required().label('ID ресторана'),
+    id: yup.string().required().label('id ресторана'),
     name: yup.string().required().label('Название ресторана'),
     address: yup.string().required().label('Адрес ресторана'),
     lat: yup.number().required().label('Широта'),

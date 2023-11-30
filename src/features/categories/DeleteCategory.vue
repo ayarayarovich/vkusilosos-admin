@@ -3,7 +3,7 @@
     <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить категорию
       <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-purple-200 whitespace-nowrap"
-        >{{ category.name }} (id: {{ category.ID }})</span
+        >{{ category.name }} (id: {{ category.id }})</span
       >
     </p>
     <div class="flex justify-end gap-4">
@@ -40,7 +40,7 @@ const { mutateAsync, isLoading } = useDeleteCategory()
 
 const deleteCategory = () => {
   mutateAsync({
-    id: category.ID,
+    id: category.id,
     name: category.name
   }).then(() => {
     dialogRef.value.close()

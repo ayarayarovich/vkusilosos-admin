@@ -1,6 +1,6 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
-    <MyInputNumber name="id" label="ID" :initial-value="user.id" disabled />
+    <MyInputNumber name="id" label="id" :initial-value="user.id" disabled />
     <MyInputNumber name="bonus" label="Количество бонусов" />
 
     <Button
@@ -31,7 +31,7 @@ const user = dialogRef.value.data.user as User
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.number().required().label('ID пользователя'),
+    id: yup.number().required().label('id пользователя'),
     bonus: yup.number().required().label('Количество бонусов')
   })
 })

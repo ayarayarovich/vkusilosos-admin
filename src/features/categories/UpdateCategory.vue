@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="onSubmit">
     <div class="py-4 border-t">
-      <MyInputNumber name="id" label="ID" disabled :initial-value="category.ID" />
+      <MyInputNumber name="id" label="id" disabled :initial-value="category.id" />
       <MyInputText name="name" label="Название" :initial-value="category.name" />
     </div>
 
@@ -30,7 +30,7 @@ const category = dialogRef.value.data.category as ICategory
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.number().required().label('ID категории'),
+    id: yup.number().required().label('id категории'),
     name: yup.string().required().label('Название категории')
   })
 })

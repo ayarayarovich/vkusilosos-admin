@@ -1,10 +1,10 @@
 
 
 export interface ITag {
-  ID: number
+  id: number
   name: string
   img: string
-  CreatedAt: string
-  UpdatedAt: string
-  DeletedAt: string | null
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
 }

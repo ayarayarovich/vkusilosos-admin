@@ -3,7 +3,7 @@
     <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить блюдо
       <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
-        >{{ dish.name }} (id: {{ dish.ID }})</span
+        >{{ dish.name }} (id: {{ dish.id }})</span
       >
     </p>
     <div class="flex justify-end gap-4">
@@ -31,7 +31,7 @@ const deleteMutation = reactive(
     mutationFn: () =>
       axiosPrivate.delete('admin/dish', {
         params: {
-          id: dish.ID
+          id: dish.id
         }
       }),
     onSuccess() {
@@ -39,7 +39,7 @@ const deleteMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удалено блюдо ${dish.name} (id: ${dish.ID})`
+        detail: `Удалено блюдо ${dish.name} (id: ${dish.id})`
       })
       queryClient.invalidateQueries(['dishes'])
     },

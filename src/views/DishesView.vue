@@ -169,13 +169,13 @@ onMounted(() => {
         paginator
         :first="0"
         :rows="rowsPerPage"
-        dataKey="ID"
+        dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
         :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
-        <Column field="ID" header="ID" />
+        <Column field="id" header="ID" />
         <Column field="name" header="Название" />
         <Column field="img" header="Картинка">
           <template #body="slotProps">
@@ -208,9 +208,9 @@ onMounted(() => {
           </template>
         </Column>
 
-        <Column field="CreatedAt" header="Создано" />
-        <Column field="UpdatedAt" header="Обновлено" />
-        <Column field="DeletedAt" header="Удалено" />
+        <Column field="created_at" header="Создано" />
+        <Column field="updated_at" header="Обновлено" />
+        <Column field="deleted_at" header="Удалено" />
 
         <template #loading>
           <ProgressSpinner class="h-8" />

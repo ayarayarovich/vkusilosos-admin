@@ -171,13 +171,13 @@ onMounted(() => {
         paginator
         :first="0"
         :rows="rowsPerPage"
-        dataKey="ID"
+        dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
         :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
-        <Column field="ID" header="ID" />
+        <Column field="id" header="ID" />
         <Column field="img" header="Картинка">
           <template #body="slotProps">
             <img

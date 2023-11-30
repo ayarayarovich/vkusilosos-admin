@@ -9,7 +9,7 @@
       :aspect-ratio="30 / 9"
     />
 
-    <MyInputNumber name="acc_id" label="ID акции" />
+    <MyInputNumber name="acc_id" label="id акции" />
 
     <Button class="w-full mt-12 flex justify-center p-4" type="submit"> Создать </Button>
   </form>
@@ -29,7 +29,7 @@ const queryClient = useQueryClient()
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     img: yup.string().required().label('Изображение'),
-    acc_id: yup.number().required().label('ID акции')
+    acc_id: yup.number().required().label('id акции')
   })
 })
 

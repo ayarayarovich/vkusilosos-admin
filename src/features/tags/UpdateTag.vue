@@ -12,7 +12,7 @@
         />
       </div>
       <div>
-        <MyInputNumber name="id" label="ID" disabled />
+        <MyInputNumber name="id" label="id" disabled />
         <MyInputText name="name" label="Название" />
       </div>
     </div>
@@ -41,12 +41,12 @@ const tag = dialogRef.value.data.tag as ITag
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.number().required().label('ID тэга'),
+    id: yup.number().required().label('id тэга'),
     name: yup.string().required().label('Название тега'),
     img: yup.string().required().label('Изображение')
   }),
   initialValues: {
-    id: tag.ID,
+    id: tag.id,
     name: tag.name,
     img: tag.img
   }
