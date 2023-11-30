@@ -1,44 +1,29 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
 
-import type { Tag } from '@/interfaces'
-import { CreateTag, DeleteTag } from '@/features/tags'
+import { CreateTag, DeleteTag, useTags, type ITag } from '@/features/tags'
 import { useDialog } from 'primevue/usedialog'
+import { useDebounce } from '@vueuse/core'
+import UpdateTag from '@/features/tags/UpdateTag.vue'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedTag = ref<Tag>()
-const expandedRows = ref<Tag[]>()
-const totalRecords = ref<number>()
+const selectedTag = ref<ITag>()
 
-const query = reactive(
-  useQuery<{
-    items: Tag[]
-    total: number
-  }>({
-    queryKey: ['tags', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/tag', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const searchTerm = ref('')
+const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
+const { data, refetch, isFetching, isError } = useTags(
+  {
+    limit,
+    offset,
+    search: debouncedSearchTerm
+  },
+  (r) => r
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -56,7 +41,7 @@ const beginCreateTagInteraction = () => {
   })
 }
 
-const beginDeleteTagInteraction = (tag: Tag) => {
+const beginDeleteTagInteraction = (tag: ITag) => {
   dialog.open(DeleteTag, {
     props: {
       class: 'w-full max-w-xl',
@@ -65,12 +50,28 @@ const beginDeleteTagInteraction = (tag: Tag) => {
     } as any,
     data: {
       tag
+    },
+    onClose: () => {
+      selectedTag.value = undefined
+    }
+  })
+}
+
+const beginUpdateTagInteraction = (tag: ITag) => {
+  dialog.open(UpdateTag, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Изменить тег'
+    } as any,
+    data: {
+      tag
     }
   })
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -87,6 +88,11 @@ const menuModel = ref([
     label: 'Создать',
     icon: 'pi pi-fw pi-plus',
     command: () => beginCreateTagInteraction()
+  },
+  {
+    label: 'Изменить',
+    icon: 'pi pi-fw pi-pencil',
+    command: () => beginUpdateTagInteraction(selectedTag.value!)
   },
   {
     label: 'Удалить',
@@ -115,18 +121,23 @@ onMounted(() => {
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateTagInteraction()" />
           </div>
 
           <div class="flex-1 flex justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" />
+              <InputText placeholder="Поиск" v-model="searchTerm" />
             </span>
           </div>
 
           <div class="flex-1 flex justify-end gap-2">
+            <Button
+              icon="pi pi-pencil"
+              :disabled="!selectedTag"
+              @click="beginUpdateTagInteraction(selectedTag!)"
+            />
             <Button
               :disabled="!selectedTag"
               icon="pi pi-times"
@@ -139,37 +150,45 @@ onMounted(() => {
     </Toolbar>
 
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
         v-else
+        column-resize-mode="expand"
         size="small"
         scrollable
         :scroll-height="scrollHeight"
         v-model:selection="selectedTag"
-        v-model:expandedRows="expandedRows"
         selection-mode="single"
         contextMenu
         v-model:contextMenuSelection="selectedTag"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
         :rows="rowsPerPage"
-        dataKey="id"
+        dataKey="ID"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
-        <Column expander style="width: 3rem" />
-        <Column field="id" header="ID" />
+        <Column selectionMode="single" headerStyle="width: 3rem" />
+        <Column field="ID" header="ID" />
+        <Column field="img" header="Картинка">
+          <template #body="slotProps">
+            <img
+              :src="slotProps.data.img"
+              alt=""
+              class="h-16 aspect-square drop-shadow-md rounded-md"
+            />
+          </template>
+        </Column>
         <Column field="name" header="Название" />
-        <Column field="count_dishes" header="Количество блюд" />
-
+        
         <template #loading>
           <ProgressSpinner class="h-8" />
         </template>

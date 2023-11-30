@@ -3,7 +3,7 @@ import axios from 'axios'
 import pinia from '@/stores'
 import { useUserStore } from '@/stores/user'
 
-const baseURL = 'https://api.losos.ayarayarovich.tech'
+const baseURL = 'https://api.losos.toolio.space'
 
 export const axiosPublic = axios.create({
   baseURL
@@ -17,7 +17,7 @@ axiosPrivate.interceptors.request.use(
   (config) => {
     const userStore = useUserStore(pinia)
     if (userStore.isAuthenticated) {
-      config.headers['Authorization'] = `Bearer ${userStore.accessToken}`
+      config.headers['Authorization'] = userStore.accessToken
     } else {
       userStore.signOut()
     }
@@ -44,7 +44,7 @@ axiosPrivate.interceptors.response.use(
           userStore.accessToken = accessToken
           userStore.refreshToken = refreshToken
 
-          axiosPrivate.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+          axiosPrivate.defaults.headers.common['Authorization'] = accessToken
 
           return axiosPrivate(originalConfig)
         } catch (_error: any) {

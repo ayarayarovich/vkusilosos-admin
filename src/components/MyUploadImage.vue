@@ -229,7 +229,7 @@ const inputRef = ref<HTMLInputElement>()
 const files = ref<File[]>([])
 
 watch(
-  [editingFileUrl, value.value],
+  [editingFileUrl, value],
   () => {
     if (!editingFileUrl.value) {
       editingFileUrl.value = value.value

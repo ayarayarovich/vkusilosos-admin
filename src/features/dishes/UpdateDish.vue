@@ -1,16 +1,15 @@
 <template>
-  <form class="p-2" @submit="onSubmit">
+  <form class="mt-8" @submit="onSubmit">
     <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
       <MyInputText name="name" label="Название" />
-      <MyInputNumber name="price" label="Цена" mode="currency" currency="RUB" />
-      <MyInputNumber label="Цена продажи" name="sale_price" />
-      <MyInputNumber label="IIKO ID" name="iiko_id" />
+      <MyInputText name="description" label="Описание" />
+      <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
-      <MyInputNumber label="Пищевая ценность" name="energy" />
+      <MyInputNumber label="Цена" name="price" />
+      <MyInputNumber label="Пищевая ценность" name="pich_cen" />
       <MyInputNumber label="Белки" name="belki" />
       <MyInputNumber label="Жиры" name="ziri" />
       <MyInputNumber label="Углеводы" name="uglevodi" />
-      <MyInputNumber label="Количество" name="size" />
 
       <DropdownSelect
         class="w-full"
@@ -18,58 +17,113 @@
         label="Цвет карточки"
         placeholder="Выберите"
         :options="possibleCardColors"
-      />
+      >
+        <template #option="slotProps">
+          <div class="flex items-center gap-4">
+            <div
+              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              :style="{ backgroundColor: slotProps.option.label }"
+            ></div>
+            <span>{{ slotProps.option.label }}</span>
+          </div>
+        </template>
+        <template #value="slotProps">
+          <div v-if="slotProps.value" class="flex items-center gap-4">
+            <div
+              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              :style="{ backgroundColor: slotProps.value.label }"
+            ></div>
+            <span>{{ slotProps.value.label }}</span>
+          </div>
+          <span v-else> Выберите </span>
+        </template>
+      </DropdownSelect>
 
       <DropdownSelect
         class="w-full"
-        name="category_id"
+        name="size"
+        label="Размер карточки"
+        placeholder="Выберите"
+        :options="[
+          {
+            label: 'Маленький',
+            code: 1
+          },
+          {
+            label: 'Большой',
+            code: 2
+          }
+        ]"
+      >
+      </DropdownSelect>
+
+      <DropdownSelect
+        class="w-full"
+        name="category"
         label="Категория"
         placeholder="Выберите"
-        :options="possibleCategories"
+        :options="possibleCategories || []"
       />
 
-      <div class="col-start-1 col-span-1 row-start-1 row-span-2 w-full h-full">
+      <MyMultiSelect class="w-full" name="tags" label="Теги" :options="possibleTags || []" />
+
+      <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full">
         <MyUploadImage
           class="rounded-lg"
           name="img"
-          filename-prop-in-request="image"
-          filename-prop-in-response="fileLink"
+          :aspect-ratio="4 / 3"
+          filename-prop-in-request="file"
+          filename-prop-in-response="link"
           upload-route="admin/upload"
         />
       </div>
     </div>
 
+    <div class="flex items-center justify-center gap-12 mb-8 flex-wrap">
+      <MyInputSwitch label="В наличии" :name="`have`" />
+      <MyInputSwitch label="Можно доставить" :name="`can_deliver`" />
+      <MyInputSwitch label="Активно" :name="`active`" />
+    </div>
+
     <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
+    <MultiSelect
+      class="mb-8 w-full"
+      display="chip"
+      v-model="selectedRestaurants"
+      :options="restaurantsData || []"
+      optionLabel="name"
+      placeholder="Выберите рестораны"
+    />
     <div class="mb-8">
       <fieldset
         v-for="(field, idx) in fields"
-        :key="field.key"
-        class="relative border-2 border-gray-200 rounded-lg p-4 mb-8"
+        :key="field.value.ID"
+        class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
       >
         <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
-          "{{ field.value.name }}" - {{ field.value.address }}
+          "{{ field.value.name }}" - {{ field.value.adres }}
         </h3>
         <div class="flex gap-4">
           <MyInputNumber
-            disabled
             class="flex-1"
-            :name="`restaurants[${idx}].restaurant_id`"
+            :name="`vars[${idx}].rest_id`"
+            :initial-value="field.value.ID"
+            disabled
             label="ID ресторана"
-            :initial-value="field.value.id"
           />
-          <MyInputNumber class="flex-1" :name="`restaurants[${idx}].iiko_id`" label="IIKO ID" />
+          <MyInputNumber class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
           <MyInputNumber
             class="flex-1"
-            :name="`restaurants[${idx}].price`"
+            :name="`vars[${idx}].price`"
             label="Цена"
             mode="currency"
             currency="RUB"
           />
         </div>
         <div class="flex items-center justify-center gap-12 flex-wrap">
-          <MyInputSwitch label="В наличии" :name="`restaurants[${idx}].have`" />
-          <MyInputSwitch label="Можно доставить" :name="`restaurants[${idx}].can_deliver`" />
-          <MyInputSwitch label="Активно" :name="`restaurants[${idx}].active`" />
+          <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
+          <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
+          <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
         </div>
       </fieldset>
     </div>
@@ -78,155 +132,119 @@
       class="w-full flex items-center p-4 mt-8"
       type="submit"
       label="Создать"
-      :loading="updateDishMutation.isLoading"
-      :disabled="updateDishMutation.isLoading"
+      :loading="isLoading"
+      :disabled="isLoading"
     />
   </form>
 </template>
 
 <script setup lang="ts">
-import type { Dish, Category, Restaurant } from '@/interfaces'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, reactive, watch, computed, inject } from 'vue'
-import { axiosPrivate } from '@/network'
-import { useToast } from 'primevue/usetoast'
+import { inject, ref, watch } from 'vue'
+import MyUploadImage from '@/components/MyUploadImage.vue'
+import { useFieldArray, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { useForm, useFieldArray } from 'vee-validate'
+
+import DropdownSelect from '@/components/DropdownSelect.vue'
+import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
-import MyInputText from '@/components/MyInputText.vue'
-import MyUploadImage from '@/components/MyUploadImage.vue'
-import DropdownSelect from '@/components/DropdownSelect.vue'
+
+import { useCategories } from '@/features/categories'
+import { useCreateDish, useDish } from './composables'
+import { useRestaurants, type IRestaurant } from '@/features/restaurants'
+import { useTags } from '@/features/tags'
+import MyMultiSelect from '@/components/MyMultiSelect.vue'
+import type { IDish } from './interfaces'
 
 const dialogRef = inject('dialogRef') as any
-const dish = dialogRef.value.data.dish as Dish
+const dish = dialogRef.value.data.dish as IDish
 
-const toast = useToast()
-const queryClient = useQueryClient()
 const possibleCardColors = ref([
-  { label: 'Белый', code: 'white' },
-  { label: 'Оранжевый', code: 'orange' },
-  { label: 'Желтый', code: 'yellow' },
-  { label: 'Желтозеленый', code: 'yellowgreen' },
-  { label: 'Синий', code: 'blue' }
+  { label: '#FAFAFA', code: 1 },
+  { label: '#FADEC3', code: 2 },
+  { label: '#E6F0F8', code: 3 },
+  { label: '#F0EDBA', code: 4 },
+  { label: '#FEEDB1', code: 5 }
 ])
 
-const { data: dishData } = useQuery<Dish>({
-  queryKey: ['dishes', dish.id],
-  queryFn: () => axiosPrivate.get('admin/dish', { params: { id: dish.id } }).then((res) => res.data)
-})
+const { data: dishData } = useDish(dish.ID, (v) => v)
 
-const { handleSubmit } = useForm({
+const { handleSubmit, errors } = useForm({
   validationSchema: yup.object({
     name: yup.string().required().label('Название'),
     img: yup.string().required().label('Изображение'),
-    category_id: yup.number().required().label('Категория'),
+    price: yup.number().required().label('Цена'),
+    category: yup.number().required().label('Категория'),
     color: yup.string().required().label('Цвет карточки'),
     belki: yup.number().required().label('Количество белков'),
-    energy: yup.number().required().label('Пищевая ценность'),
+    pich_cen: yup.number().required().label('Пищевая ценность'),
     uglevodi: yup.number().required().label('Количество углеводов'),
     ziri: yup.number().required().label('Количество жиров'),
     weight: yup.number().required().label('Вес'),
     size: yup.number().required().label('Количество'),
+    description: yup.string().label('Описание'),
+    iiko_id: yup.string().required().label('IIKO ID'),
+    tags: yup.array().required().label('Теги'),
     active: yup.boolean().label('Активно'),
     can_deliver: yup.boolean().label('Можно доставить'),
     have: yup.boolean().label('В наличии'),
-    description: yup.string().label('Описание'),
-    price: yup.number().required().label('Цена'),
-    sale_price: yup.number().required().label('Цена продажи'),
-    iiko_id: yup.number().required().label('IIKO ID'),
-    restaurants: yup.array().of(
+    vars: yup.array().of(
       yup.object({
-        restaurant_id: yup.number().required().label('ID ресторана'),
+        rest_id: yup.number().required().label('ID ресторана'),
         iiko_id: yup.number().required().label('IIKO ID блюда'),
-        price: yup.number().required().label('Цена')
+        price: yup.number().required().label('Цена'),
+        active: yup.boolean().label('Активно'),
+        can_deliver: yup.boolean().label('Можно доставить'),
+        have: yup.boolean().label('В наличии')
       })
     )
   }),
   initialValues: dishData
 })
 
-const { replace, fields } = useFieldArray<Restaurant>('restaurants')
+const { replace, fields } = useFieldArray<any>('vars')
 
-const updateDishMutation = reactive(
-  useMutation({
-    mutationFn: (payload: any) => {
-      // const response = axiosPrivate.put('admin/dish', payload)
-      const response = Promise.reject('GET /admin/dish route not implemented properly')
-      return response
-    },
-    onSuccess(data, variables) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Обновлено блюдо ${variables.name}`
-      })
-      queryClient.invalidateQueries(['dishes'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось обновить блюдо',
-        detail: error
-      })
-    }
-  })
+const { mutate, isLoading } = useCreateDish()
+
+const { data: possibleCategories } = useCategories({ offset: 0, limit: 9999999, search: '' }, (r) =>
+  r.list.map((v) => ({ label: v.name, code: v.ID }))
+)
+const { data: restaurantsData } = useRestaurants(
+  {
+    offset: 0,
+    limit: 99999999,
+    search: ''
+  },
+  (r) => r.list
+)
+const { data: possibleTags } = useTags(
+  {
+    offset: 0,
+    limit: 99999999,
+    search: ''
+  },
+  (r) => r.list.map((v) => ({ label: v.name, code: v.ID }))
 )
 
-const { data: categoriesData } = useQuery<{
-  items: Category[]
-  total: number
-}>({
-  queryKey: ['categories'],
-  queryFn: async () => {
-    const response = await axiosPrivate.get('admin/categories', {
-      params: {
-        limit: 99999999,
-        offset: 0
-      }
-    })
-    return response.data
-  }
-})
-
-const possibleCategories = computed(() => {
-  if (categoriesData.value) {
-    return categoriesData.value.items.map((item) => ({
-      label: item.name,
-      code: item.id
-    }))
-  }
-  return []
-})
-
-const { data: restaurantsData } = useQuery<{
-  items: Restaurant[]
-  total: number
-}>({
-  queryKey: ['restaurants'],
-  queryFn: async () => {
-    const response = await axiosPrivate.get('admin/rests', {
-      params: {
-        limit: 999999999,
-        offset: 0
-      }
-    })
-    return response.data
+const selectedRestaurants = ref<IRestaurant[]>()
+watch([selectedRestaurants], () => {
+  if (selectedRestaurants.value) {
+    const copy = selectedRestaurants.value.map((item) => ({ ...item }))
+    replace(copy)
   }
 })
 watch([restaurantsData], () => {
-  if (restaurantsData.value) {
-    replace(
-      restaurantsData.value.items.map((item) => ({
-        ...item
-      }))
-    )
-  }
+  selectedRestaurants.value = restaurantsData.value?.filter((vs) => {
+    for (let i = 0; i < dish.vars.length; ++i) {
+      if (dish.vars[i].rest_id == vs.id) {
+        return true
+      }
+    }
+    return false
+  })
 })
 
 const onSubmit = handleSubmit((vals) => {
-  updateDishMutation.mutate(vals)
+  mutate(vals)
 })
 </script>

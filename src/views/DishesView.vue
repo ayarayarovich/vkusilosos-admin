@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
 
 import type { Dish } from '@/interfaces'
 import { useDebounce } from '@vueuse/core'
 
-import { CreateDish, DeleteDish, UpdateDish } from '@/features/dishes'
+import { CreateDish, DeleteDish, UpdateDish, useDishes, type IDish } from '@/features/dishes'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -15,32 +13,17 @@ const rowsPerPage = ref(20)
 const offset = ref(0)
 const limit = rowsPerPage
 const searchTerm = ref('')
-const selectedDish = ref<Dish>()
+const selectedDish = ref<IDish>()
 const debouncedSearchTerm = useDebounce(searchTerm, 500)
-const totalRecords = ref<number>()
 
-const query = reactive(
-  useQuery({
-    queryKey: ['dishes', { offset, limit, searchTerm: debouncedSearchTerm }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/dishes', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number,
-          search: (queryKey[1] as any).searchTerm as string
-        }
-      })
-      return response.data
-    },
-    placeholderData: (previousData: any) => previousData
-  })
+const { data, refetch, isFetching, isError } = useDishes(
+  {
+    limit,
+    offset,
+    search: debouncedSearchTerm
+  },
+  (r) => r
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -57,7 +40,7 @@ const beginCreateDishInteraction = () => {
     } as any
   })
 }
-const beginUpdateDishInteraction = (dish: Dish) => {
+const beginUpdateDishInteraction = (dish: IDish) => {
   dialog.open(UpdateDish, {
     props: {
       class: 'w-full max-w-4xl',
@@ -70,7 +53,7 @@ const beginUpdateDishInteraction = (dish: Dish) => {
   })
 }
 
-const beginDeleteDishInteraction = (dish: Dish) => {
+const beginDeleteDishInteraction = (dish: IDish) => {
   dialog.open(DeleteDish, {
     props: {
       class: 'w-full max-w-xl',
@@ -79,12 +62,15 @@ const beginDeleteDishInteraction = (dish: Dish) => {
     } as any,
     data: {
       dish
+    },
+    onClose: () => {
+      selectedDish.value = undefined
     }
   })
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -134,7 +120,7 @@ onMounted(() => {
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateDishInteraction()" />
           </div>
 
@@ -163,7 +149,7 @@ onMounted(() => {
     </Toolbar>
 
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -178,18 +164,18 @@ onMounted(() => {
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
         :rows="rowsPerPage"
-        dataKey="id"
+        dataKey="ID"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
-        <Column field="id" header="ID" />
+        <Column field="ID" header="ID" />
         <Column field="name" header="Название" />
         <Column field="img" header="Картинка">
           <template #body="slotProps">
@@ -200,8 +186,31 @@ onMounted(() => {
             />
           </template>
         </Column>
-        <Column field="price" header="Цена" />
-        <Column field="sale_price" header="Цена продажи" />
+        <Column field="price" header="Цена">
+          <template #body="slotProps">
+            {{ slotProps.data.price }} ₽
+          </template>
+        </Column>
+        <Column field="active" header="Статус">
+          <template #body="slotProps">
+            <Tag
+              :value="slotProps.data.active ? 'Активно' : 'Заблокировано'"
+              :severity="slotProps.data.active ? 'success' : 'danger'"
+            />
+          </template>
+        </Column>
+        <Column field="active" header="Наличие">
+          <template #body="slotProps">
+            <Tag
+              :value="slotProps.data.have ? 'Есть' : 'Нету'"
+              :severity="slotProps.data.have ? 'success' : 'danger'"
+            />
+          </template>
+        </Column>
+
+        <Column field="CreatedAt" header="Создано" />
+        <Column field="UpdatedAt" header="Обновлено" />
+        <Column field="DeletedAt" header="Удалено" />
 
         <template #loading>
           <ProgressSpinner class="h-8" />

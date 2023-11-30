@@ -1,43 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
 
-import type { Category } from '@/interfaces'
+import type { ICategory } from '@/features/categories'
 import { CreateCategory, DeleteCategory, UpdateCategory } from '@/features/categories'
 import { useDialog } from 'primevue/usedialog'
+import { useCategories } from '@/features/categories/composables'
+import { useDebounce } from '@vueuse/core'
 
-const rowsPerPage = ref(20)
+const initialRowsPerPage = 20
 
 const offset = ref(0)
-const limit = rowsPerPage
-const selectedCategory = ref<Category>()
-const totalRecords = ref<number>()
+const limit = ref(initialRowsPerPage)
+const selectedCategory = ref<ICategory>()
+const searchTerm = ref('')
+const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
-const query = reactive(
-  useQuery<{
-    items: Category[]
-    total: number
-  }>({
-    queryKey: ['categories', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/categories', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const { data, isFetching, isError, refetch } = useCategories(
+  { offset, limit, search: debouncedSearchTerm },
+  (v) => v
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -56,7 +38,7 @@ const beginCreateCategoryInteraction = () => {
   })
 }
 
-const beginDeleteCategoryInteraction = (category: Category) => {
+const beginDeleteCategoryInteraction = (category: ICategory) => {
   dialog.open(DeleteCategory, {
     props: {
       class: 'max-w-xl w-full',
@@ -65,11 +47,14 @@ const beginDeleteCategoryInteraction = (category: Category) => {
     } as any,
     data: {
       category
+    },
+    onClose: () => {
+      selectedCategory.value = undefined
     }
   })
 }
 
-const beginUpdateCategoryInteraction = (category: Category) => {
+const beginUpdateCategoryInteraction = (category: ICategory) => {
   dialog.open(UpdateCategory, {
     props: {
       class: 'max-w-xl w-full',
@@ -83,7 +68,7 @@ const beginUpdateCategoryInteraction = (category: Category) => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -133,7 +118,7 @@ onMounted(() => {
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateCategoryInteraction()" />
           </div>
 
@@ -162,7 +147,7 @@ onMounted(() => {
     </Toolbar>
 
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -177,15 +162,16 @@ onMounted(() => {
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
-        :rows="rowsPerPage"
-        dataKey="id"
+        :rows="initialRowsPerPage"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        dataKey="ID"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />

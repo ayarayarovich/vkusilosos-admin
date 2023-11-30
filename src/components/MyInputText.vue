@@ -4,6 +4,7 @@
     <InputText
       :id="inputID"
       v-model="value"
+      size="small"
       :name="props.name"
       :label="props.label"
       :type="props.type || 'text'"

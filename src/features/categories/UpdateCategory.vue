@@ -1,34 +1,32 @@
 <template>
-  <form class="mt-8" @submit.prevent="onSubmit">
-    <MyInputNumber name="id" label="ID" disabled :initial-value="category.id" />
-    <MyInputText name="name" label="Название" :initial-value="category.name" />
+  <form @submit.prevent="onSubmit">
+    <div class="py-4 border-t">
+      <MyInputNumber name="id" label="ID" disabled :initial-value="category.ID" />
+      <MyInputText name="name" label="Название" :initial-value="category.name" />
+    </div>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="w-full flex items-center"
       type="submit"
       label="Сохранить"
-      :loading="updateCategoryMutation.isLoading"
-      :disabled="updateCategoryMutation.isLoading"
+      size="small"
+      :loading="isLoading"
+      :disabled="isLoading"
     />
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { reactive, inject } from 'vue'
-import { axiosPrivate } from '@/network'
-import { useToast } from 'primevue/usetoast'
+import { inject } from 'vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import type { Category } from '@/interfaces'
-
-const toast = useToast()
-const queryClient = useQueryClient()
+import { useUpdateCategory } from './composables'
+import type { ICategory } from './interfaces'
 
 const dialogRef = inject('dialogRef') as any
-const category = dialogRef.value.data.category as Category
+const category = dialogRef.value.data.category as ICategory
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -37,33 +35,9 @@ const { handleSubmit } = useForm({
   })
 })
 
-const updateCategoryMutation = reactive(
-  useMutation({
-    mutationFn: async (payload: any) => {
-      const response = await axiosPrivate.put('admin/category', payload)
-      return response.data
-    },
-    onSuccess(data, variables) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Изменена категория ${variables.name} (id: ${variables.id})`
-      })
-      queryClient.invalidateQueries(['categories'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось изменить категорию',
-        detail: error
-      })
-    }
-  })
-)
+const { mutate, isLoading } = useUpdateCategory()
 
 const onSubmit = handleSubmit((vals) => {
-  updateCategoryMutation.mutate(vals)
+  mutate(vals)
 })
 </script>

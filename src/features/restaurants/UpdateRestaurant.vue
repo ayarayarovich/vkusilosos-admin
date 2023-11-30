@@ -75,7 +75,7 @@ const updateRestaurantMutation = reactive(
 )
 
 const { data } = useQuery({
-  queryKey: ['rests', { id: restaurant.id }],
+  queryKey: ['rests', { id: restaurant.ID }],
   queryFn: async ({ queryKey }) => {
     const response = await axiosPrivate.get('admin/rest', {
       params: {

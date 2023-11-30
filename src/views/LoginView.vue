@@ -20,30 +20,40 @@ const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userS
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    phone: yup.string().required().label('Логин'),
+    login: yup.string().required().label('Логин'),
     password: yup.string().required().label('Пароль')
   })
 })
 
 const { isLoading, mutate } = useMutation<any, any, any>({
   mutationFn: async (payload: any) => {
-    return axiosPublic.post('api/password_verification', payload)
+    return axiosPublic.post('auth/login', payload)
   },
   onSuccess({ data }) {
-    accessToken.value = data.accessToken
+    accessToken.value = data.token
     refreshToken.value = data.refreshToken
-    userID.value = data.user.userId
     isAuthenticated.value = true
     router.push({ name: 'dashboard' })
   },
   onError(error: any) {
     const body = error.response.data
-    toast.add({
-      severity: 'error',
-      life: 3000,
-      summary: body.message,
-      detail: error
-    })
+
+    if (error.response.status === 401) {
+      toast.add({
+        severity: 'error',
+        life: 3000,
+        summary: 'Ошибка',
+        detail: 'Неверный логин или пароль'
+      })
+    }
+    else {
+      toast.add({
+        severity: 'error',
+        life: 3000,
+        summary: 'Ошибка',
+        detail: body
+      })
+    }
   }
 })
 
@@ -64,7 +74,7 @@ const signIn = handleSubmit((vals) => {
       </div>
 
       <form class="w-full max-w-sm" @submit="signIn">
-        <MyInputText label="Логин" type="text" name="phone" />
+        <MyInputText label="Логин" type="text" name="login" />
         <MyInputText label="Пароль" type="password" name="password" />
 
         <Button

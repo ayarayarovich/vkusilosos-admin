@@ -3,7 +3,7 @@
     <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить блюдо
       <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-indigo-100 whitespace-nowrap"
-        >{{ dish.name }} (id: {{ dish.id }})</span
+        >{{ dish.name }} (id: {{ dish.ID }})</span
       >
     </p>
     <div class="flex justify-end gap-4">
@@ -18,10 +18,10 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { reactive, inject } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import type { Dish } from '@/interfaces'
+import type { IDish } from './interfaces'
 
 const dialogRef = inject('dialogRef') as any
-const dish = dialogRef.value.data.dish as Dish
+const dish = dialogRef.value.data.dish as IDish
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -31,7 +31,7 @@ const deleteMutation = reactive(
     mutationFn: () =>
       axiosPrivate.delete('admin/dish', {
         params: {
-          id: dish.id
+          id: dish.ID
         }
       }),
     onSuccess() {
@@ -39,7 +39,7 @@ const deleteMutation = reactive(
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удалено блюдо ${dish.name} (id: ${dish.id})`
+        detail: `Удалено блюдо ${dish.name} (id: ${dish.ID})`
       })
       queryClient.invalidateQueries(['dishes'])
     },

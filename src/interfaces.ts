@@ -11,11 +11,15 @@ export interface User {
 }
 
 export interface Dish {
-  id: number
-  name: string
+  CreatedAt: string
+  DeletedAt: string | null
+  ID: number
+  UpdatedAt: string
+  active: boolean
+  have: boolean
   img: string
+  name: string
   price: number
-  sale_price: number
 }
 
 export interface Review {
@@ -51,21 +55,6 @@ export interface UpdateDish extends CreateDish {
   id: number
 }
 
-export interface CreateCategory {
-  name: string
-}
-
-export interface Category {
-  id: number
-  name: string
-  count_dishes: number
-}
-
-export interface UpdateCategory {
-  id: number
-  name: string
-}
-
 export interface CreateRestaurant {
   name: string
   address: string
@@ -75,7 +64,7 @@ export interface CreateRestaurant {
 }
 
 export interface Restaurant {
-  id: number
+  ID: number
   name: string
   address: string
 }
@@ -86,22 +75,4 @@ export interface UpdateRestaurant {
   lat: number
   lon: number
   geojson: string
-}
-
-export interface CreateTag {
-  name: string
-  dishes: number[]
-}
-
-export interface UpdateTag {
-  id: number
-  name: string
-  dishes: number[]
-}
-
-export interface Tag {
-  id: number
-  name: string
-  count_dishes: number
-  dishes: Category[]
 }
