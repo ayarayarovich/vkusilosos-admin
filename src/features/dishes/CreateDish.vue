@@ -3,7 +3,7 @@
     <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
-      <MyInputText label="IIKO id" name="iiko_id" />
+      <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
       <MyInputNumber label="Пищевая ценность" name="pich_cen" />
@@ -71,7 +71,7 @@
         <MyUploadImage
           class="rounded-lg"
           name="img"
-          :aspect-ratio="4/3"
+          :aspect-ratio="4 / 3"
           filename-prop-in-request="file"
           filename-prop-in-response="link"
           upload-route="admin/upload"
@@ -97,7 +97,7 @@
     <div class="mb-8">
       <fieldset
         v-for="(field, idx) in fields"
-        :key="field.value.id"
+        :key="field.key"
         class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
       >
         <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
@@ -107,11 +107,10 @@
           <MyInputNumber
             class="flex-1"
             :name="`vars[${idx}].rest_id`"
-            :initial-value="field.value.id"
             disabled
-            label="id ресторана"
+            label="ID ресторана"
           />
-          <MyInputText class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO id" />
+          <MyInputText class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
           <MyInputNumber
             class="flex-1"
             :name="`vars[${idx}].price`"
@@ -178,12 +177,12 @@ const { handleSubmit } = useForm({
     weight: yup.number().required().label('Вес'),
     size: yup.number().required().label('Количество'),
     description: yup.string().label('Описание'),
-    iiko_id: yup.string().required().label('IIKO id'),
+    iiko_id: yup.string().required().label('IIKO ID'),
     tags: yup.array().required().label('Теги'),
     vars: yup.array().of(
       yup.object({
-        rest_id: yup.number().required().label('id ресторана'),
-        iiko_id: yup.string().required().label('IIKO id блюда'),
+        rest_id: yup.number().required().label('ID ресторана'),
+        iiko_id: yup.string().required().label('IIKO ID блюда'),
         price: yup.number().required().label('Цена'),
         active: yup.boolean().label('Активно'),
         can_deliver: yup.boolean().label('Можно доставить'),
@@ -220,7 +219,11 @@ const { data: possibleTags } = useTags(
 const selectedRestaurants = ref<Restaurant[]>()
 watch([selectedRestaurants], () => {
   if (selectedRestaurants.value) {
-    const copy = selectedRestaurants.value.map((item) => ({ ...item }))
+    const copy = selectedRestaurants.value.map((item) => ({
+      rest_id: item.id,
+      name: item.name,
+      adres: item.adres
+    }))
     replace(copy)
   }
 })

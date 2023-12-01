@@ -1,15 +1,57 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <div class="py-4 border-t">
-      <MyInputNumber name="id" label="id" disabled :initial-value="category.id" />
-      <MyInputText name="name" label="Название" :initial-value="category.name" />
+    <div>
+      <MyInputNumber name="id" label="ID" disabled />
+      <MyInputText name="name" label="Название" />
+      <DropdownSelect
+        name="active"
+        label="Активно"
+        :options="[
+          {
+            label: 'Не активна',
+            code: false
+          },
+          {
+            label: 'Активна',
+            code: true
+          }
+        ]"
+      >
+        <template #value="slotProps">
+          <Tag
+            v-if="slotProps.value.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.value.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.value.label"
+            severity="success"
+          />
+        </template>
+        <template #option="slotProps">
+          <Tag
+            v-if="slotProps.option.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.option.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.option.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.option.label"
+            severity="success"
+          />
+        </template>
+      </DropdownSelect>
     </div>
 
     <Button
-      class="w-full flex items-center"
+      class="w-full flex items-center mt-4"
       type="submit"
       label="Сохранить"
-      size="small"
       :loading="isLoading"
       :disabled="isLoading"
     />
@@ -20,6 +62,7 @@
 import { inject } from 'vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputText from '@/components/MyInputText.vue'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useUpdateCategory } from './composables'
@@ -30,9 +73,15 @@ const category = dialogRef.value.data.category as ICategory
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.number().required().label('id категории'),
-    name: yup.string().required().label('Название категории')
-  })
+    id: yup.number().required().label('ID категории'),
+    name: yup.string().required().label('Название категории'),
+    active: yup.boolean().required().label('Активно')
+  }),
+  initialValues: {
+    id: category.id,
+    name: category.name,
+    active: category.active
+  }
 })
 
 const { mutate, isLoading } = useUpdateCategory()

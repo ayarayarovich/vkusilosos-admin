@@ -1,62 +1,67 @@
 <template>
-  <div>
-    <p class="mb-8 text-lg leading-loose">
-      <span
-        class="min-w-max inline-block font-bold px-2 rounded-lg bg-indigo-100 whitespace-nowrap"
-      >
-        {{ user.name || '*без имени*' }} (id: {{ user.id }})</span
-      >
-    </p>
-    <div class="flex justify-end gap-4">
-      <Button class="flex-1" label="Нет" severity="secondary" @click="dialogRef.close()" />
-      <Button class="flex-1" label="Да" severity="danger" @click="changeStatus()" />
-    </div>
-  </div>
+  <form @submit="onSubmit">
+    <MyInputNumber name="user_id" label="ID пользователя" disabled />
+    <DropdownSelect name="status" label="Статус" placeholder="Выберите" :options="possibleStatuses">
+      <template #value="slotProps">
+        <template v-if="slotProps.value">
+          <Tag v-if="slotProps.value.code === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
+          <Tag v-else-if="slotProps.value.code === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
+          <Tag v-else-if="slotProps.value.code === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+        </template>
+      </template>
+      <template #option="slotProps">
+        <template v-if="slotProps.option">
+          <Tag v-if="slotProps.option.code === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
+          <Tag v-else-if="slotProps.option.code === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
+          <Tag v-else-if="slotProps.option.code === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+        </template>
+      </template>
+    </DropdownSelect>
+
+    <Button
+      class="w-full flex items-center p-4 mt-8"
+      type="submit"
+      label="Сохранить"
+      :loading="isLoading"
+      :disabled="isLoading"
+    />
+  </form>
 </template>
 
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { inject, reactive } from 'vue'
-import { axiosPrivate } from '@/network'
-import { useToast } from 'primevue/usetoast'
-import type { User } from '@/interfaces'
+import { inject, ref } from 'vue'
+import type { IUser } from './interfaces'
+import { useChangeUserStatus } from './composables'
+import { useForm } from 'vee-validate'
+import yup from '@/yup'
 
-const toast = useToast()
-const queryClient = useQueryClient()
+import MyInputNumber from '@/components/MyInputNumber.vue'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 
 const dialogRef = inject('dialogRef') as any
-const user = dialogRef.value.data.user as User
+const user = dialogRef.value.data.user as IUser
 
-const changeStatusMutation = reactive(
-  useMutation({
-    mutationFn: () =>
-      axiosPrivate.delete('admin/user', {
-        params: {
-          id: user.id
-        }
-      }),
-    onSuccess() {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Статус пользователя ${user.name} (id: ${user.id}) изменён`
-      })
-      queryClient.invalidateQueries(['users'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось изменить статус пользователя',
-        detail: error
-      })
-    }
-  })
-)
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    user_id: yup.number().required().label('ID пользователя'),
+    status: yup.number().required().label('Статус')
+  }),
+  initialValues: {
+    user_id: user.id,
+    status: user.status
+  }
+})
 
-const changeStatus = () => {
-  changeStatusMutation.mutate()
-  dialogRef.value.close()
-}
+const possibleStatuses = ref([
+  { label: 'Заблокирован', code: 0 },
+  { label: 'Активен', code: 1 },
+  { label: 'На модерации', code: 2 }
+])
+
+const { mutateAsync, isLoading } = useChangeUserStatus()
+
+const onSubmit = handleSubmit((vals) => {
+  mutateAsync(vals).then(dialogRef.value.close)
+
+})
 </script>

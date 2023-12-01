@@ -1,12 +1,12 @@
 import { type MaybeRef } from 'vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { IRestaurant } from './interfaces'
+import type { IUser } from './interfaces'
 
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 
-interface GetRestaurantsResponse {
-  list: IRestaurant[]
+interface GetUsersResponse {
+  users: IUser[]
   total: number
 }
 
@@ -16,15 +16,15 @@ interface QueryConfig {
   search: MaybeRef<string>
 }
 
-export const useRestaurants = <SData>(
+export const useUsers = <SData>(
   queryConfig: QueryConfig,
-  selector?: (response: GetRestaurantsResponse) => SData
+  selector?: (response: GetUsersResponse) => SData
 ) => {
   const { offset, limit, search } = queryConfig
   return useQuery({
-    queryKey: ['rests', { offset, limit, search }] as any,
+    queryKey: ['users', { offset, limit, search }] as any,
     queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get<GetRestaurantsResponse>('admin/rests', {
+      const response = await axiosPrivate.get<GetUsersResponse>('admin/users', {
         params: {
           offset: (queryKey[1] as any).offset as number,
           limit: (queryKey[1] as any).limit as number,
@@ -34,85 +34,82 @@ export const useRestaurants = <SData>(
       return response.data
     },
     select: selector,
-    keepPreviousData: true,
+    keepPreviousData: true
   })
 }
 
-export const useCreateRestaurant = () => {
+export const useChangeUserStatus = () => {
   const toast = useToast()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.post('admin/rest', vars),
+    mutationFn: (vars: any) =>
+      axiosPrivate.post('admin/user/status', vars),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Добавлен ресторан ${vars.name}`
+        detail: `Статус пользователя ID: ${vars.user_id} изменён`
       })
-      queryClient.invalidateQueries(['rests'])
+      queryClient.invalidateQueries(['users'])
     },
     onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось создать ресторан',
+        summary: 'Не удалось изменить статус пользователя',
         detail: error
       })
     }
   })
 }
 
-export const useDeleteRestaurant = () => {
+export const useGiftBonusesToUser = () => {
   const toast = useToast()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: { id: number; name: string }) =>
-      new Promise((res, rej) =>
-        setTimeout(() => res('Restaurant deletion route is not implemented.'), 1000)
-      ),
+    mutationFn: (vars: any) => axiosPrivate.post('admin/user/bonus', vars),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Удален ресторан ${vars.name} (id: ${vars.id})`
+        detail: `Добавлено бонусов пользователю с ID: ${vars.user_id})`
       })
-      queryClient.invalidateQueries(['rests'])
+      queryClient.invalidateQueries(['users'])
     },
     onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось удалить ресторан',
+        summary: 'Не удалось добавить бонусов',
         detail: error
       })
     }
   })
 }
 
-export const useUpdateRestaurant = () => {
+export const useSendNotificationToUser = () => {
   const toast = useToast()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (vars: any) => Promise.reject('Restaurant update route is not implemented.'),
+    mutationFn: (vars: any) => axiosPrivate.post('admin/user/push', vars),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Изменен ресторан ${vars.name} (id: ${vars.id})`
+        detail: `Отправлено уведомление пользователю с ID: ${vars.user_id})`
       })
-      queryClient.invalidateQueries(['rests'])
     },
     onError(error: any) {
       toast.add({
         severity: 'error',
         life: 3000,
-        summary: 'Не удалось изменить ресторан',
+        summary: 'Не удалось отправить уведомление',
         detail: error
       })
     }

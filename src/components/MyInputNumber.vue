@@ -14,6 +14,8 @@
       :mode="props.mode"
       :currency="props.currency"
       :disabled="props.disabled"
+      :min-fraction-digits="props.minFractionDigits"
+      :max-fraction-digits="props.maxFractionDigits"
     />
 
     <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>
@@ -31,6 +33,8 @@ const props = defineProps<{
   currency?: string
   initialValue?: number
   disabled?: boolean
+  minFractionDigits?: number
+  maxFractionDigits?: number
 }>()
 
 const { errorMessage, value } = useField<any>(

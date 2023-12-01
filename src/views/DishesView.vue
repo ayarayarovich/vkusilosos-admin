@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 
-import type { Dish } from '@/interfaces'
+import dateFormat from 'dateformat'
 import { useDebounce } from '@vueuse/core'
 
 import { CreateDish, DeleteDish, UpdateDish, useDishes, type IDish } from '@/features/dishes'
@@ -182,14 +182,12 @@ onMounted(() => {
             <img
               :src="slotProps.data.img"
               :alt="slotProps.data.img"
-              class="h-16 drop-shadow-md rounded-lg"
+              class="h-16 aspect-[4/3] object-cover drop-shadow-md rounded-lg"
             />
           </template>
         </Column>
         <Column field="price" header="Цена">
-          <template #body="slotProps">
-            {{ slotProps.data.price }} ₽
-          </template>
+          <template #body="slotProps"> {{ slotProps.data.price }} ₽ </template>
         </Column>
         <Column field="active" header="Статус">
           <template #body="slotProps">
@@ -208,9 +206,16 @@ onMounted(() => {
           </template>
         </Column>
 
-        <Column field="created_at" header="Создано" />
-        <Column field="updated_at" header="Обновлено" />
-        <Column field="deleted_at" header="Удалено" />
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
 
         <template #loading>
           <ProgressSpinner class="h-8" />

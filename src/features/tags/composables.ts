@@ -69,7 +69,7 @@ export const useUpdateTag = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.put('admin/tag', vars, { params: { id: vars.id } }),
+    mutationFn: (vars: any) => axiosPrivate.put('admin/tag', vars),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',

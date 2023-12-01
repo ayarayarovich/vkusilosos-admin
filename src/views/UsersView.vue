@@ -1,40 +1,28 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
 import { useDebounce } from '@vueuse/core'
-import { axiosPrivate } from '@/network'
 
-import type { User } from '@/interfaces'
-import { ChangeStatus, GiftBonusesToUser, SendNotification } from '@/features/users'
+import dateFormat from 'dateformat'
+import { ChangeStatus, GiftBonusesToUser, SendNotification, useUsers, type IUser } from '@/features/users'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const searchTerm = ref('')
-const debouncedSearchTerm = useDebounce(searchTerm, 500)
+const search = ref('')
+const debouncedSearch = useDebounce(search, 500)
 
 const selectedUser = ref()
 
-const query = reactive(
-  useQuery<{
-    items: User[]
-    total: number
-  }>({
-    queryKey: ['users', { offset, limit, searchTerm: debouncedSearchTerm }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/users', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number,
-          search: (queryKey[1] as any).searchTerm as string
-        }
-      })
-      return response.data
-    }
-  })
+const { data, isFetching, isError, refetch } = useUsers(
+  {
+    limit,
+    offset,
+    search: debouncedSearch
+  },
+  (v) => v
 )
 
 const onPage = (e: DataTablePageEvent) => {
@@ -43,7 +31,7 @@ const onPage = (e: DataTablePageEvent) => {
 }
 
 const dialog = useDialog()
-const beginBlockUnblockUserInteraction = (user: User) => {
+const beginBlockUnblockUserInteraction = (user: IUser) => {
   dialog.open(ChangeStatus, {
     props: {
       class: 'w-full max-w-xl',
@@ -56,7 +44,7 @@ const beginBlockUnblockUserInteraction = (user: User) => {
   })
 }
 
-const beginGiftBonusesToUserInteraction = (user: User) => {
+const beginGiftBonusesToUserInteraction = (user: IUser) => {
   dialog.open(GiftBonusesToUser, {
     props: {
       class: 'w-full max-w-xl',
@@ -69,7 +57,7 @@ const beginGiftBonusesToUserInteraction = (user: User) => {
   })
 }
 
-const beginSendNotificationInteraction = (user: User) => {
+const beginSendNotificationInteraction = (user: IUser) => {
   dialog.open(SendNotification, {
     props: {
       class: 'w-full max-w-xl',
@@ -83,7 +71,7 @@ const beginSendNotificationInteraction = (user: User) => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -97,7 +85,7 @@ const menuModel = ref([
     command: () => refresh()
   },
   {
-    label: 'Заблокировать/Разблокировать',
+    label: 'Изменить статус',
     icon: 'pi pi-fw pi-user-edit',
     command: () => beginBlockUnblockUserInteraction(selectedUser.value!)
   },
@@ -133,13 +121,13 @@ onMounted(() => {
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
           </div>
 
           <div class="flex-1 flex justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" v-model="searchTerm" />
+              <InputText placeholder="Поиск" v-model="search" />
             </span>
           </div>
 
@@ -167,7 +155,7 @@ onMounted(() => {
     </Toolbar>
 
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -182,7 +170,7 @@ onMounted(() => {
         v-model:contextMenuSelection="selectedUser"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
-        :value="query.data?.items"
+        :value="data?.users"
         lazy
         paginator
         :first="0"
@@ -190,24 +178,66 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="query.data?.total"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Имя" />
         <Column field="surname" header="Фамилия" />
         <Column field="phone" header="Телефон" />
-        <Column field="role" header="Роль" />
+        <Column field="role" header="Роль">
+          <template #body="slotProps">
+            <Tag v-if="slotProps.data.role === 'user'" icon="pi pi-user" value="Обычный" severity="info"></Tag>
+            <Tag v-else-if="slotProps.data.role === 'admin'" icon="pi pi-bolt" value="Админ" severity="warning"></Tag>
+            <Tag v-else :value="slotProps.data.role" severity="info" />
+          </template>
+          </Column>
         <Column field="status" header="Статус">
           <template #body="slotProps">
-            <Tag
-              :value="slotProps.data.status"
-              :severity="slotProps.data.status === 'blocked' ? 'danger' : 'success'"
-            />
+            <Tag v-if="slotProps.data.status === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
+            <Tag v-else-if="slotProps.data.status === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
+            <Tag v-else-if="slotProps.data.status === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+            <Tag v-else :value="slotProps.data.status" severity="info" />
           </template>
         </Column>
-        <Column field="tolal_order" header="Сумма чеков" />
+        <Column field="summ" header="Сумма чеков">
+          <template #body="slotProps">
+            {{ slotProps.data.summ }} ₽
+          </template>
+        </Column>
+        <Column field="email" header="Email" />
         <Column field="bonuses" header="Бонусы" />
+        <Column field="birthday" header="День рождения">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.birthday, 'dd.mm.yyyy') }}
+          </template>
+        </Column>
+        <Column field="choosed_adres" header="Адрес доставки" />
+        <Column field="choosed_rest" header="Ресторан" />
+        <Column field="get_pushes" header="Уведомления">
+          <template #body="slotProps">
+            <Tag v-if="slotProps.data.get_pushes === false" icon="pi pi-ban" value="Отключены" severity="danger"/>
+            <Tag v-else-if="slotProps.data.get_pushes === true" icon="pi pi-bell" value="Включены" severity="success"/>
+          </template>
+        </Column>
+        <Column field="last_point" header="Сумма последнего заказа">
+          <template #body="slotProps">
+            {{ slotProps.data.last_point }} ₽
+          </template>
+        </Column>
+        <Column field="point" header="point" />
+        <Column field="referal" header="Реферал" />
+        <Column field="share_id" header="Реферальный код" />
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
 
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">

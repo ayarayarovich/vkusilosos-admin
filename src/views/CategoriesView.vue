@@ -2,22 +2,22 @@
 import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 
-import type { ICategory } from '@/features/categories'
-import { CreateCategory, DeleteCategory, UpdateCategory } from '@/features/categories'
+import { CreateCategory, DeleteCategory, UpdateCategory, type ICategory } from '@/features/categories'
 import { useDialog } from 'primevue/usedialog'
 import { useCategories } from '@/features/categories/composables'
 import { useDebounce } from '@vueuse/core'
+import dateFormat from 'dateformat'
 
 const initialRowsPerPage = 20
 
 const offset = ref(0)
 const limit = ref(initialRowsPerPage)
 const selectedCategory = ref<ICategory>()
-const searchTerm = ref('')
-const debouncedSearchTerm = useDebounce(searchTerm, 500)
+const search = ref('')
+const debouncedSearch = useDebounce(search, 500)
 
 const { data, isFetching, isError, refetch } = useCategories(
-  { offset, limit, search: debouncedSearchTerm },
+  { offset, limit, search: debouncedSearch },
   (v) => v
 )
 
@@ -176,6 +176,32 @@ onMounted(() => {
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
+        <Column fiend="active" header="Активна">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.active === false"
+              icon="pi pi-ban"
+              value="Не активна"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.active === true"
+              icon="pi pi-check-circle"
+              value="Активна"
+              severity="success"
+            />
+          </template>
+        </Column>
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
 
         <template #loading>
           <ProgressSpinner class="h-8" />

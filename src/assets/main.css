@@ -29,3 +29,18 @@
 .p-toolbar .p-toolbar-group-center {
   width: 100%;
 }
+
+.p-column-title, .p-datatable-tbody td {
+  @apply whitespace-nowrap;
+}
+
+img:before {
+  content: ' ';
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: url(/noimage.svg);
+  background-size: cover;
+  background-position: center;
+}

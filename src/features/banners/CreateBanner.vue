@@ -3,56 +3,84 @@
     <MyUploadImage
       name="img"
       class="rounded-lg mb-8"
-      filename-prop-in-request="image"
-      filename-prop-in-response="fileLink"
+      filename-prop-in-request="file"
+      filename-prop-in-response="link"
       upload-route="admin/upload"
       :aspect-ratio="30 / 9"
     />
 
-    <MyInputNumber name="acc_id" label="id акции" />
+    <MyInputText name="link" label="Ссылка" />
+    <DropdownSelect
+      name="active"
+      label="Активен"
+      placeholder="Выберите"
+      :options="[
+        {
+          label: 'Не активен',
+          code: false
+        },
+        {
+          label: 'Активен',
+          code: true
+        }
+      ]"
+    >
+      <template #value="slotProps">
+        <template v-if="slotProps.value">
+          <Tag
+            v-if="slotProps.value.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.value.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.value.label"
+            severity="success"
+          />
+        </template>
+      </template>
+      <template #option="slotProps">
+        <Tag
+          v-if="slotProps.option.code === false"
+          icon="pi pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === true"
+          icon="pi pi-check-circle"
+          :value="slotProps.option.label"
+          severity="success"
+        />
+      </template>
+    </DropdownSelect>
 
     <Button class="w-full mt-12 flex justify-center p-4" type="submit"> Создать </Button>
   </form>
 </template>
 
 <script setup lang="ts">
-import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputText from '@/components/MyInputText.vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { useToast } from 'primevue/usetoast'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-
-const toast = useToast()
-const queryClient = useQueryClient()
+import { useCreateBanner } from './composables'
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
     img: yup.string().required().label('Изображение'),
-    acc_id: yup.number().required().label('id акции')
-  })
-})
-
-const { mutate } = useMutation({
-  mutationFn: (payload: any) => Promise.reject('Banner creation route not linked yet'),
-  onSuccess() {
-    toast.add({
-      severity: 'success',
-      life: 3000,
-      summary: 'Успешно',
-      detail: `Баннер создан`
-    })
-    queryClient.invalidateQueries(['banners'])
-  },
-  onError(error: any) {
-    toast.add({
-      severity: 'error',
-      life: 3000,
-      summary: 'Не удалось создать баннер',
-      detail: error
-    })
+    link: yup.string().required().label('Ссылка'),
+    active: yup.boolean().required().label('Активно')
+  }),
+  initialValues: {
+    active: true
   }
 })
+
+const { mutate } = useCreateBanner()
 
 const onSubmit = handleSubmit((vals) => {
   mutate(vals)

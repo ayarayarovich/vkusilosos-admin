@@ -10,7 +10,7 @@
         <MyInputNumber
           class="mb-4"
           name="acc_id"
-          label="id акции"
+          label="ID акции"
           :initial-value="schemaDefaults.acc_id"
         />
 
@@ -53,7 +53,7 @@ const schema = yup.object({
   src: yup.string().required().label('Баннер'),
   // TODO: add conditional validation. Only one of the bottom properties could be specified.
   // Also check about default values for fields.
-  acc_id: yup.number().label('id акции').default(-1),
+  acc_id: yup.number().label('ID акции').default(-1),
   link: yup.string().label('Ссылка на акцию')
 })
 

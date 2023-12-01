@@ -12,7 +12,6 @@
       @blur="handleBlur"
       @change="handleChange"
     >
-
       <template #option="slotProps">
         <slot name="option" v-bind="slotProps"></slot>
       </template>
@@ -20,7 +19,6 @@
       <template #value="slotProps">
         <slot name="value" v-bind="slotProps"></slot>
       </template>
-
     </Dropdown>
     <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>
   </div>
@@ -31,7 +29,7 @@ import { useField } from 'vee-validate'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
-  options: { code: string | number; label: string | number }[]
+  options: { code: any; label: any }[]
   placeholder?: string
   name: string
   label: string
@@ -45,7 +43,11 @@ const { setValue, errorMessage, handleBlur, handleChange, value } = useField(() 
 watch([selected], () => {
   setValue(selected.value?.code)
 })
-watch([value], () => {
-  selected.value = props.options.find((opt) => opt.code === value.value)
-})
+watch(
+  [value],
+  () => {
+    selected.value = props.options.find((opt) => opt.code === value.value)
+  },
+  { immediate: true }
+)
 </script>

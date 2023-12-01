@@ -1,10 +1,53 @@
 <template>
-  <form class="mt-8 w-full" @submit.prevent="onSubmit">
+  <form class="w-full" @submit.prevent="onSubmit">
     <div>
       <MyInputText name="name" label="Название" />
+      <DropdownSelect
+        name="active"
+        label="Активно"
+        :options="[
+          {
+            label: 'Не активна',
+            code: false
+          },
+          {
+            label: 'Активна',
+            code: true
+          }
+        ]"
+      >
+        <template #value="slotProps">
+          <Tag
+            v-if="slotProps.value.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.value.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.value.label"
+            severity="success"
+          />
+        </template>
+        <template #option="slotProps">
+          <Tag
+            v-if="slotProps.option.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.option.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.option.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.option.label"
+            severity="success"
+          />
+        </template>
+      </DropdownSelect>
     </div>
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="w-full flex items-center mt-4"
       type="submit"
       label="Создать"
       :loading="isLoading"
@@ -18,11 +61,16 @@ import MyInputText from '@/components/MyInputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useCreateCategory } from './composables'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    name: yup.string().required().label('Название')
-  })
+    name: yup.string().required().label('Название'),
+    active: yup.boolean().required().label('Активна')
+  }),
+  initialValues: {
+    active: false
+  }
 })
 
 const { mutate, isLoading } = useCreateCategory()

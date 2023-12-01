@@ -1,7 +1,7 @@
 <template>
   <form class="mt-8" @submit.prevent="onSubmit">
-    <MyInputNumber name="id" label="id" disabled :initial-value="review.id" />
-    <MyInputNumber name="user_id" label="id пользователя" :initial-value="review.user_id" />
+    <MyInputNumber name="id" label="ID" disabled :initial-value="review.id" />
+    <MyInputNumber name="user_id" label="ID пользователя" :initial-value="review.user_id" />
 
     <div class="flex items-center w-full">
       <span>Не отвечен</span>
@@ -38,8 +38,8 @@ const review = dialogRef.value.data.review as Review
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.number().required().label('id отзыва'),
-    user_id: yup.string().required().label('id пользователя'),
+    id: yup.number().required().label('ID отзыва'),
+    user_id: yup.string().required().label('ID пользователя'),
     status: yup.boolean().required().label('Статус')
   })
 })

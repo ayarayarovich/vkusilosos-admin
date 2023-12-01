@@ -1,6 +1,6 @@
 <template>
-  <form class="mt-8" @submit="onSubmit">
-    <MyInputNumber name="user_id" label="id пользователя" :initial-value="user.id" disabled />
+  <form @submit="onSubmit">
+    <MyInputNumber name="user_id" label="ID пользователя" disabled />
     <MyEditor name="title" label="Заголовок" class="mb-4" />
     <MyEditor name="text" label="Тело" class="mb-4" />
 
@@ -10,69 +10,48 @@
     <MyInputSwitch name="email" label="Электронная почта" />
     <MyInputSwitch name="phone" label="SMS" />
 
-
     <Button
       class="w-full flex items-center p-4 mt-8"
       type="submit"
       label="Отправить"
-      :loading="sendNotificationMutation.isLoading"
-      :disabled="sendNotificationMutation.isLoading"
+      :loading="isLoading"
+      :disabled="isLoading"
     />
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMutation } from '@tanstack/vue-query'
-import { reactive, inject } from 'vue'
-import { axiosPrivate } from '@/network'
-import { useToast } from 'primevue/usetoast'
 import type { User } from '@/interfaces'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import { useForm } from 'vee-validate'
 import yup from '@/yup'
 import MyEditor from '@/components/MyEditor.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
-
-const toast = useToast()
+import { useSendNotificationToUser } from '.'
+import { inject } from 'vue'
 
 const dialogRef = inject('dialogRef') as any
 const user = dialogRef.value.data.user as User
 
 const { handleSubmit, errors } = useForm({
-  validationSchema: (yup.object({
-    user_id: yup.number().required().label('id пользователя'),
-    title: yup.string().required().label('Заголовок'),
-    text: yup.string().required().label('Тело'),
-    push: yup.boolean().label('Пуш-уведомление'),
-    email: yup.boolean().label('Электронная почта'),
-    phone: yup.boolean().label('SMS')
-  }) as any).atLeastOneIsTrueOf(['push', 'email', 'phone'])
+  validationSchema: (
+    yup.object({
+      user_id: yup.number().required().label('ID пользователя'),
+      title: yup.string().required().label('Заголовок'),
+      text: yup.string().required().label('Тело'),
+      push: yup.boolean().label('Пуш-уведомление'),
+      email: yup.boolean().label('Электронная почта'),
+      phone: yup.boolean().label('SMS')
+    }) as any
+  ).atLeastOneIsTrueOf(['push', 'email', 'phone']),
+  initialValues: {
+    user_id: user.id
+  }
 })
 
-const sendNotificationMutation = reactive(
-  useMutation({
-    mutationFn: (payload: any) => axiosPrivate.post('admin/user/push', payload),
-    onSuccess() {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Отправлено уведомление пользователю ${user.name} (id: ${user.id})`
-      })
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось отправить уведомление',
-        detail: error
-      })
-    }
-  })
-)
+const { mutateAsync, isLoading } = useSendNotificationToUser()
 
 const onSubmit = handleSubmit((vals) => {
-  sendNotificationMutation.mutate(vals)
-  dialogRef.value.close()
+  mutateAsync(vals).then(dialogRef.value.close)
 })
 </script>

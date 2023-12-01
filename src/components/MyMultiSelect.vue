@@ -38,7 +38,7 @@ const props = defineProps<{
 const inputID = computed(() => `multiselect-${props.name}`)
 const selected = ref<typeof props.options>()
 
-const { setValue, errorMessage, handleBlur, handleChange, value } = useField(() => props.name)
+const { setValue, errorMessage, handleBlur, handleChange, value } = useField<(string | number)[]>(() => props.name)
 
 const initial = ref(true)
 
@@ -49,7 +49,8 @@ watch([selected], () => {
 })
 watch([value], () => {
   if (initial.value) {
-    selected.value = props.options.filter((opt) => opt.code === value.value)
+    selected.value = props.options.filter((opt) => !!value.value.find(opt.code as any))
+    console.log(selected.value)
     initial.value = false
   }
 })

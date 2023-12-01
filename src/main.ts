@@ -8,6 +8,7 @@ import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { ru } from 'yup-locales'
 import { setLocale as YupSetLocale } from 'yup'
+import { i18n as dateformatI18N } from "dateformat"
 import * as yup from 'yup'
 
 import PrimeVue from 'primevue/config'
@@ -204,6 +205,52 @@ app.use(PrimeVue, {
     }
   }
 })
+
+dateformatI18N.dayNames = [
+  "Вс",
+  "Пн",
+  "Вт",
+  "Ср",
+  "Чт",
+  "Пт",
+  "Сб",
+  "Воскресенье",
+  "Понедельник",
+  "Вторник",
+  "Среда",
+  "Четверг",
+  "Пятница",
+  "Суббота",
+];
+
+dateformatI18N.monthNames = [
+  "Янв",
+  "Фев",
+  "Мар",
+  "Апр",
+  "Май",
+  "Июн",
+  "Июл",
+  "Авг",
+  "Сен",
+  "Окт",
+  "Ноя",
+  "Дек",
+  "Январь",
+  "Февраль",
+  "Март",
+  "Апрель",
+  "Май",
+  "Июнь",
+  "Июль",
+  "Август",
+  "Сентябрь",
+  "Октябрь",
+  "Ноябрь",
+  "Декабрь",
+];
+
+dateformatI18N.timeNames = ["a", "p", "am", "pm", "A", "P", "AM", "PM"];
 
 app.use(ToastService)
 app.use(ConfirmationService)

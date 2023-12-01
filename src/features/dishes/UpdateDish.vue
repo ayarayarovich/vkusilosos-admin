@@ -3,7 +3,7 @@
     <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
-      <MyInputText label="IIKO id" name="iiko_id" />
+      <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
       <MyInputNumber label="Пищевая ценность" name="pich_cen" />
@@ -65,7 +65,7 @@
         :options="possibleCategories || []"
       />
 
-      <MyMultiSelect class="w-full" name="tags" label="Теги" :options="possibleTags || []" />
+      <!-- <MyMultiSelect class="w-full" name="tags" label="Теги" :options="possibleTags || []" /> -->
 
       <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full">
         <MyUploadImage
@@ -109,9 +109,9 @@
             :name="`vars[${idx}].rest_id`"
             :initial-value="field.value.id"
             disabled
-            label="id ресторана"
+            label="ID ресторана"
           />
-          <MyInputNumber class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO id" />
+          <MyInputNumber class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
           <MyInputNumber
             class="flex-1"
             :name="`vars[${idx}].price`"
@@ -167,7 +167,7 @@ const possibleCardColors = ref([
   { label: '#FEEDB1', code: 5 }
 ])
 
-const { data: dishData } = useDish(dish.id, (v) => v)
+const { data: dishData } = useDish(dish.id, (v) => (console.log(v), v))
 
 const { handleSubmit, errors } = useForm({
   validationSchema: yup.object({
@@ -183,15 +183,15 @@ const { handleSubmit, errors } = useForm({
     weight: yup.number().required().label('Вес'),
     size: yup.number().required().label('Количество'),
     description: yup.string().label('Описание'),
-    iiko_id: yup.string().required().label('IIKO id'),
+    iiko_id: yup.string().required().label('IIKO ID'),
     tags: yup.array().required().label('Теги'),
     active: yup.boolean().label('Активно'),
     can_deliver: yup.boolean().label('Можно доставить'),
     have: yup.boolean().label('В наличии'),
     vars: yup.array().of(
       yup.object({
-        rest_id: yup.number().required().label('id ресторана'),
-        iiko_id: yup.number().required().label('IIKO id блюда'),
+        rest_id: yup.number().required().label('ID ресторана'),
+        iiko_id: yup.number().required().label('IIKO ID блюда'),
         price: yup.number().required().label('Цена'),
         active: yup.boolean().label('Активно'),
         can_deliver: yup.boolean().label('Можно доставить'),
@@ -233,16 +233,16 @@ watch([selectedRestaurants], () => {
     replace(copy)
   }
 })
-watch([restaurantsData], () => {
-  selectedRestaurants.value = restaurantsData.value?.filter((vs) => {
-    for (let i = 0; i < dish.vars.length; ++i) {
-      if (dish.vars[i].rest_id == vs.id) {
-        return true
-      }
-    }
-    return false
-  })
-})
+// watch([restaurantsData], () => {
+//   selectedRestaurants.value = restaurantsData.value?.filter((vs) => {
+//     for (let i = 0; i < dish.vars.length; ++i) {
+//       if (dish.vars[i].rest_id == vs.id) {
+//         return true
+//       }
+//     }
+//     return false
+//   })
+// })
 
 const onSubmit = handleSubmit((vals) => {
   mutate(vals)

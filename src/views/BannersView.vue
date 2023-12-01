@@ -1,42 +1,28 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
 
-import { CreateBanner } from '@/features/banners'
+import { CreateBanner, useBanners } from '@/features/banners'
 import { useDialog } from 'primevue/usedialog'
+import { useDebounce } from '@vueuse/core'
+import dateFormat from 'dateformat'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedStory = ref<any>()
-const totalRecords = ref<number>()
+const search = ref('')
+const debouncedSearch = useDebounce(search, 500)
+const selectedBanner = ref<any>()
 
-const query = reactive(
-  useQuery<{
-    items: any
-    total: number
-  }>({
-    queryKey: ['categories', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/categories', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const { data, isFetching, isError, refetch } = useBanners(
+  {
+    limit,
+    offset,
+    search: debouncedSearch
+  },
+  (v) => v
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -56,7 +42,7 @@ const beginCreateBannerInteraction = () => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -90,13 +76,13 @@ onMounted(() => {
   <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
     <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Баннеры</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedStory = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selectedBanner = undefined" />
 
     <Toolbar>
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateBannerInteraction()" />
           </div>
 
@@ -124,10 +110,8 @@ onMounted(() => {
       </template>
     </Toolbar>
 
-    <strong class="mt-6 text-center text-red-500">Табличка пока левая</strong>
-
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -135,14 +119,14 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedStory"
+        v-model:selection="selectedBanner"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedStory"
+        v-model:contextMenuSelection="selectedBanner"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
@@ -150,16 +134,52 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
-        <Column field="name" header="Название" />
-        <Column field="count_dishes" header="Количество блюд" />
+        <Column field="img" header="Картинка">
+          <template #body="slotProps">
+            <img
+              :src="slotProps.data.img"
+              oner
+              alt=""
+              class="h-24 aspect-[30/9] object-cover drop-shadow-md rounded-md"
+            />
+          </template>
+        </Column>
+        <Column field="link" header="Ссылка">
+          <template #body="slotProps">
+            <a :href="slotProps.data.link" class="underline">{{ slotProps.data.link }}</a>
+          </template>
+        </Column>
+        <Column field="active" header="Статус">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.active === false"
+              icon="pi pi-lock"
+              value="Не активен"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.active === true"
+              icon="pi pi-check-circle"
+              value="Активен"
+              severity="success"
+            />
+          </template>
+        </Column>
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
 
-        <template #loading>
-          <ProgressSpinner class="h-8" />
-        </template>
         <template #empty>
           <div class="py-12 flex flex-col items-center gap-4">
             <img class="h-36" src="/empty.svg" alt="" />

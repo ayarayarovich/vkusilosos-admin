@@ -1,42 +1,33 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
-
-import type { Restaurant } from '@/interfaces'
-import { CreateRestaurant, DeleteRestaurant, UpdateRestaurant } from '@/features/restaurants'
+import {
+  CreateRestaurant,
+  DeleteRestaurant,
+  UpdateRestaurant,
+  useRestaurants,
+  type IRestaurant
+} from '@/features/restaurants'
 import { useDialog } from 'primevue/usedialog'
+import { useDebounce } from '@vueuse/core'
+import dateFormat from 'dateformat'
+
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedRestaurant = ref<Restaurant>()
-const totalRecords = ref<number>()
+const search = ref('')
+const debouncedSearch = useDebounce(search, 500)
+const selectedRestaurant = ref<IRestaurant>()
 
-const query = reactive(
-  useQuery<{
-    items: Restaurant[]
-    total: number
-  }>({
-    queryKey: ['rests', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/rests', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const { data, refetch, isFetching, isError } = useRestaurants(
+  {
+    limit,
+    offset,
+    search: debouncedSearch
+  },
+  (v) => v
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -53,7 +44,7 @@ const beginCreateRestaurantInteraction = () => {
     } as any
   })
 }
-const beginUpdateRestaurantInteraction = (restaurant: Restaurant) => {
+const beginUpdateRestaurantInteraction = (restaurant: IRestaurant) => {
   dialog.open(UpdateRestaurant, {
     props: {
       class: 'w-full max-w-4xl',
@@ -66,7 +57,7 @@ const beginUpdateRestaurantInteraction = (restaurant: Restaurant) => {
   })
 }
 
-const beginDeleteRestaurantInteraction = (restaurant: Restaurant) => {
+const beginDeleteRestaurantInteraction = (restaurant: IRestaurant) => {
   dialog.open(DeleteRestaurant, {
     props: {
       class: 'w-full max-w-xl',
@@ -80,7 +71,7 @@ const beginDeleteRestaurantInteraction = (restaurant: Restaurant) => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -130,14 +121,14 @@ onMounted(() => {
       <template #center>
         <div class="w-full flex">
           <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateRestaurantInteraction()" />
           </div>
 
           <div class="flex-1 flex justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" />
+              <InputText placeholder="Поиск" v-model="search" />
             </span>
           </div>
 
@@ -159,7 +150,7 @@ onMounted(() => {
     </Toolbar>
 
     <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -174,7 +165,7 @@ onMounted(() => {
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
@@ -182,12 +173,33 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
-        <Column field="address" header="Адрес" />
+        <Column field="adres" header="Адрес" />
+        <Column field="active" header="Статус">
+          <template #body="slotProps">
+            <Tag v-if="slotProps.data.active === true" icon="pi pi-check-circle" value="Активен" severity="success" />
+            <Tag v-else-if="slotProps.data.active === false" icon="pi pi-check-circle" value="Не активен" severity="danger" />
+          </template>
+        </Column>
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
+        <Column field="deleted_at" header="Удалено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.deleted_at) }}
+          </template>
+        </Column>
 
         <template #loading>
           <ProgressSpinner class="h-8" />

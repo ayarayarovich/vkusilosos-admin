@@ -7,81 +7,103 @@
 
     <h2 class="text-lg font-bold mb-4">Локация</h2>
     <div class="flex gap-4 mb-2">
-      <MyInputText name="address" label="Адрес" />
+      <MyInputText name="adres" label="Адрес" />
     </div>
     <div class="flex gap-4 mb-8">
-      <MyInputNumber name="lat" label="Широта" />
-      <MyInputNumber name="lon" label="Долгота" />
+      <MyInputNumber name="lat" label="Широта" :minFractionDigits="2" :maxFractionDigits="6" />
+      <MyInputNumber name="lng" label="Долгота" :minFractionDigits="2" :maxFractionDigits="6" />
     </div>
 
     <h2 class="text-lg font-bold mb-4">GeoJson</h2>
     <MyUploadFile
-      name="geojson"
-      uploadRoute="admin/geojson"
-      filenamePropInRequest="geojson"
-      filenamePropInResponse="geoJsonName"
+      class="mb-8"
+      name="geo"
+      uploadRoute="admin/upload"
+      filenamePropInRequest="file"
+      filenamePropInResponse="link"
     />
+
+    <DropdownSelect
+      name="active"
+      label="Активен"
+      placeholder="Выберите"
+      :options="[
+        {
+          label: 'Не активен',
+          code: false
+        },
+        {
+          label: 'Активен',
+          code: true
+        }
+      ]"
+    >
+      <template #value="slotProps">
+        <template v-if="slotProps.value">
+          <Tag
+            v-if="slotProps.value.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.value.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.value.label"
+            severity="success"
+          />
+        </template>
+      </template>
+      <template #option="slotProps">
+        <Tag
+          v-if="slotProps.option.code === false"
+          icon="pi pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === true"
+          icon="pi pi-check-circle"
+          :value="slotProps.option.label"
+          severity="success"
+        />
+      </template>
+    </DropdownSelect>
 
     <Button
       class="w-full flex items-center p-4 mt-8"
       type="submit"
       label="Создать"
-      :loading="createRestaurantMutation.isLoading"
-      :disabled="createRestaurantMutation.isLoading"
+      :loading="isLoading"
+      :disabled="isLoading"
     />
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { reactive } from 'vue'
-import { axiosPrivate } from '@/network'
-import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyUploadFile from '@/components/MyUploadFile.vue'
-
-const toast = useToast()
-const queryClient = useQueryClient()
+import DropdownSelect from '@/components/DropdownSelect.vue'
+import { useCreateRestaurant } from './composables'
 
 const schema = yup.object({
   name: yup.string().required().label('Название ресторана'),
-  address: yup.string().required().label('Адрес ресторана'),
+  adres: yup.string().required().label('Адрес ресторана'),
   lat: yup.number().required().label('Широта'),
-  lon: yup.number().required().label('Долгота'),
-  geojson: yup.string().required().label('GeoJson')
+  lng: yup.number().required().label('Долгота'),
+  geo: yup.string().required().label('GeoJson')
 })
 
 const { handleSubmit } = useForm({
   validationSchema: schema
 })
 
-const createRestaurantMutation = reactive(
-  useMutation({
-    mutationFn: async (payload: any) => axiosPrivate.post('admin/rest', payload),
-    onSuccess(data, variables) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Создан ресторан ${variables.name}`
-      })
-      queryClient.invalidateQueries(['rests'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось создать ресторан',
-        detail: error
-      })
-    }
-  })
-)
+const { mutate, isLoading } = useCreateRestaurant()
 
 const onSubmit = handleSubmit((v) => {
-  createRestaurantMutation.mutate(v)
+  mutate(v)
 })
 </script>

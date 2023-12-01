@@ -6,6 +6,7 @@ import { CreateTag, DeleteTag, useTags, type ITag } from '@/features/tags'
 import { useDialog } from 'primevue/usedialog'
 import { useDebounce } from '@vueuse/core'
 import UpdateTag from '@/features/tags/UpdateTag.vue'
+import dateFormat from 'dateformat'
 
 const rowsPerPage = ref(20)
 
@@ -13,14 +14,14 @@ const offset = ref(0)
 const limit = rowsPerPage
 const selectedTag = ref<ITag>()
 
-const searchTerm = ref('')
-const debouncedSearchTerm = useDebounce(searchTerm, 500)
+const search = ref('')
+const debouncedSearch = useDebounce(search, 500)
 
 const { data, refetch, isFetching, isError } = useTags(
   {
     limit,
     offset,
-    search: debouncedSearchTerm
+    search: debouncedSearch
   },
   (r) => r
 )
@@ -34,7 +35,7 @@ const dialog = useDialog()
 const beginCreateTagInteraction = () => {
   dialog.open(CreateTag, {
     props: {
-      class: 'w-full max-w-4xl',
+      class: 'w-full max-w-xl',
       modal: true,
       header: 'Новый тег'
     } as any
@@ -128,7 +129,7 @@ onMounted(() => {
           <div class="flex-1 flex justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" v-model="searchTerm" />
+              <InputText placeholder="Поиск" v-model="search" />
             </span>
           </div>
 
@@ -188,6 +189,22 @@ onMounted(() => {
           </template>
         </Column>
         <Column field="name" header="Название" />
+        <Column field="active" header="Статус">
+          <template #body="slotProps">
+            <Tag v-if="slotProps.data.active === true" icon="pi pi-check-circle" value="Активен" severity="success" />
+            <Tag v-else-if="slotProps.data.active === false" icon="pi pi-check-circle" value="Не активен" severity="danger" />
+          </template>
+        </Column>
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
         
         <template #loading>
           <ProgressSpinner class="h-8" />
@@ -196,23 +213,6 @@ onMounted(() => {
           <div class="py-12 flex flex-col items-center gap-4">
             <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
-          </div>
-        </template>
-
-        <template #expansion="slotProps">
-          <div class="p-3">
-            <h5>Список блюд для тега {{ slotProps.data.name }}</h5>
-            <DataTable :value="slotProps.data.dishes">
-              <Column field="id" header="ID"></Column>
-              <Column field="name" header="Название"></Column>
-
-              <template #empty>
-                <div class="py-4 flex flex-col items-center gap-4">
-                  <img class="h-16" src="/empty.svg" alt="" />
-                  <span>Нет данных</span>
-                </div>
-              </template>
-            </DataTable>
           </div>
         </template>
       </DataTable>

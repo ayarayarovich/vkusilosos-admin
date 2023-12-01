@@ -57,22 +57,22 @@ export interface UpdateDish extends CreateDish {
 
 export interface CreateRestaurant {
   name: string
-  address: string
+  adres: string
   lat: number
-  lon: number
-  geojson: string
+  lng: number
+  geo: string
 }
 
 export interface Restaurant {
   id: number
   name: string
-  address: string
+  adres: string
 }
 
 export interface UpdateRestaurant {
   name: string
-  address: string
+  adres: string
   lat: number
-  lon: number
-  geojson: string
+  lng: number
+  geo: string
 }

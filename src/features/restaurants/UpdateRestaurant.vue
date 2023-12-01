@@ -2,26 +2,75 @@
   <form class="p-2" @submit.prevent="onSubmit">
     <h2 class="text-lg font-bold mb-4">Общая информация</h2>
     <div class="flex gap-4 mb-8">
-      <MyInputNumber name="id" label="id" disabled />
+      <MyInputNumber name="id" label="ID" disabled />
       <MyInputText name="name" label="Название" />
     </div>
 
     <h2 class="text-lg font-bold mb-4">Локация</h2>
     <div class="flex gap-4 mb-2">
-      <MyInputText name="address" label="Адрес" />
+      <MyInputText name="adres" label="Адрес" />
     </div>
     <div class="flex gap-4 mb-8">
       <MyInputNumber name="lat" label="Широта" />
-      <MyInputNumber name="lon" label="Долгота" />
+      <MyInputNumber name="lng" label="Долгота" />
     </div>
 
     <h2 class="text-lg font-bold mb-4">GeoJson</h2>
     <MyUploadFile
-      name="geojson"
-      uploadRoute="admin/geojson"
-      filenamePropInRequest="geojson"
-      filenamePropInResponse="geoJsonName"
+      class="mb-8"
+      name="geo"
+      uploadRoute="admin/upload"
+      filenamePropInRequest="file"
+      filenamePropInResponse="link"
     />
+
+    <DropdownSelect
+      name="active"
+      label="Активен"
+      placeholder="Выберите"
+      :options="[
+        {
+          label: 'Не активен',
+          code: false
+        },
+        {
+          label: 'Активен',
+          code: true
+        }
+      ]"
+    >
+      <template #value="slotProps">
+        <template v-if="slotProps.value">
+          <Tag
+            v-if="slotProps.value.code === false"
+            icon="pi pi-ban"
+            :value="slotProps.value.label"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === true"
+            icon="pi pi-check-circle"
+            :value="slotProps.value.label"
+            severity="success"
+          />
+        </template>
+      </template>
+      <template #option="slotProps">
+        <Tag
+          v-if="slotProps.option.code === false"
+          icon="pi pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === true"
+          icon="pi pi-check-circle"
+          :value="slotProps.option.label"
+          severity="success"
+        />
+      </template>
+    </DropdownSelect>
+
 
     <Button
       class="w-full flex items-center p-4 mt-8"
@@ -35,7 +84,7 @@
 
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { reactive, inject } from 'vue'
+import { reactive, inject, computed } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 import { useForm } from 'vee-validate'
@@ -44,6 +93,7 @@ import type { Restaurant } from '@/interfaces'
 import MyUploadFile from '@/components/MyUploadFile.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
+import DropdownSelect from '@/components/DropdownSelect.vue'
 
 const dialogRef = inject('dialogRef') as any
 const restaurant = dialogRef.value.data.restaurant as Restaurant
@@ -89,14 +139,28 @@ const { data } = useQuery({
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    id: yup.string().required().label('id ресторана'),
+    id: yup.string().required().label('ID ресторана'),
     name: yup.string().required().label('Название ресторана'),
-    address: yup.string().required().label('Адрес ресторана'),
+    adres: yup.string().required().label('Адрес ресторана'),
     lat: yup.number().required().label('Широта'),
-    lon: yup.number().required().label('Долгота'),
-    geojson: yup.string().label('GeoJson')
+    lng: yup.number().required().label('Долгота'),
+    geo: yup.string().label('GeoJson'),
+    active: yup.boolean().required().label('Активен')
   }),
-  initialValues: data
+  initialValues: computed(() => {
+    if (data.value) {
+      return {
+        id: data.value.id,
+        name: data.value.name,
+        adres: data.value.adres,
+        lat: data.value.lat,
+        lng: data.value.lng,
+        geo: data.value.geo,
+        active: data.value.active
+      }
+    }
+    return {}
+  })
 })
 
 const onSubmit = handleSubmit((v) => {
