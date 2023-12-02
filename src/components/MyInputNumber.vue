@@ -7,7 +7,6 @@
       :name="props.name"
       :label="props.label"
       class="w-full"
-      size="small"
       :class="{
         'p-invalid': errorMessage
       }"
@@ -24,7 +23,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { computed, onMounted, toRefs, watch } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   label: string

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <label :for="inputID" class="block text-900 font-medium mb-2">{{ props.label }}</label>
-    <Editor id="inputID" v-model="value" @text-change="handleChange" editor-style="height: 10rem"  />
+    <Editor :id="inputID" v-model="value" editor-style="height: 10rem" />
 
     <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>
   </div>
@@ -11,6 +11,7 @@
 import { useField } from 'vee-validate'
 import { computed } from 'vue'
 import Editor from 'primevue/editor'
+import { v4 as uuidv4 } from 'uuid'
 
 const props = defineProps<{
   label: string
@@ -19,7 +20,7 @@ const props = defineProps<{
   initialValue?: string
 }>()
 
-const { errorMessage, handleChange, value } = useField<any>(
+const { errorMessage, value } = useField<any>(
   () => props.name,
   {},
   {
@@ -27,5 +28,5 @@ const { errorMessage, handleChange, value } = useField<any>(
   }
 )
 
-const inputID = computed(() => `input-text-${props.name}`)
+const inputID = computed(() => `${uuidv4()}-input-text-${props.name}`)
 </script>

@@ -8,6 +8,7 @@
       :input-id="inputID"
       :options="props.options"
       optionLabel="label"
+      :max-selected-labels="props.maxSelectedLabels"
       :placeholder="props.placeholder"
       @blur="handleBlur"
       @change="handleChange"
@@ -33,6 +34,7 @@ const props = defineProps<{
   placeholder?: string
   name: string
   label: string
+  maxSelectedLabels?: number
 }>()
 
 const inputID = computed(() => `multiselect-${props.name}`)
@@ -47,10 +49,17 @@ watch([selected], () => {
     setValue(selected.value.map((v) => v.code))
   }
 })
-watch([value], () => {
-  if (initial.value) {
-    selected.value = props.options.filter((opt) => !!value.value.find(opt.code as any))
-    console.log(selected.value)
+
+watch([value, () => props.options], () => {
+  if (value.value && initial.value && props.options.length > 0) {
+    selected.value = props.options.filter((opt) => {
+      for (let i = 0; i < value.value.length; ++i) {
+        if (value.value[i] == opt.code) {
+          return true
+        }
+      }
+      return false
+    })
     initial.value = false
   }
 })

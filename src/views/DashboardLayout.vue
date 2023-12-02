@@ -1,7 +1,7 @@
 <template>
-  <div class="h-screen flex border-0">
+  <div>
     <div
-      class="h-full shrink-0 overflow-y-auto scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-200"
+      class="h-screen fixed w-64 shrink-0 overflow-y-auto scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-200"
     >
       <div class="px-6 py-4 flex flex-col items-stretch text-black">
         <img :src="logoSrc" class="h-8 w-full object-contain object-center my-6" alt="" />
@@ -140,7 +140,7 @@
         </ul>
       </div>
     </div>
-    <div class="h-screen overflow-y-auto grow">
+    <div class="pl-64 w-full">
       <RouterView />
     </div>
   </div>
