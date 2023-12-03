@@ -25,14 +25,14 @@ import type { User } from '@/interfaces'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import { useForm } from 'vee-validate'
 import yup from '@/yup'
-import MyEditor from '@/components/MyEditor.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
-import { useSendNotificationToUser } from '.'
+import { useSendNotificationToUser } from './composables'
+import type { IUser } from './interfaces'
 import { inject } from 'vue'
 import MyInputText from '@/components/MyInputText.vue'
 
 const dialogRef = inject('dialogRef') as any
-const user = dialogRef.value.data.user as User
+const user = dialogRef.value.data.user as IUser
 
 const { handleSubmit, errors } = useForm({
   validationSchema: (
