@@ -1,8 +1,8 @@
 <template>
   <form @submit="onSubmit">
     <MyInputNumber name="user_id" label="ID пользователя" disabled />
-    <MyEditor name="title" label="Заголовок" class="mb-4" />
-    <MyEditor name="text" label="Тело" class="mb-4" />
+    <MyInputText name="title" label="Заголовок" class="mb-4" />
+    <MyInputText name="text" label="Тело" class="mb-4" />
 
     <h2 class="text-lg font-medium mb-1">Куда отправить?</h2>
     <small class="block p-error mb-3">{{ errors[''] || '&nbsp;' }}</small>
@@ -29,6 +29,7 @@ import MyEditor from '@/components/MyEditor.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
 import { useSendNotificationToUser } from '.'
 import { inject } from 'vue'
+import MyInputText from '@/components/MyInputText.vue'
 
 const dialogRef = inject('dialogRef') as any
 const user = dialogRef.value.data.user as User
