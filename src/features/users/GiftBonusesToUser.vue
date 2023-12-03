@@ -14,16 +14,16 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/interfaces'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 import { useGiftBonusesToUser } from './composables'
+import type { IUser } from './interfaces'
 import { inject } from 'vue'
 
 const dialogRef = inject('dialogRef') as any
-const user = dialogRef.value.data.user as User
+const user = dialogRef.value.data.user as IUser
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
