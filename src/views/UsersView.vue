@@ -200,34 +200,12 @@ onMounted(() => {
             <Tag v-else :value="slotProps.data.status" severity="info" />
           </template>
         </Column>
-        <Column field="summ" header="Сумма чеков">
-          <template #body="slotProps">
-            {{ slotProps.data.summ }} ₽
-          </template>
-        </Column>
-        <Column field="email" header="Email" />
         <Column field="bonuses" header="Бонусы" />
         <Column field="birthday" header="День рождения">
           <template #body="slotProps">
             {{ dateFormat(slotProps.data.birthday, 'dd.mm.yyyy') }}
           </template>
         </Column>
-        <Column field="choosed_adres" header="Адрес доставки" />
-        <Column field="choosed_rest" header="Ресторан" />
-        <Column field="get_pushes" header="Уведомления">
-          <template #body="slotProps">
-            <Tag v-if="slotProps.data.get_pushes === false" icon="pi pi-ban" value="Отключены" severity="danger"/>
-            <Tag v-else-if="slotProps.data.get_pushes === true" icon="pi pi-bell" value="Включены" severity="success"/>
-          </template>
-        </Column>
-        <Column field="last_point" header="Сумма последнего заказа">
-          <template #body="slotProps">
-            {{ slotProps.data.last_point }} ₽
-          </template>
-        </Column>
-        <Column field="point" header="point" />
-        <Column field="referal" header="Реферал" />
-        <Column field="share_id" header="Реферальный код" />
         <Column field="created_at" header="Создано">
           <template #body="slotProps">
             {{ dateFormat(slotProps.data.created_at) }}
