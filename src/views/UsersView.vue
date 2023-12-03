@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { DataTablePageEvent } from 'primevue/datatable'
+import type { DataTablePageEvent, DataTableRowDoubleClickEvent } from 'primevue/datatable'
 import { useDebounce } from '@vueuse/core'
 
 import dateFormat from 'dateformat'
-import { ChangeStatus, GiftBonusesToUser, SendNotification, useUsers, type IUser } from '@/features/users'
+import { ChangeStatus, GiftBonusesToUser, SendNotification, useUsers, type IUser, UserDetails } from '@/features/users'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -28,6 +28,10 @@ const { data, isFetching, isError, refetch } = useUsers(
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
   limit.value = e.rows
+}
+
+const onRowDoubleClick = (e: DataTableRowDoubleClickEvent) => {
+  beginShowUserDetailsInteraction(e.data)
 }
 
 const dialog = useDialog()
@@ -70,6 +74,19 @@ const beginSendNotificationInteraction = (user: IUser) => {
   })
 }
 
+const beginShowUserDetailsInteraction = (user: IUser) => {
+  dialog.open(UserDetails, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Подробности'
+    } as any,
+    data: {
+      user
+    }
+  })
+}
+
 const refresh = () => {
   refetch()
 }
@@ -98,6 +115,11 @@ const menuModel = ref([
     label: 'Отправить уведомление',
     icon: 'pi pi-fw pi-bell',
     command: () => beginSendNotificationInteraction(selectedUser.value!)
+  },
+  {
+    label: 'Подробнее',
+    icon: 'pi pi-fw pi-search',
+    command: () => beginShowUserDetailsInteraction(selectedUser.value!)
   }
 ])
 
@@ -169,6 +191,7 @@ onMounted(() => {
         contextMenu
         v-model:contextMenuSelection="selectedUser"
         @rowContextmenu="onRowContextMenu"
+        @row-dblclick="onRowDoubleClick"
         :meta-key-selection="false"
         :value="data?.users"
         lazy
