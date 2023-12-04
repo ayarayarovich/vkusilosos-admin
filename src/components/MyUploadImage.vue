@@ -199,6 +199,7 @@ const save = () => {
               summary: 'Не удалось загрузить файл',
               detail: error
             })
+            isEditingImage.value = true
           })
           .finally(() => {
             isUploading.value = false

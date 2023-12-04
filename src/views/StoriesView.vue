@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
+import dateFormat from 'dateformat'
 
-import { CreateStory } from '@/features/stories'
+import { CreateStory, useStories } from '@/features/stories'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -12,31 +11,18 @@ const rowsPerPage = ref(20)
 const offset = ref(0)
 const limit = rowsPerPage
 const selectedStory = ref<any>()
-const totalRecords = ref<number>()
 
-const query = reactive(
-  useQuery<{
-    items: any
-    total: number
-  }>({
-    queryKey: ['categories', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/categories', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
-)
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
+const { data, isFetching, isError, refetch } = useStories(
+  {
+    limit,
+    offset,
+    search: ''
+  },
+  (v) => {
+    console.log(v)
+    return v
   }
-})
+)
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -56,7 +42,7 @@ const beginCreateStoryInteraction = () => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const cm = ref()
@@ -87,47 +73,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
-    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Истории</h1>
+  <main class="flex h-screen flex-col items-stretch px-4" ref="root">
+    <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Истории</h1>
 
     <ContextMenu ref="cm" :model="menuModel" @hide="selectedStory = undefined" />
 
     <Toolbar>
       <template #center>
-        <div class="w-full flex">
-          <div class="flex-1 flex justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+        <div class="flex w-full">
+          <div class="flex flex-1 justify-start gap-2">
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateStoryInteraction()" />
           </div>
 
-          <div class="flex-1 flex justify-center">
+          <div class="flex flex-1 justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" />
+              <InputText disabled placeholder="Поиск" />
             </span>
           </div>
 
-          <div class="flex-1 flex justify-end gap-2">
-            <!-- <Button
-              icon="pi pi-pencil"
-              :disabled="!selectedStory"
-              @click="beginUpdateCategoryInteraction(selectedStory!)"
-            />
-            <Button
-              :disabled="!selectedStory"
-              icon="pi pi-times"
-              severity="danger"
-              @click="beginDeleteCategoryInteraction(selectedStory!)"
-            /> -->
+          <div class="flex flex-1 justify-end gap-2">
+            
           </div>
         </div>
       </template>
     </Toolbar>
 
-    <strong class="mt-6 text-center text-red-500">Табличка пока левая</strong>
-
-    <div class="flex-1 min-h-0 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+    <div class="min-h-0 flex-1 py-6">
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -141,8 +115,8 @@ onMounted(() => {
         v-model:contextMenuSelection="selectedStory"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
-        class="border rounded-lg h-full overflow-hidden"
-        :value="query.data?.items"
+        class="h-full overflow-hidden rounded-lg border"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
@@ -150,18 +124,57 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
-        <Column field="name" header="Название" />
-        <Column field="count_dishes" header="Количество блюд" />
+        <Column field="preview" header="Превью">
+          <template #body="slotProps">
+            <img
+              :src="slotProps.data.img"
+              oner
+              alt=""
+              class="h-36 aspect-[9/16] object-cover drop-shadow-md rounded-md"
+            />
+          </template>
+        </Column>
+        <Column field="active" header="Статус">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.active === false"
+              icon="pi pi-lock"
+              value="Не активна"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.active === true"
+              icon="pi pi-check-circle"
+              value="Активна"
+              severity="success"
+            />
+          </template>
+        </Column>
+        <Column field="created_at" header="Создано">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.created_at) }}
+          </template>
+        </Column>
+        <Column field="updated_at" header="Обновлено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.updated_at) }}
+          </template>
+        </Column>
+        <Column field="deleted_at" header="Удалено">
+          <template #body="slotProps">
+            {{ dateFormat(slotProps.data.deleted_at) }}
+          </template>
+        </Column>
 
         <template #loading>
           <ProgressSpinner class="h-8" />
         </template>
         <template #empty>
-          <div class="py-12 flex flex-col items-center gap-4">
+          <div class="flex flex-col items-center gap-4 py-12">
             <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>
