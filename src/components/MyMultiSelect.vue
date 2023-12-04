@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="inputID" class="block text-900 font-medium mb-2">{{ props.label }}</label>
+    <label :for="inputID" class="text-900 mb-2 block font-medium">{{ props.label }}</label>
     <MultiSelect
       class="w-full"
       :class="{ 'p-invalid': errorMessage }"
@@ -40,9 +40,9 @@ const props = defineProps<{
 const inputID = computed(() => `multiselect-${props.name}`)
 const selected = ref<typeof props.options>()
 
-const { setValue, errorMessage, handleBlur, handleChange, value } = useField<(string | number)[]>(() => props.name)
-
-const initial = ref(true)
+const { setValue, errorMessage, handleBlur, handleChange, value } = useField<(string | number)[]>(
+  () => props.name
+)
 
 watch([selected], () => {
   if (selected.value) {
@@ -50,17 +50,15 @@ watch([selected], () => {
   }
 })
 
-watch([value, () => props.options], () => {
-  if (value.value && initial.value && props.options.length > 0) {
-    selected.value = props.options.filter((opt) => {
-      for (let i = 0; i < value.value.length; ++i) {
-        if (value.value[i] == opt.code) {
-          return true
-        }
-      }
-      return false
-    })
-    initial.value = false
-  }
-})
+const initial = ref(true)
+watch(
+  [value, () => props.options],
+  () => {
+    if (value.value && initial.value && props.options.length > 0) {
+      selected.value = props.options.filter((opt) => value.value.some((v) => v === opt.code))
+      initial.value = false
+    }
+  },
+  { immediate: true }
+)
 </script>
