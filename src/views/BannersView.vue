@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 
-import { CreateBanner, useBanners } from '@/features/banners'
+import { CreateBanner, useBanners, DeleteBanner, type IBanner } from '@/features/banners'
 import { useDialog } from 'primevue/usedialog'
 import { useDebounce } from '@vueuse/core'
 import dateFormat from 'dateformat'
@@ -37,7 +37,20 @@ const beginCreateBannerInteraction = () => {
       class: 'max-w-4xl w-full',
       modal: true,
       header: 'Новый баннер'
-    } as any
+    } as any,
+  })
+}
+
+const beginDeleteBannerInteraction = (banner: IBanner) => {
+  dialog.open(DeleteBanner, {
+    props: {
+      class: 'max-w-xl w-full',
+      modal: true,
+      header: 'Удалить баннер'
+    } as any,
+    data: {
+      banner
+    }
   })
 }
 
@@ -59,6 +72,11 @@ const menuModel = ref([
     label: 'Создать',
     icon: 'pi pi-fw pi-plus',
     command: () => beginCreateBannerInteraction()
+  },
+  {
+    label: 'Удалить',
+    icon: 'pi pi-fw pi-times',
+    command: () => beginDeleteBannerInteraction(selectedBanner.value!)
   }
 ])
 
@@ -94,17 +112,12 @@ onMounted(() => {
           </div>
 
           <div class="flex-1 flex justify-end gap-2">
-            <!-- <Button
-              icon="pi pi-pencil"
-              :disabled="!selectedStory"
-              @click="beginUpdateCategoryInteraction(selectedStory!)"
-            />
             <Button
-              :disabled="!selectedStory"
+              :disabled="!selectedBanner"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteCategoryInteraction(selectedStory!)"
-            /> -->
+              @click="beginDeleteBannerInteraction(selectedBanner!)"
+            />
           </div>
         </div>
       </template>

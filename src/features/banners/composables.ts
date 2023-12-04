@@ -63,3 +63,33 @@ export const useCreateBanner = () => {
     }
   })
 }
+
+export const useDeleteBanner = () => {
+  const toast = useToast()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (vars: any) => axiosPrivate.delete('admin/banner', {
+      params: {
+        id: vars.id
+      }
+    }),
+    onSuccess(_, vars) {
+      toast.add({
+        severity: 'success',
+        life: 3000,
+        summary: 'Успешно',
+        detail: `Удален баннер (id: ${vars.id})`
+      })
+      queryClient.invalidateQueries(['banners'])
+    },
+    onError(error: any) {
+      toast.add({
+        severity: 'error',
+        life: 3000,
+        summary: 'Не удалось удалить баннер',
+        detail: error
+      })
+    }
+  })
+}
