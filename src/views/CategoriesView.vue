@@ -176,6 +176,22 @@ onMounted(() => {
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
         <Column field="name" header="Название" />
+        <Column field="addable" header="Тип">
+          <template #body="slotProps">
+            <template v-if="slotProps.data.addable">
+              <Tag
+                v-if="slotProps.data.addable === false"
+                value="Обычная"
+                severity="warning"
+              />
+              <Tag
+                v-else-if="slotProps.data.addable === true"
+                value="Добавки"
+                severity="primary"
+              />
+            </template>
+          </template>
+        </Column>
         <Column fiend="active" header="Активна">
           <template #body="slotProps">
             <Tag

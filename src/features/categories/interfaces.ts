@@ -8,7 +8,8 @@ export interface ICategory {
   updated_at: string,
   deleted_at: string | null,
   name: string,
-  active: boolean
+  active: boolean,
+  addable: boolean
 }
 
 export interface IUpdateCategory {
