@@ -91,18 +91,26 @@ export const useGiftBonusesToUser = () => {
   })
 }
 
-export const useSendNotificationToUser = () => {
+export const useSendNotification = () => {
   const toast = useToast()
-  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.post('admin/user/push', vars),
+    mutationFn: (vars: any) => axiosPrivate.post('admin/user/push', {
+      user_id: -1,
+      ...vars
+    }),
     onSuccess(_, vars) {
+      let detail = ''
+      if (vars.user_id)
+        detail = `Отправлено уведомление пользователю с ID: ${vars.user_id})`
+      else
+        detail = 'Уведомление отправлено всем пользователям'
+
       toast.add({
         severity: 'success',
         life: 3000,
         summary: 'Успешно',
-        detail: `Отправлено уведомление пользователю с ID: ${vars.user_id})`
+        detail
       })
     },
     onError(error: any) {

@@ -1,6 +1,6 @@
 <template>
   <form @submit="onSubmitDocuments">
-    <h1 class="text-xl font-bold mb-6 mt-8">Документы</h1>
+    <h1 class="text-xl font-bold mb-6">Документы</h1>
     <MyEditor
       class="mb-4"
       label="Политика конфиденциальности в отношении обработки персональных данных"
@@ -9,7 +9,7 @@
     <MyEditor class="mb-4" label="Публичная оферта" name="ofert" />
     <MyEditor label="Пользовательское соглашение" name="users" />
 
-    <Button label="Сохранить документы" class="w-full my-4" type="submit" />
+    <Button label="Сохранить документы" class="w-full mt-4" type="submit" />
   </form>
 </template>
 

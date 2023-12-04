@@ -21,12 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/interfaces'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import { useForm } from 'vee-validate'
 import yup from '@/yup'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
-import { useSendNotificationToUser } from './composables'
+import { useSendNotification } from './composables'
 import type { IUser } from './interfaces'
 import { inject } from 'vue'
 import MyInputText from '@/components/MyInputText.vue'
@@ -50,7 +49,7 @@ const { handleSubmit, errors } = useForm({
   }
 })
 
-const { mutateAsync, isLoading } = useSendNotificationToUser()
+const { mutateAsync, isLoading } = useSendNotification()
 
 const onSubmit = handleSubmit((vals) => {
   mutateAsync(vals).then(dialogRef.value.close)

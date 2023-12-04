@@ -1,6 +1,6 @@
 <template>
   <form @submit="onSubmitCommonSettings">
-    <h1 class="text-xl font-bold mb-6 mt-8">Общие настройки</h1>
+    <h1 class="text-xl font-bold mb-6">Общие настройки</h1>
     <div class="flex gap-8">
       <div class="flex-1">
         <MyInputNumber
@@ -28,7 +28,7 @@
       :max-selected-labels="3"
     />
 
-    <Button label="Обновить настройки" class="w-full my-4" type="submit" />
+    <Button label="Обновить настройки" class="w-full mt-4" type="submit" />
   </form>
 </template>
 
