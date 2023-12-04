@@ -5,7 +5,7 @@ import 'primevue/resources/themes/lara-light-indigo/theme.css'
 import 'primeicons/primeicons.css'
 
 import { createApp } from 'vue'
-import { VueQueryPlugin } from '@tanstack/vue-query'
+import { VueQueryPlugin, type VueQueryPluginOptions } from '@tanstack/vue-query'
 import { ru } from 'yup-locales'
 import { setLocale as YupSetLocale } from 'yup'
 import { i18n as dateformatI18N } from "dateformat"
@@ -257,7 +257,15 @@ app.use(ConfirmationService)
 app.use(DialogService)
 app.use(pinia)
 app.use(router)
-app.use(VueQueryPlugin)
+app.use(VueQueryPlugin, {
+  queryClientConfig: {
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000
+      }
+    }
+  }
+} as VueQueryPluginOptions)
 
 app.component('InputNumber', InputNumber)
 app.component('InputMask', InputMask)
