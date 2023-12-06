@@ -1,35 +1,23 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
 
-import type { Review } from '@/interfaces'
-import { RespondToReview } from '@/features/reviews'
+import { RespondToReview, type IReview, useReviews } from '@/features/reviews'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
-const selected = ref<Review>()
+const selectedReview = ref<IReview>()
 const offset = ref(0)
 const limit = rowsPerPage
 
-const query = reactive(
-  useQuery<{
-    items: Review[]
-    total: number
-  }>({
-    queryKey: ['feedbacks', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/reviews', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const { data, isError, isFetching, refetch } = useReviews(
+  {
+    limit,
+    offset,
+    search: ''
+  },
+  (v) => v
 )
 
 const onPage = (e: DataTablePageEvent) => {
@@ -38,7 +26,7 @@ const onPage = (e: DataTablePageEvent) => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
 
 const dialog = useDialog()
@@ -55,12 +43,12 @@ const menuModel = ref([
   },
   {
     label: 'Ответить',
-    icon: 'pi pi-fw pi-pencil',
-    command: () => beginRespondToReviewInteraction(selected.value!)
+    icon: 'pi pi-fw pi-check',
+    command: () => beginRespondToReviewInteraction(selectedReview.value!)
   }
 ])
 
-const beginRespondToReviewInteraction = (review: Review) => {
+const beginRespondToReviewInteraction = (review: IReview) => {
   dialog.open(RespondToReview, {
     props: {
       class: 'w-full max-w-xl',
@@ -87,18 +75,13 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Отзывы</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selectedReview = undefined" />
 
     <Toolbar>
       <template #center>
         <div class="flex w-full">
           <div class="flex flex-1 justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
-            <Button
-              icon="pi pi-pencil"
-              :disabled="!selected"
-              @click="beginRespondToReviewInteraction(selected!)"
-            />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
           </div>
 
           <div class="flex flex-1 justify-center">
@@ -108,13 +91,19 @@ onMounted(() => {
             </span>
           </div>
 
-          <div class="flex flex-1 justify-end gap-2"></div>
+          <div class="flex flex-1 justify-end gap-2">
+            <Button
+              icon="pi pi-check"
+              :disabled="!selectedReview"
+              @click="beginRespondToReviewInteraction(selectedReview!)"
+            />
+          </div>
         </div>
       </template>
     </Toolbar>
 
     <div class="min-h-0 flex-1 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -122,14 +111,14 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selected"
+        v-model:selection="selectedReview"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selected"
+        v-model:contextMenuSelection="selectedReview"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
@@ -137,22 +126,28 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="query.data?.total"
+        :totalRecords="data?.total"
       >
         <Column expander class="w-12"></Column>
         <Column field="id" header="ID"></Column>
+        <Column field="user_id" header="ID пользователя"></Column>
         <Column field="text" header="Текст"> </Column>
-        <Column field="status" header="Статус"> </Column>
-
-        <template #expansion="slotProps">
-          <div class="p-3">
-            <h5>Пользователь {{ slotProps.data.user.name }}</h5>
-            <DataTable :value="[slotProps.data.user]">
-              <Column field="id" header="ID"></Column>
-              <Column field="name" header="Имя"></Column>
-            </DataTable>
-          </div>
-        </template>
+        <Column field="status" header="Статус">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.status === 1"
+              icon="pi pi-check-circle"
+              value="Отвечен"
+              severity="success"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 0"
+              icon="pi pi-times"
+              value="Не отвечен"
+              severity="danger"
+            />
+          </template>
+        </Column>
 
         <template #empty>
           <div class="flex flex-col items-center gap-4 py-12">

@@ -3,7 +3,7 @@ import LoginView from '@/views/LoginView.vue'
 import DashboardLayout from '@/views/DashboardLayout.vue'
 
 import UsersView from '@/views/UsersView.vue'
-import FeedbackView from '@/views/FeedbackView.vue'
+import ReviewsView from '@/views/ReviewsView.vue'
 import DishesView from '@/views/DishesView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CategoriesView from '@/views/CategoriesView.vue'
@@ -40,9 +40,9 @@ const router = createRouter({
           component: UsersView
         },
         {
-          path: 'feedback',
-          name: 'feedback',
-          component: FeedbackView
+          path: 'reviews',
+          name: 'reviews',
+          component: ReviewsView
         },
         {
           path: 'dishes',

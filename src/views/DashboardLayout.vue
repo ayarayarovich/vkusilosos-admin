@@ -40,7 +40,7 @@
             >
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'feedback' }"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'reviews' }"
               ><span
                 class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
