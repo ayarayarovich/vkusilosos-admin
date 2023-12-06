@@ -157,7 +157,7 @@ onMounted(() => {
               :src="slotProps.data.img"
               oner
               alt=""
-              class="h-24 aspect-[30/9] object-cover drop-shadow-md rounded-md"
+              class="w-[20rem] min-w-[20rem] aspect-[30/9] object-cover drop-shadow-md rounded-md"
             />
           </template>
         </Column>

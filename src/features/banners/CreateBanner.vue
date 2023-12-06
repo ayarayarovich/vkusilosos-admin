@@ -70,6 +70,7 @@ import * as yup from 'yup'
 import { useCreateBanner } from './composables'
 
 const { handleSubmit } = useForm({
+  // TODO: поправить названия полей
   validationSchema: yup.object({
     img: yup.string().required().label('Изображение'),
     link: yup.string().required().label('Ссылка'),

@@ -3,14 +3,14 @@ import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import dateFormat from 'dateformat'
 
-import { CreateStory, useStories } from '@/features/stories'
+import { CreateStory, useStories, type IStory, DeleteStory } from '@/features/stories'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedStory = ref<any>()
+const selectedStory = ref<IStory>()
 
 const { data, isFetching, isError, refetch } = useStories(
   {
@@ -41,6 +41,19 @@ const beginCreateStoryInteraction = () => {
   })
 }
 
+const beginDeleteStoryInteraction = (story: IStory) => {
+  dialog.open(DeleteStory, {
+    props: {
+      class: 'max-w-xl w-full',
+      modal: true,
+      header: 'Удалить историю'
+    } as any,
+    data: {
+      story
+    }
+  })
+}
+
 const refresh = () => {
   refetch()
 }
@@ -59,6 +72,11 @@ const menuModel = ref([
     label: 'Создать',
     icon: 'pi pi-fw pi-plus',
     command: () => beginCreateStoryInteraction()
+  },
+  {
+    label: 'Удалить',
+    icon: 'pi pi-fw pi-times',
+    command: () => beginDeleteStoryInteraction(selectedStory.value!)
   }
 ])
 
@@ -94,7 +112,12 @@ onMounted(() => {
           </div>
 
           <div class="flex flex-1 justify-end gap-2">
-            
+            <Button
+              icon="pi pi-times"
+              severity="danger"
+              :disabled="!selectedStory"
+              @click="beginDeleteStoryInteraction(selectedStory!)"
+            />
           </div>
         </div>
       </template>
@@ -131,10 +154,10 @@ onMounted(() => {
         <Column field="preview" header="Превью">
           <template #body="slotProps">
             <img
-              :src="slotProps.data.img"
+              :src="slotProps.data.preview"
               oner
               alt=""
-              class="h-36 aspect-[9/16] object-cover drop-shadow-md rounded-md"
+              class="aspect-[9/16] w-[5rem] min-w-[5rem] rounded-md object-cover drop-shadow-md"
             />
           </template>
         </Column>

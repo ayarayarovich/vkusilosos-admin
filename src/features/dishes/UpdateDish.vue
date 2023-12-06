@@ -1,12 +1,13 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
-    <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
+    <div class="mb-4 grid grid-cols-3 items-center justify-items-center gap-4">
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
       <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
-      <MyInputNumber label="Пищевая ценность" name="pich_cen" />
+      <MyInputNumber label="Пищевая ценность" name="pich_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
+      <MyInputNumber label="Энергетическая ценность" name="energ_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
       <MyInputNumber label="Белки" name="belki" />
       <MyInputNumber label="Жиры" name="ziri" />
       <MyInputNumber label="Углеводы" name="uglevodi" />
@@ -21,7 +22,7 @@
         <template #option="slotProps">
           <div class="flex items-center gap-4">
             <div
-              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              class="aspect-square h-6 rounded-md border-2 border-gray-500"
               :style="{ backgroundColor: slotProps.option.label }"
             ></div>
             <span>{{ slotProps.option.label }}</span>
@@ -30,7 +31,7 @@
         <template #value="slotProps">
           <div v-if="slotProps.value" class="flex items-center gap-4">
             <div
-              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              class="aspect-square h-6 rounded-md border-2 border-gray-500"
               :style="{ backgroundColor: slotProps.value.label }"
             ></div>
             <span>{{ slotProps.value.label }}</span>
@@ -65,9 +66,9 @@
         :options="possibleCategories || []"
       />
 
-      <!-- <MyMultiSelect class="w-full" name="tags" label="Теги" :options="possibleTags || []" /> -->
+      <MyMultiSelect class="w-full" name="tags" placeholder="Выберите" label="Теги" :options="possibleTags || []" />
 
-      <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full">
+      <div class="col-span-1 col-start-1 row-span-2 row-start-1 w-full">
         <MyUploadImage
           class="rounded-lg"
           name="img"
@@ -79,26 +80,27 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-center gap-12 mb-8 flex-wrap">
+    <div class="mb-8 flex flex-wrap items-center justify-center gap-12">
       <MyInputSwitch label="В наличии" :name="`have`" />
       <MyInputSwitch label="Можно доставить" :name="`can_deliver`" />
       <MyInputSwitch label="Активно" :name="`active`" />
     </div>
 
-    <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
+    <h2 class="mb-6 text-lg font-bold">По ресторанам</h2>
     <MultiSelect
       class="mb-8 w-full"
       display="chip"
-      v-model="selectedRestaurants"
+      v-model="restaurantsFieldArray"
       :options="restaurantsData || []"
       optionLabel="name"
+      data-key="rest_id"
       placeholder="Выберите рестораны"
     />
     <div class="mb-8">
       <fieldset
         v-for="(field, idx) in fields"
         :key="field.value.id"
-        class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
+        class="relative mb-4 rounded-lg border-2 border-gray-200 p-4"
       >
         <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
           "{{ field.value.name }}" - {{ field.value.adres }}
@@ -120,7 +122,7 @@
             currency="RUB"
           />
         </div>
-        <div class="flex items-center justify-center gap-12 flex-wrap">
+        <div class="flex flex-wrap items-center justify-center gap-12">
           <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
           <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
           <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
@@ -129,9 +131,9 @@
     </div>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
-      label="Создать"
+      label="Сохранить"
       :loading="isLoading"
       :disabled="isLoading"
     />
@@ -150,7 +152,7 @@ import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
 
 import { useCategories } from '@/features/categories'
-import { useCreateDish, useDish } from './composables'
+import { useUpdateDish, useDish } from './composables'
 import { useRestaurants, type IRestaurant } from '@/features/restaurants'
 import { useTags } from '@/features/tags'
 import MyMultiSelect from '@/components/MyMultiSelect.vue'
@@ -167,9 +169,15 @@ const possibleCardColors = ref([
   { label: '#FEEDB1', code: 5 }
 ])
 
-const { data: dishData } = useDish(dish.id, (v) => (console.log(v), v))
+const { data: dishData } = useDish(dish.id, (v) => {
+  if (v.tags) {
+    v.tags = v.tags.map((tag) => tag.id)
+  }
+  console.log('dishData', v)
+  return v
+})
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: yup.object({
     name: yup.string().required().label('Название'),
     img: yup.string().required().label('Изображение'),
@@ -178,6 +186,7 @@ const { handleSubmit, errors } = useForm({
     color: yup.string().required().label('Цвет карточки'),
     belki: yup.number().required().label('Количество белков'),
     pich_cen: yup.number().required().label('Пищевая ценность'),
+    energ_cen: yup.number().required().label('Энергетическая ценность'),
     uglevodi: yup.number().required().label('Количество углеводов'),
     ziri: yup.number().required().label('Количество жиров'),
     weight: yup.number().required().label('Вес'),
@@ -204,7 +213,7 @@ const { handleSubmit, errors } = useForm({
 
 const { replace, fields } = useFieldArray<any>('vars')
 
-const { mutate, isLoading } = useCreateDish()
+const { mutate, isLoading } = useUpdateDish()
 
 const { data: possibleCategories } = useCategories({ offset: 0, limit: 9999999, search: '' }, (r) =>
   r.list.map((v) => ({ label: v.name, code: v.id }))
@@ -215,7 +224,13 @@ const { data: restaurantsData } = useRestaurants(
     limit: 99999999,
     search: ''
   },
-  (r) => r.list
+  (resp) => {
+    return resp.list.map(r => ({
+      rest_id: r.id,
+      adres: r.adres,
+      name: r.name,
+    }))
+  }
 )
 const { data: possibleTags } = useTags(
   {
@@ -226,23 +241,51 @@ const { data: possibleTags } = useTags(
   (r) => r.list.map((v) => ({ label: v.name, code: v.id }))
 )
 
-const selectedRestaurants = ref<IRestaurant[]>()
-watch([selectedRestaurants], () => {
-  if (selectedRestaurants.value) {
-    const copy = selectedRestaurants.value.map((item) => ({ ...item }))
+const restaurantsFieldArray = ref<
+  {
+    rest_id: number
+    iiko_id: number
+    price: number
+    active: boolean
+    can_deliver: boolean
+    have: boolean,
+    name: string,
+    adres: string
+  }[]
+>()
+watch([restaurantsFieldArray], () => {
+  if (restaurantsFieldArray.value) {
+    console.log('RestaurantsFieldArray', restaurantsFieldArray.value)
+    const copy = restaurantsFieldArray.value.map(i => ({...i}))
     replace(copy)
   }
 })
-// watch([restaurantsData], () => {
-//   selectedRestaurants.value = restaurantsData.value?.filter((vs) => {
-//     for (let i = 0; i < dish.vars.length; ++i) {
-//       if (dish.vars[i].rest_id == vs.id) {
-//         return true
-//       }
-//     }
-//     return false
-//   })
-// })
+watch([restaurantsData, dishData], () => {
+  if (restaurantsData.value && dishData.value) {
+    const arr: typeof restaurantsFieldArray.value = []
+    for (const restaurant of restaurantsData.value) {
+      if (dishData.value.vars) {
+        for (const vr of dishData.value.vars) {
+          if (vr.rest_id === restaurant.rest_id) {
+            arr.push({
+              active: vr.active,
+              can_deliver: vr.can_deliver,
+              have: vr.have,
+              iiko_id: vr.iiko_id,
+              price: vr.price,
+              rest_id: vr.rest_id,
+              name: restaurant.name,
+              adres: restaurant.adres
+            })
+          }
+        }
+      }
+    }
+    restaurantsFieldArray.value = arr
+  }
+}, {
+  immediate: true
+})
 
 const onSubmit = handleSubmit((vals) => {
   mutate(vals)

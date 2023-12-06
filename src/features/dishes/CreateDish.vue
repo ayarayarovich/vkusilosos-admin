@@ -6,7 +6,8 @@
       <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
-      <MyInputNumber label="Пищевая ценность" name="pich_cen" />
+      <MyInputNumber label="Пищевая ценность" name="pich_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
+      <MyInputNumber label="Энергетическая ценность" name="energ_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
       <MyInputNumber label="Белки" name="belki" />
       <MyInputNumber label="Жиры" name="ziri" />
       <MyInputNumber label="Углеводы" name="uglevodi" />
@@ -65,9 +66,9 @@
         :options="possibleCategories || []"
       />
 
-      <MyMultiSelect class="w-full" name="tags" label="Теги" :options="possibleTags || []" />
+      <MyMultiSelect class="w-full" name="tags" placeholder="Выберите" label="Теги" :options="possibleTags || []" />
 
-      <div class="col-start-1 col-span-1 row-start-1 row-span-3 w-full">
+      <div class="col-start-1 col-span-1 row-start-1 row-span-2 w-full">
         <MyUploadImage
           class="rounded-lg"
           name="img"
@@ -172,6 +173,7 @@ const { handleSubmit } = useForm({
     color: yup.string().required().label('Цвет карточки'),
     belki: yup.number().required().label('Количество белков'),
     pich_cen: yup.number().required().label('Пищевая ценность'),
+    energ_cen: yup.number().required().label('Энергетическая ценность'),
     uglevodi: yup.number().required().label('Количество углеводов'),
     ziri: yup.number().required().label('Количество жиров'),
     weight: yup.number().required().label('Вес'),

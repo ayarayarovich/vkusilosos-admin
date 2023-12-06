@@ -61,8 +61,8 @@
         <MyUploadImage
           :name="`story_items[${idx}].img`"
           class="rounded-lg"
-          filename-prop-in-request="image"
-          filename-prop-in-response="fileLink"
+          filename-prop-in-request="file"
+          filename-prop-in-response="link"
           upload-route="admin/upload"
           :aspect-ratio="9 / 16"
         />

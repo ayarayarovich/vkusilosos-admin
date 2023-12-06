@@ -90,3 +90,33 @@ export const useCreateDish = () => {
   })
 }
 
+
+export const useUpdateDish = () => {
+  const toast = useToast()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (vars: any) => {
+      const response = await axiosPrivate.put('admin/dish', vars)
+      return response
+    },
+    onSuccess(_, vars) {
+      toast.add({
+        severity: 'success',
+        life: 3000,
+        summary: 'Успешно',
+        detail: `Обновлено блюдо ${vars.name}`
+      })
+      queryClient.invalidateQueries(['dishes'])
+    },
+    onError(error: any) {
+      toast.add({
+        severity: 'error',
+        life: 3000,
+        summary: 'Не удалось обновить блюдо',
+        detail: error
+      })
+    }
+  })
+}
+
