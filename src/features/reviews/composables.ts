@@ -24,7 +24,7 @@ export const useReviews = <SData>(
   return useQuery({
     queryKey: ['reviews', { offset, limit, search }] as any,
     queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get<GetReviewsResponse>('admin/user/reviews', {
+      const response = await axiosPrivate.get<GetReviewsResponse>('admin/reviews', {
         params: {
           offset: (queryKey[1] as any).offset as number,
           limit: (queryKey[1] as any).limit as number,
