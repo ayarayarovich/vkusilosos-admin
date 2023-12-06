@@ -31,6 +31,11 @@ export const useReviews = <SData>(
           search: (queryKey[1] as any).search as string
         }
       })
+      for (const review of response.data.list) {
+        if (review.UserID) {
+          review.user_id = review.UserID
+        }
+      }
       return response.data
     },
     select: selector,

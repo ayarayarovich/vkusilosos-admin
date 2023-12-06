@@ -4,6 +4,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 
 import { RespondToReview, type IReview, useReviews } from '@/features/reviews'
 import { useDialog } from 'primevue/usedialog'
+import truncate from 'truncate'
 
 const rowsPerPage = ref(20)
 
@@ -128,10 +129,15 @@ onMounted(() => {
         @page="onPage($event)"
         :totalRecords="data?.total"
       >
-        <Column expander class="w-12"></Column>
+        <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID"></Column>
         <Column field="user_id" header="ID пользователя"></Column>
-        <Column field="text" header="Текст"> </Column>
+        <Column field="user_name" header="Имя пользователя"></Column>
+        <Column field="text" header="Текст">
+          <template #body="slotProps">
+            {{ truncate(slotProps.data.text, 20) }}
+          </template>
+        </Column>
         <Column field="status" header="Статус">
           <template #body="slotProps">
             <Tag
