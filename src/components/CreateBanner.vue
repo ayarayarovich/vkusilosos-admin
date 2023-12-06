@@ -4,7 +4,7 @@
       <Button label="Создать баннер" icon="pi pi-external-link" @click="visible = true" />
     </div>
 
-    <Dialog v-model:visible="visible" modal header="Создать баннер" class="max-w-4xl w-full m-4">
+    <Dialog v-model:visible="visible" modal header="Создать баннер" class="m-4 w-full max-w-4xl">
       <form class="p-2" @submit="onSubmit">
         <MyInputText class="mb-4" name="link" label="Ссылка на акцию" />
         <MyInputNumber
@@ -23,7 +23,7 @@
         />
 
         <Button
-          class="w-full flex items-center p-4 mt-8"
+          class="mt-8 flex w-full items-center p-4"
           type="submit"
           label="Создать"
           :loading="createMutation.isLoading"

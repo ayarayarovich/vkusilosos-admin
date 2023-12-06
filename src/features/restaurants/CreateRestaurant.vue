@@ -1,20 +1,20 @@
 <template>
   <form class="p-2" @submit.prevent="onSubmit">
-    <h2 class="text-lg font-bold mb-4">Общая информация</h2>
-    <div class="flex gap-4 mb-8">
+    <h2 class="mb-4 text-lg font-bold">Общая информация</h2>
+    <div class="mb-8 flex gap-4">
       <MyInputText name="name" label="Название" />
     </div>
 
-    <h2 class="text-lg font-bold mb-4">Локация</h2>
-    <div class="flex gap-4 mb-2">
+    <h2 class="mb-4 text-lg font-bold">Локация</h2>
+    <div class="mb-2 flex gap-4">
       <MyInputText name="adres" label="Адрес" />
     </div>
-    <div class="flex gap-4 mb-8">
+    <div class="mb-8 flex gap-4">
       <MyInputNumber name="lat" label="Широта" :minFractionDigits="2" :maxFractionDigits="6" />
       <MyInputNumber name="lng" label="Долгота" :minFractionDigits="2" :maxFractionDigits="6" />
     </div>
 
-    <h2 class="text-lg font-bold mb-4">GeoJson</h2>
+    <h2 class="mb-4 text-lg font-bold">GeoJson</h2>
     <MyUploadFile
       class="mb-8"
       name="geo"
@@ -71,7 +71,7 @@
     </DropdownSelect>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Создать"
       :loading="isLoading"

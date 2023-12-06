@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-full relative flex flex-col border-2 overflow-hidden items-center transition-colors"
+    class="relative flex h-full w-full flex-col items-center overflow-hidden border-2 transition-colors"
     :class="{
       'border-red-400': errorMessage,
       'border-gray': !errorMessage,
@@ -11,13 +11,13 @@
     @drop="onDrop"
   >
     <div
-      class="w-full h-full relative z-0"
+      class="relative z-0 h-full w-full"
       :style="{
         aspectRatio: props.aspectRatio
       }"
     >
       <Transition name="fade" mode="out-in">
-        <div v-if="isSelected" class="w-full h-full rounded-md overflow-hidden">
+        <div v-if="isSelected" class="h-full w-full overflow-hidden rounded-md">
           <div>
             <Cropper
               :style="{
@@ -43,17 +43,17 @@
             />
           </div>
         </div>
-        <div v-else class="w-full h-full">
+        <div v-else class="h-full w-full">
           <input
             type="file"
             :id="inputID"
             @change="onChange"
-            class="absolute h-px w-px opacity-0 peer"
+            class="peer absolute h-px w-px opacity-0"
             ref="inputRef"
           />
           <label
             :for="inputID"
-            class="cursor-pointer text-center p-4 flex items-center justify-center w-full h-full rounded-md peer-focus:ring-2 ring-indigo-300 transition-shadow"
+            class="flex h-full w-full cursor-pointer items-center justify-center rounded-md p-4 text-center ring-indigo-300 transition-shadow peer-focus:ring-2"
           >
             <span> Перетащите сюда картику, либо выберите кликнув <u>здесь</u> </span>
           </label>
@@ -64,28 +64,28 @@
     <Transition name="fade" mode="out-in">
       <div
         v-if="isSelected"
-        class="absolute z-20 top-0 left-0 w-full p-2 flex gap-2 items-center justify-center text-white"
+        class="absolute left-0 top-0 z-20 flex w-full items-center justify-center gap-2 p-2 text-white"
       >
         <button
           type="button"
-          class="h-8 max-w-[10rem] px-2 flex-1 basis-0 leading-none flex text-sm rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          class="flex h-8 max-w-[10rem] flex-1 basis-0 items-center justify-center rounded-md bg-black bg-opacity-50 px-2 text-sm leading-none transition-all hover:bg-opacity-75"
           @click="reset()"
         >
-          <i class="pi pi-times text-sm mr-1"></i> Удалить
+          <i class="pi pi-times mr-1 text-sm"></i> Удалить
         </button>
 
         <button
           type="button"
           :disabled="isUploading"
-          class="h-8 max-w-[10rem] px-2 flex-1 basis-0 leading-none text-sm flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          class="flex h-8 max-w-[10rem] flex-1 basis-0 items-center justify-center rounded-md bg-black bg-opacity-50 px-2 text-sm leading-none transition-all hover:bg-opacity-75"
           @click="saveOrEditAction()"
         >
           <Transition name="fade" mode="out-in" :duration="200">
             <span v-if="isUploading"><i class="pi pi-spin pi-spinner"></i></span>
             <span v-else-if="isEditingImage"
-              ><i class="pi pi-check text-sm mr-1"></i> Сохранить</span
+              ><i class="pi pi-check mr-1 text-sm"></i> Сохранить</span
             >
-            <span v-else><i class="pi pi-pencil text-sm mr-1"></i> Обрезать</span>
+            <span v-else><i class="pi pi-pencil mr-1 text-sm"></i> Обрезать</span>
           </Transition>
         </button>
       </div>
@@ -94,26 +94,26 @@
     <Transition name="fade" mode="out-in">
       <div
         v-if="isEditingImage"
-        class="absolute top-2 bottom-2 left-2 flex flex-col items-center justify-center gap-2"
+        class="absolute bottom-2 left-2 top-2 flex flex-col items-center justify-center gap-2"
       >
         <button
           type="button"
-          class="aspect-square h-8 flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          class="flex aspect-square h-8 items-center justify-center rounded-md bg-black bg-opacity-50 transition-all hover:bg-opacity-75"
           @click="rotate(90)"
         >
-          <i class="pi pi-refresh text-white text-lg"></i>
+          <i class="pi pi-refresh text-lg text-white"></i>
         </button>
         <button
           type="button"
-          class="aspect-square h-8 flex rounded-md items-center justify-center bg-black bg-opacity-50 hover:bg-opacity-75 transition-all"
+          class="flex aspect-square h-8 items-center justify-center rounded-md bg-black bg-opacity-50 transition-all hover:bg-opacity-75"
           @click="rotate(-90)"
         >
-          <i class="pi pi-replay text-white text-lg"></i>
+          <i class="pi pi-replay text-lg text-white"></i>
         </button>
       </div>
     </Transition>
 
-    <small class="absolute p-error bottom-2 font-medium text-center px-4 max-w-full z-20">
+    <small class="p-error absolute bottom-2 z-20 max-w-full px-4 text-center font-medium">
       {{ errorMessage || '&nbsp;' }}
     </small>
   </div>

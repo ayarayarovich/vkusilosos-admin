@@ -34,7 +34,7 @@ export const useBanners = <SData>(
       return response.data
     },
     select: selector,
-    keepPreviousData: true,
+    keepPreviousData: true
   })
 }
 
@@ -69,11 +69,12 @@ export const useDeleteBanner = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.delete('admin/banner', {
-      params: {
-        id: vars.id
-      }
-    }),
+    mutationFn: (vars: any) =>
+      axiosPrivate.delete('admin/banner', {
+        params: {
+          id: vars.id
+        }
+      }),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',

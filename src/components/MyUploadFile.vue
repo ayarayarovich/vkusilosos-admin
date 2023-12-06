@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full border-2 p-4 rounded-lg transition-colors"
+    class="w-full rounded-lg border-2 p-4 transition-colors"
     :class="{
       'border-red-400': errorMessage,
       'border-gray': !errorMessage
@@ -19,11 +19,11 @@
         <small>{{ value || '&nbsp;' }}</small>
         <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>
       </div>
-      <div class="flex flex-col justify-between gap-2 ml-auto">
+      <div class="ml-auto flex flex-col justify-between gap-2">
         <button type="button" @click="reset()">
           <i class="pi pi-times-circle" style="font-size: 1rem"></i>
         </button>
-        <div class="h-4 aspect-square relative">
+        <div class="relative aspect-square h-4">
           <Transition name="fade" mode="default">
             <i
               v-if="isUploading"
@@ -32,7 +32,7 @@
             ></i>
             <i
               v-else-if="isUploaded"
-              class="pi pi-check-circle text-green-500 absolute inset-0"
+              class="pi pi-check-circle absolute inset-0 text-green-500"
               style="font-size: 100%"
             ></i>
           </Transition>

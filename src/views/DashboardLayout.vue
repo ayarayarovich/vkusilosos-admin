@@ -1,20 +1,20 @@
 <template>
   <div>
     <div
-      class="h-screen fixed w-64 shrink-0 overflow-y-auto scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-200"
+      class="fixed h-screen w-64 shrink-0 overflow-y-auto scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-200"
     >
-      <div class="px-6 py-4 flex flex-col items-stretch text-black">
-        <img :src="logoSrc" class="h-8 w-full object-contain object-center my-6" alt="" />
-        <ul class="flex flex-col gap-1 grow">
-          <li class="font-bold mt-2 text-sm mb-1">Главная</li>
+      <div class="flex flex-col items-stretch px-6 py-4 text-black">
+        <img :src="logoSrc" class="my-6 h-8 w-full object-contain object-center" alt="" />
+        <ul class="flex grow flex-col gap-1">
+          <li class="mb-1 mt-2 text-sm font-bold">Главная</li>
           <li class="min-w-max">
             <RouterLink
               v-slot="{ isExactActive }"
               class="w-full rounded-lg"
               :to="{ name: 'dashboard' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isExactActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isExactActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-home" /> Дашборд</span
               ></RouterLink
             >
@@ -22,19 +22,19 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'settings' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-cog" /> Настройки</span
               ></RouterLink
             >
           </li>
 
-          <li class="font-bold mt-2 text-sm mb-1">Пользователи</li>
+          <li class="mb-1 mt-2 text-sm font-bold">Пользователи</li>
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'users' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-user" /> Пользователи</span
               ></RouterLink
             >
@@ -42,8 +42,8 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'feedback' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-comments" /> Отзывы</span
               ></RouterLink
             >
@@ -51,19 +51,19 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'orders' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-shopping-cart" /> Заказы</span
               ></RouterLink
             >
           </li>
 
-          <li class="font-bold mt-2 text-sm mb-1">Еда</li>
+          <li class="mb-1 mt-2 text-sm font-bold">Еда</li>
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'categories' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-sitemap" /> Категории</span
               ></RouterLink
             >
@@ -71,8 +71,8 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'dishes' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-book" /> Блюда</span
               ></RouterLink
             >
@@ -80,33 +80,33 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'tags' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-hashtag" /> Теги</span
               ></RouterLink
             >
           </li>
 
-          <li class="font-bold mt-2 text-sm mb-1">Точки</li>
+          <li class="mb-1 mt-2 text-sm font-bold">Точки</li>
           <li class="min-w-max">
             <RouterLink
               v-slot="{ isActive }"
               class="w-full rounded-lg"
               :to="{ name: 'restaurants' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-building" /> Рестораны</span
               ></RouterLink
             >
           </li>
 
-          <li class="font-bold mt-2 text-sm mb-1">Маркетинг</li>
+          <li class="mb-1 mt-2 text-sm font-bold">Маркетинг</li>
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'stories' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-instagram" /> Истории</span
               ></RouterLink
             >
@@ -114,8 +114,8 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'banners' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-images" /> Баннеры</span
               ></RouterLink
             >
@@ -123,16 +123,16 @@
           <li class="min-w-max">
             <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'promotions' }"
               ><span
-                class="text-sm px-4 py-2 hover:bg-gray-100 block rounded-lg transition-all"
-                :class="isActive ? 'text-black !bg-indigo-100' : ''"
+                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
                 ><i class="pi pi-fw pi-percentage" /> Акции</span
               ></RouterLink
             >
           </li>
-          <li class="grow flex flex-col justify-end mt-8">
+          <li class="mt-8 flex grow flex-col justify-end">
             <button
               @click="userStore.signOut"
-              class="p-3 hover:bg-gray-100 block rounded-lg transition-all text-start"
+              class="block rounded-lg p-3 text-start transition-all hover:bg-gray-100"
             >
               <i class="pi pi-fw pi-sign-out" /> Выйти
             </button>
@@ -140,7 +140,7 @@
         </ul>
       </div>
     </div>
-    <div class="pl-64 w-full">
+    <div class="w-full pl-64">
       <RouterView />
     </div>
   </div>

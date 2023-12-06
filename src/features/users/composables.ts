@@ -43,8 +43,7 @@ export const useChangeUserStatus = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (vars: any) =>
-      axiosPrivate.post('admin/user/status', vars),
+    mutationFn: (vars: any) => axiosPrivate.post('admin/user/status', vars),
     onSuccess(_, vars) {
       toast.add({
         severity: 'success',
@@ -95,16 +94,15 @@ export const useSendNotification = () => {
   const toast = useToast()
 
   return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.post('admin/user/push', {
-      user_id: -1,
-      ...vars
-    }),
+    mutationFn: (vars: any) =>
+      axiosPrivate.post('admin/user/push', {
+        user_id: -1,
+        ...vars
+      }),
     onSuccess(_, vars) {
       let detail = ''
-      if (vars.user_id)
-        detail = `Отправлено уведомление пользователю с ID: ${vars.user_id})`
-      else
-        detail = 'Уведомление отправлено всем пользователям'
+      if (vars.user_id) detail = `Отправлено уведомление пользователю с ID: ${vars.user_id})`
+      else detail = 'Уведомление отправлено всем пользователям'
 
       toast.add({
         severity: 'success',

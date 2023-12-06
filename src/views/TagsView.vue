@@ -113,27 +113,27 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
-    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Теги</h1>
+  <main class="flex h-screen flex-col items-stretch px-4" ref="root">
+    <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Теги</h1>
 
     <ContextMenu ref="cm" :model="menuModel" @hide="selectedTag = undefined" />
 
     <Toolbar>
       <template #center>
-        <div class="w-full flex">
-          <div class="flex-1 flex gap-2">
+        <div class="flex w-full">
+          <div class="flex flex-1 gap-2">
             <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
             <Button icon="pi pi-plus" @click="beginCreateTagInteraction()" />
           </div>
 
-          <div class="flex-1 flex justify-center">
+          <div class="flex flex-1 justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText placeholder="Поиск" v-model="search" />
             </span>
           </div>
 
-          <div class="flex-1 flex justify-end gap-2">
+          <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
               :disabled="!selectedTag"
@@ -150,7 +150,7 @@ onMounted(() => {
       </template>
     </Toolbar>
 
-    <div class="flex-1 min-h-0 py-6">
+    <div class="min-h-0 flex-1 py-6">
       <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
@@ -166,7 +166,7 @@ onMounted(() => {
         v-model:contextMenuSelection="selectedTag"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
-        class="border rounded-lg h-full overflow-hidden"
+        class="h-full overflow-hidden rounded-lg border"
         :value="data?.list"
         lazy
         paginator
@@ -184,15 +184,25 @@ onMounted(() => {
             <img
               :src="slotProps.data.img"
               alt=""
-              class="h-16 aspect-square drop-shadow-md rounded-md"
+              class="aspect-square h-16 rounded-md drop-shadow-md"
             />
           </template>
         </Column>
         <Column field="name" header="Название" />
         <Column field="active" header="Статус">
           <template #body="slotProps">
-            <Tag v-if="slotProps.data.active === true" icon="pi pi-check-circle" value="Активен" severity="success" />
-            <Tag v-else-if="slotProps.data.active === false" icon="pi pi-check-circle" value="Не активен" severity="danger" />
+            <Tag
+              v-if="slotProps.data.active === true"
+              icon="pi pi-check-circle"
+              value="Активен"
+              severity="success"
+            />
+            <Tag
+              v-else-if="slotProps.data.active === false"
+              icon="pi pi-check-circle"
+              value="Не активен"
+              severity="danger"
+            />
           </template>
         </Column>
         <Column field="created_at" header="Создано">
@@ -205,12 +215,12 @@ onMounted(() => {
             {{ dateFormat(slotProps.data.updated_at) }}
           </template>
         </Column>
-        
+
         <template #loading>
           <ProgressSpinner class="h-8" />
         </template>
         <template #empty>
-          <div class="py-12 flex flex-col items-center gap-4">
+          <div class="flex flex-col items-center gap-4 py-12">
             <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>

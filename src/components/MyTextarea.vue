@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <label :for="inputID" class="block text-900 font-medium mb-2">{{ props.label }}</label>
+    <label :for="inputID" class="text-900 mb-2 block font-medium">{{ props.label }}</label>
     <Textarea
       :id="inputID"
       v-model="value"

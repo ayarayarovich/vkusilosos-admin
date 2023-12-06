@@ -4,22 +4,52 @@
     <DropdownSelect name="status" label="Статус" placeholder="Выберите" :options="possibleStatuses">
       <template #value="slotProps">
         <template v-if="slotProps.value">
-          <Tag v-if="slotProps.value.code === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
-          <Tag v-else-if="slotProps.value.code === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
-          <Tag v-else-if="slotProps.value.code === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+          <Tag
+            v-if="slotProps.value.code === 0"
+            icon="pi pi-lock"
+            value="Заблокирован"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === 1"
+            icon="pi pi-check-circle"
+            value="Активен"
+            severity="success"
+          />
+          <Tag
+            v-else-if="slotProps.value.code === 2"
+            icon="pi pi-clock"
+            value="На модерации"
+            severity="warning"
+          />
         </template>
       </template>
       <template #option="slotProps">
         <template v-if="slotProps.option">
-          <Tag v-if="slotProps.option.code === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
-          <Tag v-else-if="slotProps.option.code === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
-          <Tag v-else-if="slotProps.option.code === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+          <Tag
+            v-if="slotProps.option.code === 0"
+            icon="pi pi-lock"
+            value="Заблокирован"
+            severity="danger"
+          />
+          <Tag
+            v-else-if="slotProps.option.code === 1"
+            icon="pi pi-check-circle"
+            value="Активен"
+            severity="success"
+          />
+          <Tag
+            v-else-if="slotProps.option.code === 2"
+            icon="pi pi-clock"
+            value="На модерации"
+            severity="warning"
+          />
         </template>
       </template>
     </DropdownSelect>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Сохранить"
       :loading="isLoading"
@@ -62,6 +92,5 @@ const { mutateAsync, isLoading } = useChangeUserStatus()
 
 const onSubmit = handleSubmit((vals) => {
   mutateAsync(vals).then(dialogRef.value.close)
-
 })
 </script>

@@ -1,13 +1,23 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
-    <div class="grid grid-cols-3 items-center justify-items-center gap-4 mb-4">
+    <div class="mb-4 grid grid-cols-3 items-center justify-items-center gap-4">
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
       <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
-      <MyInputNumber label="Пищевая ценность" name="pich_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
-      <MyInputNumber label="Энергетическая ценность" name="energ_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
+      <MyInputNumber
+        label="Пищевая ценность"
+        name="pich_cen"
+        :min-fraction-digits="0"
+        :max-fraction-digits="2"
+      />
+      <MyInputNumber
+        label="Энергетическая ценность"
+        name="energ_cen"
+        :min-fraction-digits="0"
+        :max-fraction-digits="2"
+      />
       <MyInputNumber label="Белки" name="belki" />
       <MyInputNumber label="Жиры" name="ziri" />
       <MyInputNumber label="Углеводы" name="uglevodi" />
@@ -22,7 +32,7 @@
         <template #option="slotProps">
           <div class="flex items-center gap-4">
             <div
-              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              class="aspect-square h-6 rounded-md border-2 border-gray-500"
               :style="{ backgroundColor: slotProps.option.label }"
             ></div>
             <span>{{ slotProps.option.label }}</span>
@@ -31,7 +41,7 @@
         <template #value="slotProps">
           <div v-if="slotProps.value" class="flex items-center gap-4">
             <div
-              class="h-6 aspect-square rounded-md border-2 border-gray-500"
+              class="aspect-square h-6 rounded-md border-2 border-gray-500"
               :style="{ backgroundColor: slotProps.value.label }"
             ></div>
             <span>{{ slotProps.value.label }}</span>
@@ -66,9 +76,15 @@
         :options="possibleCategories || []"
       />
 
-      <MyMultiSelect class="w-full" name="tags" placeholder="Выберите" label="Теги" :options="possibleTags || []" />
+      <MyMultiSelect
+        class="w-full"
+        name="tags"
+        placeholder="Выберите"
+        label="Теги"
+        :options="possibleTags || []"
+      />
 
-      <div class="col-start-1 col-span-1 row-start-1 row-span-2 w-full">
+      <div class="col-span-1 col-start-1 row-span-2 row-start-1 w-full">
         <MyUploadImage
           class="rounded-lg"
           name="img"
@@ -80,13 +96,13 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-center gap-12 mb-8 flex-wrap">
+    <div class="mb-8 flex flex-wrap items-center justify-center gap-12">
       <MyInputSwitch label="В наличии" :name="`have`" />
       <MyInputSwitch label="Можно доставить" :name="`can_deliver`" />
       <MyInputSwitch label="Активно" :name="`active`" />
     </div>
 
-    <h2 class="text-lg mb-6 font-bold">По ресторанам</h2>
+    <h2 class="mb-6 text-lg font-bold">По ресторанам</h2>
     <MultiSelect
       class="mb-8 w-full"
       display="chip"
@@ -99,7 +115,7 @@
       <fieldset
         v-for="(field, idx) in fields"
         :key="field.key"
-        class="relative border-2 border-gray-200 rounded-lg p-4 mb-4"
+        class="relative mb-4 rounded-lg border-2 border-gray-200 p-4"
       >
         <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
           "{{ field.value.name }}" - {{ field.value.adres }}
@@ -120,7 +136,7 @@
             currency="RUB"
           />
         </div>
-        <div class="flex items-center justify-center gap-12 flex-wrap">
+        <div class="flex flex-wrap items-center justify-center gap-12">
           <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
           <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
           <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
@@ -129,7 +145,7 @@
     </div>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Создать"
       :loading="isLoading"

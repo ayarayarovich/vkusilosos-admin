@@ -1,4 +1,3 @@
-
 export interface IBanner {
   id: number
   active: boolean

@@ -1,9 +1,8 @@
-import { axiosPrivate } from "@/network"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query"
-import { useToast } from "primevue/usetoast"
-import type { IDish } from "./interfaces"
-import type { MaybeRef } from "vue"
-
+import { axiosPrivate } from '@/network'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useToast } from 'primevue/usetoast'
+import type { IDish } from './interfaces'
+import type { MaybeRef } from 'vue'
 
 interface GetDishesResponse {
   list: IDish[]
@@ -34,7 +33,7 @@ export const useDishes = <SData>(
       return response.data
     },
     select: selector,
-    keepPreviousData: true,
+    keepPreviousData: true
   })
 }
 
@@ -51,13 +50,13 @@ export const useDish = <SData>(
     queryFn: async ({ queryKey }) => {
       const response = await axiosPrivate.get<GetDishResponse>('admin/dish', {
         params: {
-          id: (queryKey[1] as any).id as number,
+          id: (queryKey[1] as any).id as number
         }
       })
       return response.data
     },
     select: selector,
-    keepPreviousData: true,
+    keepPreviousData: true
   })
 }
 
@@ -90,7 +89,6 @@ export const useCreateDish = () => {
   })
 }
 
-
 export const useUpdateDish = () => {
   const toast = useToast()
   const queryClient = useQueryClient()
@@ -119,4 +117,3 @@ export const useUpdateDish = () => {
     }
   })
 }
-

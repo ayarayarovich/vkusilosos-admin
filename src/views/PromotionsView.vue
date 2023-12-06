@@ -4,8 +4,8 @@ const number = ref(0)
 </script>
 
 <template>
-  <main class="px-4 min-h-full flex flex-col items-stretch">
-    <div class="h-24 flex items-center justify-between" ref="heading">
+  <main class="flex min-h-full flex-col items-stretch px-4">
+    <div class="flex h-24 items-center justify-between" ref="heading">
       <h1 class="text-3xl font-semibold leading-none text-black">Акции</h1>
     </div>
   </main>

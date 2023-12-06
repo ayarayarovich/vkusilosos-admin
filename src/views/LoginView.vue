@@ -16,7 +16,7 @@ const toast = useToast()
 
 const router = useRouter()
 const userStore = useUserStore()
-const { isAuthenticated, accessToken, refreshToken, userID } = storeToRefs(userStore)
+const { isAuthenticated, accessToken, refreshToken } = storeToRefs(userStore)
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -45,8 +45,7 @@ const { isLoading, mutate } = useMutation<any, any, any>({
         summary: 'Ошибка',
         detail: 'Неверный логин или пароль'
       })
-    }
-    else {
+    } else {
       toast.add({
         severity: 'error',
         life: 3000,
@@ -63,11 +62,11 @@ const signIn = handleSubmit((vals) => {
 </script>
 
 <template>
-  <main class="p-4 min-h-screen flex items-center justify-center">
+  <main class="flex min-h-screen items-center justify-center p-4">
     <div class="flex flex-col items-center">
-      <div class="w-full text-center mb-4 flex justify-center flex-col">
+      <div class="mb-4 flex w-full flex-col justify-center text-center">
         <img :src="logoSrc" alt="Image" class="mb-12 h-12" />
-        <div class="text-900 text-3xl font-medium mb-3">
+        <div class="text-900 mb-3 text-3xl font-medium">
           Вход <br />
           в панель администратора
         </div>
@@ -79,7 +78,7 @@ const signIn = handleSubmit((vals) => {
 
         <Button
           icon="pi pi-user"
-          class="w-full flex items-center mt-4 p-4"
+          class="mt-4 flex w-full items-center p-4"
           label="Войти"
           type="submit"
           :loading="isLoading"

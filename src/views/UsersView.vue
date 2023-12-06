@@ -4,7 +4,14 @@ import type { DataTablePageEvent, DataTableRowDoubleClickEvent } from 'primevue/
 import { useDebounce } from '@vueuse/core'
 
 import dateFormat from 'dateformat'
-import { ChangeStatus, GiftBonusesToUser, SendNotification, useUsers, type IUser, UserDetails } from '@/features/users'
+import {
+  ChangeStatus,
+  GiftBonusesToUser,
+  SendNotification,
+  useUsers,
+  type IUser,
+  UserDetails
+} from '@/features/users'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
@@ -134,26 +141,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
-    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Пользователи</h1>
+  <main class="flex h-screen flex-col items-stretch px-4" ref="root">
+    <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Пользователи</h1>
 
     <ContextMenu ref="cm" :model="menuModel" @hide="selectedUser = undefined" />
 
     <Toolbar>
       <template #center>
-        <div class="w-full flex">
-          <div class="flex-1 flex justify-start gap-2">
+        <div class="flex w-full">
+          <div class="flex flex-1 justify-start gap-2">
             <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
           </div>
 
-          <div class="flex-1 flex justify-center">
+          <div class="flex flex-1 justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText placeholder="Поиск" v-model="search" />
             </span>
           </div>
 
-          <div class="flex-1 flex justify-end gap-2">
+          <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-user-edit"
               :disabled="!selectedUser"
@@ -176,14 +183,14 @@ onMounted(() => {
       </template>
     </Toolbar>
 
-    <div class="flex-1 min-h-0 py-6">
+    <div class="min-h-0 flex-1 py-6">
       <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
         v-else
         size="small"
-        class="border rounded-lg h-full overflow-hidden"
+        class="h-full overflow-hidden rounded-lg border"
         scrollable
         :scroll-height="scrollHeight"
         v-model:selection="selectedUser"
@@ -210,16 +217,41 @@ onMounted(() => {
         <Column field="phone" header="Телефон" />
         <Column field="role" header="Роль">
           <template #body="slotProps">
-            <Tag v-if="slotProps.data.role === 'user'" icon="pi pi-user" value="Обычный" severity="info"></Tag>
-            <Tag v-else-if="slotProps.data.role === 'admin'" icon="pi pi-bolt" value="Админ" severity="warning"></Tag>
+            <Tag
+              v-if="slotProps.data.role === 'user'"
+              icon="pi pi-user"
+              value="Обычный"
+              severity="info"
+            ></Tag>
+            <Tag
+              v-else-if="slotProps.data.role === 'admin'"
+              icon="pi pi-bolt"
+              value="Админ"
+              severity="warning"
+            ></Tag>
             <Tag v-else :value="slotProps.data.role" severity="info" />
           </template>
-          </Column>
+        </Column>
         <Column field="status" header="Статус">
           <template #body="slotProps">
-            <Tag v-if="slotProps.data.status === 0" icon="pi pi-lock" value="Заблокирован" severity="danger"/>
-            <Tag v-else-if="slotProps.data.status === 1" icon="pi pi-check-circle" value="Активен" severity="success"/>
-            <Tag v-else-if="slotProps.data.status === 2" icon="pi pi-clock" value="На модерации" severity="warning"/>
+            <Tag
+              v-if="slotProps.data.status === 0"
+              icon="pi pi-lock"
+              value="Заблокирован"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 1"
+              icon="pi pi-check-circle"
+              value="Активен"
+              severity="success"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 2"
+              icon="pi pi-clock"
+              value="На модерации"
+              severity="warning"
+            />
             <Tag v-else :value="slotProps.data.status" severity="info" />
           </template>
         </Column>
@@ -241,7 +273,7 @@ onMounted(() => {
         </Column>
 
         <template #empty>
-          <div class="py-12 flex flex-col items-center gap-4">
+          <div class="flex flex-col items-center gap-4 py-12">
             <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>

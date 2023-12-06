@@ -34,7 +34,7 @@ export const useCategories = <SData>(
       return response.data
     },
     select: selector,
-    keepPreviousData: true,
+    keepPreviousData: true
   })
 }
 

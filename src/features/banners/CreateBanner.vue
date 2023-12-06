@@ -2,7 +2,7 @@
   <form @submit="onSubmit" class="w-full">
     <MyUploadImage
       name="img"
-      class="rounded-lg mb-8"
+      class="mb-8 rounded-lg"
       filename-prop-in-request="file"
       filename-prop-in-response="link"
       upload-route="admin/upload"
@@ -57,7 +57,7 @@
       </template>
     </DropdownSelect>
 
-    <Button class="w-full mt-12 flex justify-center p-4" type="submit"> Создать </Button>
+    <Button class="mt-12 flex w-full justify-center p-4" type="submit"> Создать </Button>
   </form>
 </template>
 

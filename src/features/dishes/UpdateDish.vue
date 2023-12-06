@@ -6,8 +6,18 @@
       <MyInputText label="IIKO ID" name="iiko_id" />
       <MyInputNumber label="Вес" name="weight" />
       <MyInputNumber label="Цена" name="price" />
-      <MyInputNumber label="Пищевая ценность" name="pich_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
-      <MyInputNumber label="Энергетическая ценность" name="energ_cen" :min-fraction-digits="0" :max-fraction-digits="2" />
+      <MyInputNumber
+        label="Пищевая ценность"
+        name="pich_cen"
+        :min-fraction-digits="0"
+        :max-fraction-digits="2"
+      />
+      <MyInputNumber
+        label="Энергетическая ценность"
+        name="energ_cen"
+        :min-fraction-digits="0"
+        :max-fraction-digits="2"
+      />
       <MyInputNumber label="Белки" name="belki" />
       <MyInputNumber label="Жиры" name="ziri" />
       <MyInputNumber label="Углеводы" name="uglevodi" />
@@ -66,7 +76,13 @@
         :options="possibleCategories || []"
       />
 
-      <MyMultiSelect class="w-full" name="tags" placeholder="Выберите" label="Теги" :options="possibleTags || []" />
+      <MyMultiSelect
+        class="w-full"
+        name="tags"
+        placeholder="Выберите"
+        label="Теги"
+        :options="possibleTags || []"
+      />
 
       <div class="col-span-1 col-start-1 row-span-2 row-start-1 w-full">
         <MyUploadImage
@@ -153,7 +169,7 @@ import MyInputSwitch from '@/components/MyInputSwitch.vue'
 
 import { useCategories } from '@/features/categories'
 import { useUpdateDish, useDish } from './composables'
-import { useRestaurants, type IRestaurant } from '@/features/restaurants'
+import { useRestaurants } from '@/features/restaurants'
 import { useTags } from '@/features/tags'
 import MyMultiSelect from '@/components/MyMultiSelect.vue'
 import type { IDish } from './interfaces'
@@ -225,10 +241,10 @@ const { data: restaurantsData } = useRestaurants(
     search: ''
   },
   (resp) => {
-    return resp.list.map(r => ({
+    return resp.list.map((r) => ({
       rest_id: r.id,
       adres: r.adres,
-      name: r.name,
+      name: r.name
     }))
   }
 )
@@ -248,44 +264,48 @@ const restaurantsFieldArray = ref<
     price: number
     active: boolean
     can_deliver: boolean
-    have: boolean,
-    name: string,
+    have: boolean
+    name: string
     adres: string
   }[]
 >()
 watch([restaurantsFieldArray], () => {
   if (restaurantsFieldArray.value) {
     console.log('RestaurantsFieldArray', restaurantsFieldArray.value)
-    const copy = restaurantsFieldArray.value.map(i => ({...i}))
+    const copy = restaurantsFieldArray.value.map((i) => ({ ...i }))
     replace(copy)
   }
 })
-watch([restaurantsData, dishData], () => {
-  if (restaurantsData.value && dishData.value) {
-    const arr: typeof restaurantsFieldArray.value = []
-    for (const restaurant of restaurantsData.value) {
-      if (dishData.value.vars) {
-        for (const vr of dishData.value.vars) {
-          if (vr.rest_id === restaurant.rest_id) {
-            arr.push({
-              active: vr.active,
-              can_deliver: vr.can_deliver,
-              have: vr.have,
-              iiko_id: vr.iiko_id,
-              price: vr.price,
-              rest_id: vr.rest_id,
-              name: restaurant.name,
-              adres: restaurant.adres
-            })
+watch(
+  [restaurantsData, dishData],
+  () => {
+    if (restaurantsData.value && dishData.value) {
+      const arr: typeof restaurantsFieldArray.value = []
+      for (const restaurant of restaurantsData.value) {
+        if (dishData.value.vars) {
+          for (const vr of dishData.value.vars) {
+            if (vr.rest_id === restaurant.rest_id) {
+              arr.push({
+                active: vr.active,
+                can_deliver: vr.can_deliver,
+                have: vr.have,
+                iiko_id: vr.iiko_id,
+                price: vr.price,
+                rest_id: vr.rest_id,
+                name: restaurant.name,
+                adres: restaurant.adres
+              })
+            }
           }
         }
       }
+      restaurantsFieldArray.value = arr
     }
-    restaurantsFieldArray.value = arr
+  },
+  {
+    immediate: true
   }
-}, {
-  immediate: true
-})
+)
 
 const onSubmit = handleSubmit((vals) => {
   mutate(vals)

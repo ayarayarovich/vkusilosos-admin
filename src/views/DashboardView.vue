@@ -8,69 +8,69 @@ function getGradient(ctx: any, chartArea: any) {
 </script>
 
 <template>
-  <main class="px-4 flex flex-col items-stretch">
-    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Дашборд</h1>
-    <div class="flex items-stretch gap-4 mb-8">
-      <div class="flex-1 bg-white rounded-lg p-8 border">
-        <div class="flex items-start justify-between text-black mb-4">
+  <main class="flex flex-col items-stretch px-4">
+    <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Дашборд</h1>
+    <div class="mb-8 flex items-stretch gap-4">
+      <div class="flex-1 rounded-lg border bg-white p-8">
+        <div class="mb-4 flex items-start justify-between text-black">
           <div>
-            <div class="font-medium mb-2">Заказы</div>
+            <div class="mb-2 font-medium">Заказы</div>
             <div class="text-lg font-bold">152</div>
           </div>
-          <div class="h-10 rounded-lg aspect-square bg-orange-100 flex items-center justify-center">
+          <div class="flex aspect-square h-10 items-center justify-center rounded-lg bg-orange-100">
             <i class="pi pi-fw pi-shopping-cart" />
           </div>
         </div>
         <div class="text-sm">
-          <span class="text-green-500 font-medium">24 новых заказа</span> с последнего посещения
+          <span class="font-medium text-green-500">24 новых заказа</span> с последнего посещения
         </div>
       </div>
 
-      <div class="flex-1 bg-white rounded-lg p-8 border">
-        <div class="flex items-start justify-between text-black mb-4">
+      <div class="flex-1 rounded-lg border bg-white p-8">
+        <div class="mb-4 flex items-start justify-between text-black">
           <div>
-            <div class="font-medium mb-2">Доход</div>
+            <div class="mb-2 font-medium">Доход</div>
             <div class="text-lg font-bold">56 000 ₽</div>
           </div>
-          <div class="h-10 rounded-lg aspect-square bg-green-100 flex items-center justify-center">
+          <div class="flex aspect-square h-10 items-center justify-center rounded-lg bg-green-100">
             <i class="pi pi-fw pi-money-bill" />
           </div>
         </div>
         <div class="text-sm">
-          <span class="text-green-500 font-medium">+25%</span> с прошлой недели
+          <span class="font-medium text-green-500">+25%</span> с прошлой недели
         </div>
       </div>
 
-      <div class="flex-1 bg-white rounded-lg p-8 border">
-        <div class="flex items-start justify-between text-black mb-4">
+      <div class="flex-1 rounded-lg border bg-white p-8">
+        <div class="mb-4 flex items-start justify-between text-black">
           <div>
-            <div class="font-medium mb-2">Клиенты</div>
+            <div class="mb-2 font-medium">Клиенты</div>
             <div class="text-lg font-bold">24314</div>
           </div>
-          <div class="h-10 rounded-lg aspect-square bg-red-100 flex items-center justify-center">
+          <div class="flex aspect-square h-10 items-center justify-center rounded-lg bg-red-100">
             <i class="pi pi-fw pi-user" />
           </div>
         </div>
         <div class="text-sm">
-          <span class="text-green-500 font-medium">520</span> новых клиентов
+          <span class="font-medium text-green-500">520</span> новых клиентов
         </div>
       </div>
 
-      <div class="flex-1 bg-white rounded-lg p-8 border">
-        <div class="flex items-start justify-between text-black mb-4">
+      <div class="flex-1 rounded-lg border bg-white p-8">
+        <div class="mb-4 flex items-start justify-between text-black">
           <div>
-            <div class="font-medium mb-2">Отзывы</div>
+            <div class="mb-2 font-medium">Отзывы</div>
             <div class="text-lg font-bold">143 новых</div>
           </div>
-          <div class="h-10 rounded-lg aspect-square bg-purple-100 flex items-center justify-center">
+          <div class="flex aspect-square h-10 items-center justify-center rounded-lg bg-purple-100">
             <i class="pi pi-fw pi-comments" />
           </div>
         </div>
-        <div class="text-sm"><span class="text-green-500 font-medium">46</span> отвеченных</div>
+        <div class="text-sm"><span class="font-medium text-green-500">46</span> отвеченных</div>
       </div>
     </div>
 
-    <div class="flex gap-4 mb-8">
+    <div class="mb-8 flex gap-4">
       <Chart
         class="w-full"
         type="line"

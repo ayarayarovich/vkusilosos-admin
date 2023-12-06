@@ -1,7 +1,7 @@
 <template>
   <form class="p-2" @submit="onSubmit">
     <div class="flex items-center justify-between gap-4">
-      <div class="h-64 shrink-0 aspect-square">
+      <div class="aspect-square h-64 shrink-0">
         <MyUploadImage
           name="img"
           class="rounded-lg"
@@ -63,7 +63,7 @@
       </div>
     </div>
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Сохранить"
       :loading="isLoading"

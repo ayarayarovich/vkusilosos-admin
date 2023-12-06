@@ -10,7 +10,9 @@
           'p-invalid': errorMessage
         }"
       />
-      <label :for="inputID" @click="setValue(!value)" class="block text-900 font-medium">{{ props.label }}</label>
+      <label :for="inputID" @click="setValue(!value)" class="text-900 block font-medium">{{
+        props.label
+      }}</label>
     </div>
 
     <small class="p-error">{{ errorMessage || '&nbsp;' }}</small>

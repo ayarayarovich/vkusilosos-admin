@@ -11,7 +11,7 @@ const isFetching = useIsFetching()
 
 <template>
   <div class="relative">
-    <div class="absolute top-0 left-0 right-0 h-1 z-50">
+    <div class="absolute left-0 right-0 top-0 z-50 h-1">
       <Transition name="fade">
         <ProgressBar v-if="isFetching" mode="indeterminate" class="h-full" />
       </Transition>

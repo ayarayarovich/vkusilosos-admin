@@ -4,14 +4,14 @@
     <MyInputText name="title" label="Заголовок" class="mb-4" />
     <MyInputText name="text" label="Тело" class="mb-4" />
 
-    <h2 class="text-lg font-medium mb-1">Куда отправить?</h2>
-    <small class="block p-error mb-3">{{ errors[''] || '&nbsp;' }}</small>
+    <h2 class="mb-1 text-lg font-medium">Куда отправить?</h2>
+    <small class="p-error mb-3 block">{{ errors[''] || '&nbsp;' }}</small>
     <MyInputSwitch name="push" label="Пуш" :initial-value="true" />
     <MyInputSwitch name="email" label="Электронная почта" />
     <MyInputSwitch name="phone" label="SMS" />
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Отправить"
       :loading="isLoading"

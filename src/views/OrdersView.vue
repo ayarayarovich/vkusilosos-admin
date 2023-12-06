@@ -67,31 +67,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="px-4 h-screen flex flex-col items-stretch" ref="root">
-    <h1 class="text-3xl text-center font-semibold leading-none text-black my-12">Заказы</h1>
+  <main class="flex h-screen flex-col items-stretch px-4" ref="root">
+    <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Заказы</h1>
 
     <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
-        <div class="w-full flex">
-          <div class="flex-1 flex justify-start gap-2">
+        <div class="flex w-full">
+          <div class="flex flex-1 justify-start gap-2">
             <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
           </div>
 
-          <div class="flex-1 flex justify-center">
+          <div class="flex flex-1 justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText placeholder="Поиск" />
             </span>
           </div>
 
-          <div class="flex-1 flex justify-end gap-2"></div>
+          <div class="flex flex-1 justify-end gap-2"></div>
         </div>
       </template>
     </Toolbar>
 
-    <div class="flex-1 min-h-0 py-6">
+    <div class="min-h-0 flex-1 py-6">
       <Message v-if="query.isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
@@ -106,7 +106,7 @@ onMounted(() => {
         v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
-        class="border rounded-lg h-full overflow-hidden"
+        class="h-full overflow-hidden rounded-lg border"
         :value="query.data?.items"
         lazy
         paginator
@@ -129,7 +129,7 @@ onMounted(() => {
           <ProgressSpinner class="h-8" />
         </template>
         <template #empty>
-          <div class="py-12 flex flex-col items-center gap-4">
+          <div class="flex flex-col items-center gap-4 py-12">
             <img class="h-36" src="/empty.svg" alt="" />
             <span>Нет данных</span>
           </div>

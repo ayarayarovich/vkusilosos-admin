@@ -30,7 +30,8 @@
   width: 100%;
 }
 
-.p-column-title, .p-datatable-tbody td {
+.p-column-title,
+.p-datatable-tbody td {
   @apply whitespace-nowrap;
 }
 

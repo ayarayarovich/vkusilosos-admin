@@ -2,7 +2,7 @@
   <div>
     <p class="mb-8 text-lg leading-loose">
       Вы уверены, что хотите удалить баннер
-      <span class="min-w-max inline-block font-bold px-4 rounded-lg bg-purple-200 whitespace-nowrap"
+      <span class="inline-block min-w-max whitespace-nowrap rounded-lg bg-purple-200 px-4 font-bold"
         >id: {{ banner.id }}</span
       >
     </p>
@@ -40,7 +40,7 @@ const { mutateAsync, isLoading } = useDeleteBanner()
 
 const deleteCategory = () => {
   mutateAsync({
-    id: banner.id,
+    id: banner.id
   }).then(() => {
     dialogRef.value.close()
   })

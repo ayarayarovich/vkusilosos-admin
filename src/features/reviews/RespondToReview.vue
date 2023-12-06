@@ -3,14 +3,14 @@
     <MyInputNumber name="id" label="ID" disabled :initial-value="review.id" />
     <MyInputNumber name="user_id" label="ID пользователя" :initial-value="review.user_id" />
 
-    <div class="flex items-center w-full">
+    <div class="flex w-full items-center">
       <span>Не отвечен</span>
       <MyInputSwitch name="status" label="" :initial-value="review.status" />
       <span>Отвечен</span>
     </div>
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Сохранить"
       :loading="updateCategoryMutation.isLoading"

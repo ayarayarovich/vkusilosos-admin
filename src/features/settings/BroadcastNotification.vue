@@ -1,6 +1,6 @@
 <template>
   <form @submit="onSubmit">
-    <h1 class="text-xl font-bold mb-6">Разослать уведомления</h1>
+    <h1 class="mb-6 text-xl font-bold">Разослать уведомления</h1>
     <MyInputText name="title" label="Заголовок" />
 
     <MyInputText name="text" label="Текст" />
@@ -36,7 +36,7 @@ const { handleSubmit, errors } = useForm({
       email: yup.boolean().label('Электронная почта'),
       phone: yup.boolean().label('SMS')
     }) as any
-  ).atLeastOneIsTrueOf(['push', 'email', 'phone']),
+  ).atLeastOneIsTrueOf(['push', 'email', 'phone'])
 })
 
 const { mutate, isLoading } = useSendNotification()

@@ -4,7 +4,7 @@
     <MyInputNumber name="bonuses" label="Количество бонусов" />
 
     <Button
-      class="w-full flex items-center p-4 mt-8"
+      class="mt-8 flex w-full items-center p-4"
       type="submit"
       label="Подарить"
       :loading="isLoading"
