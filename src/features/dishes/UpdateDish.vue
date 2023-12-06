@@ -1,6 +1,7 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
     <div class="mb-4 grid grid-cols-3 items-center justify-items-center gap-4">
+      <MyInputNumber name="id" label="ID" disabled />
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
       <MyInputText label="IIKO ID" name="iiko_id" />
@@ -195,6 +196,7 @@ const { data: dishData } = useDish(dish.id, (v) => {
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
+    id: yup.number().required().label('ID'),
     name: yup.string().required().label('Название'),
     img: yup.string().required().label('Изображение'),
     price: yup.number().required().label('Цена'),
