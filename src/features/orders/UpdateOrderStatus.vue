@@ -108,63 +108,63 @@
       </template>
       <template #option="slotProps">
         <Tag
-            v-if="slotProps.option.code === 'accepted'"
-            icon="pi pi-fw pi-check-circle"
-            :value="slotProps.option.label"
-            severity="success"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'delivered'"
-            icon="pi pi-fw pi-check-circle"
-            :value="slotProps.option.label"
-            severity="success"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'waitAdmin'"
-            icon="pi pi-fw pi-exclamation-circle"
-            :value="slotProps.option.label"
-            severity="warning"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'rejectedByUser'"
-            icon="pi pi-fw pi-ban"
-            :value="slotProps.option.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'rejectedByAdmin'"
-            icon="pi pi-fw pi-ban"
-            :value="slotProps.option.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'rejected'"
-            icon="pi pi-fw pi-ban"
-            :value="slotProps.option.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'waitPay'"
-            icon="pi pi-fw pi-clock"
-            :value="slotProps.option.label"
-            severity="warning"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'cooking'"
-            icon="pi pi-fw pi-heart-fill"
-            :value="slotProps.option.label"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'process'"
-            icon="pi pi-fw pi-clock"
-            :value="slotProps.option.label"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === 'deliver'"
-            icon="pi pi-fw pi-truck"
-            :value="slotProps.option.label"
-            severity="info"
-          />
+          v-if="slotProps.option.code === 'accepted'"
+          icon="pi pi-fw pi-check-circle"
+          :value="slotProps.option.label"
+          severity="success"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'delivered'"
+          icon="pi pi-fw pi-check-circle"
+          :value="slotProps.option.label"
+          severity="success"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'waitAdmin'"
+          icon="pi pi-fw pi-exclamation-circle"
+          :value="slotProps.option.label"
+          severity="warning"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'rejectedByUser'"
+          icon="pi pi-fw pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'rejectedByAdmin'"
+          icon="pi pi-fw pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'rejected'"
+          icon="pi pi-fw pi-ban"
+          :value="slotProps.option.label"
+          severity="danger"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'waitPay'"
+          icon="pi pi-fw pi-clock"
+          :value="slotProps.option.label"
+          severity="warning"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'cooking'"
+          icon="pi pi-fw pi-heart-fill"
+          :value="slotProps.option.label"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'process'"
+          icon="pi pi-fw pi-clock"
+          :value="slotProps.option.label"
+        />
+        <Tag
+          v-else-if="slotProps.option.code === 'deliver'"
+          icon="pi pi-fw pi-truck"
+          :value="slotProps.option.label"
+          severity="info"
+        />
       </template>
     </DropdownSelect>
     <Button
