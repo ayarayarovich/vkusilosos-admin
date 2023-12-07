@@ -1,39 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useQuery } from '@tanstack/vue-query'
-import { axiosPrivate } from '@/network'
+
+import { useOrders, type IOrder } from '@/features/orders'
+import UpdateOrderStatus from '@/features/orders/UpdateOrderStatus.vue'
+import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selected = ref()
-const totalRecords = ref<number>()
+const selectedOrder = ref<IOrder>()
 
-const query = reactive(
-  useQuery<{
-    items: any[]
-    total: number
-  }>({
-    queryKey: ['orders', { offset, limit }],
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get('admin/orders', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number
-        }
-      })
-      return response.data
-    }
-  })
+const { data, isFetching, isError, refetch } = useOrders(
+  {
+    offset,
+    limit,
+    search: ''
+  },
+  (v) => v
 )
-
-watch([query], () => {
-  if (query.data) {
-    totalRecords.value = query.data.total
-  }
-})
 
 const onPage = (e: DataTablePageEvent) => {
   offset.value = e.first
@@ -41,8 +27,10 @@ const onPage = (e: DataTablePageEvent) => {
 }
 
 const refresh = () => {
-  query.refetch()
+  refetch()
 }
+
+const dialog = useDialog()
 
 const cm = ref()
 const onRowContextMenu = (event: any) => {
@@ -53,8 +41,26 @@ const menuModel = ref([
     label: 'Обновить',
     icon: 'pi pi-fw pi-refresh',
     command: () => refresh()
+  },
+  {
+    label: 'Обновить статус',
+    icon: 'pi pi-fw pi-pencil',
+    command: () => beginUpdateOrderStatusInteraction(selectedOrder.value!)
   }
 ])
+
+const beginUpdateOrderStatusInteraction = (order: IOrder) => {
+  dialog.open(UpdateOrderStatus, {
+    props: {
+      class: 'w-full max-w-xl',
+      modal: true,
+      header: 'Обновить статус'
+    } as any,
+    data: {
+      order
+    }
+  })
+}
 
 const root = ref<HTMLElement>()
 const scrollHeight = ref()
@@ -70,29 +76,35 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Заказы</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selectedOrder = undefined" />
 
     <Toolbar>
       <template #center>
         <div class="flex w-full">
           <div class="flex flex-1 justify-start gap-2">
-            <Button icon="pi pi-refresh" :disabled="query.isFetching" @click="refresh()" />
+            <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
           </div>
 
           <div class="flex flex-1 justify-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText placeholder="Поиск" />
+              <InputText disabled placeholder="Поиск" />
             </span>
           </div>
 
-          <div class="flex flex-1 justify-end gap-2"></div>
+          <div class="flex flex-1 justify-end gap-2">
+            <Button
+              icon="pi pi-pencil"
+              :disabled="!selectedOrder"
+              @click="beginUpdateOrderStatusInteraction(selectedOrder!)"
+            />
+          </div>
         </div>
       </template>
     </Toolbar>
 
     <div class="min-h-0 flex-1 py-6">
-      <Message v-if="query.isError" severity="error" :closable="false"
+      <Message v-if="isError" severity="error" :closable="false"
         >Не удалось загрузить таблицу</Message
       >
       <DataTable
@@ -100,14 +112,14 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selected"
+        v-model:selection="selectedOrder"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selected"
+        v-model:contextMenuSelection="selectedOrder"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"
-        :value="query.data?.items"
+        :value="data?.list"
         lazy
         paginator
         :first="0"
@@ -115,16 +127,101 @@ onMounted(() => {
         dataKey="id"
         tableStyle="min-width: 50rem"
         @page="onPage($event)"
-        :totalRecords="totalRecords"
+        :totalRecords="data?.total"
       >
         <Column selectionMode="single" headerStyle="width: 3rem" />
         <Column field="id" header="ID" />
-        <Column field="user_name" header="Имя пользователя" />
-        <Column field="phone" header="Телефон" />
-        <Column field="total_price" header="Сумма" />
-        <Column field="count_items" header="Количество позиций" />
-        <Column field="create_time" header="Дата создания" />
-        <Column field="status" header="Статус" />
+        <Column field="user_id" header="ID пользователя" />
+        <Column field="promo" header="Промокод" />
+        <Column field="status" header="Статус">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.status === 'accepted'"
+              icon="pi pi-fw pi-check-circle"
+              value="Выполнен"
+              severity="success"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'delivered'"
+              icon="pi pi-fw pi-check-circle"
+              value="Доставлен"
+              severity="success"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'waitAdmin'"
+              icon="pi pi-fw pi-exclamation-circle"
+              value="Ожидает подтверждения админа"
+              severity="warning"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'rejectedByUser'"
+              icon="pi pi-fw pi-ban"
+              value="Отменён клиентом"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'rejectedByAdmin'"
+              icon="pi pi-fw pi-ban"
+              value="Отменён админом"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'rejected'"
+              icon="pi pi-fw pi-ban"
+              value="Отменён"
+              severity="danger"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'waitPay'"
+              icon="pi pi-fw pi-clock"
+              value="Ожидает оплаты"
+              severity="warning"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'cooking'"
+              icon="pi pi-fw pi-heart-fill"
+              value="Готовится"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'process'"
+              icon="pi pi-fw pi-clock"
+              value="В процессе"
+            />
+            <Tag
+              v-else-if="slotProps.data.status === 'deliver'"
+              icon="pi pi-fw pi-truck"
+              value="В пути"
+              severity="info"
+            />
+            <Tag v-else :value="slotProps.data.status" severity="danger" />
+          </template>
+        </Column>
+        <Column field="price" header="Сумма">
+          <template #body="slotProps"> {{ slotProps.data.price }} ₽ </template>
+        </Column>
+        <Column field="adres" header="Адрес" />
+        <Column field="count_items" header="Кол-во позиций" />
+        <Column field="rest" header="Ресторан" />
+        <Column field="pay_type" header="Способ оплаты">
+          <template #body="slotProps">
+            <Tag
+              v-if="slotProps.data.pay_type === 0"
+              icon="pi pi-fw pi-credit-card"
+              value="Карта"
+            />
+            <Tag
+              v-else-if="slotProps.data.pay_type === 1"
+              icon="pi pi-fw pi-money-bill"
+              value="Наличные"
+            />
+            <Tag v-else-if="slotProps.data.pay_type === 2" class="bg-gray-200">
+              <img class="h-4" src="/tinkoff.svg" alt="" />
+            </Tag>
+            <Tag v-else :value="slotProps.data.pay_type" severity="info" />
+          </template>
+        </Column>
+        <Column field="iiko_id" header="IIKO ID" />
+
         <template #loading>
           <ProgressSpinner class="h-8" />
         </template>
