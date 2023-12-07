@@ -21,7 +21,7 @@ const limit = rowsPerPage
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
 
-const selectedUser = ref()
+const selected = ref()
 
 const { data, isFetching, isError, refetch } = useUsers(
   {
@@ -49,6 +49,9 @@ const beginBlockUnblockUserInteraction = (user: IUser) => {
       modal: true,
       header: 'Изменить статус пользователя'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       user
     }
@@ -62,6 +65,9 @@ const beginGiftBonusesToUserInteraction = (user: IUser) => {
       modal: true,
       header: 'Подарить бонусы пользователю'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       user
     }
@@ -75,6 +81,9 @@ const beginSendNotificationInteraction = (user: IUser) => {
       modal: true,
       header: 'Отправить уведомление'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       user
     }
@@ -88,6 +97,9 @@ const beginShowUserDetailsInteraction = (user: IUser) => {
       modal: true,
       header: 'Подробности'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       user
     }
@@ -111,22 +123,22 @@ const menuModel = ref([
   {
     label: 'Изменить статус',
     icon: 'pi pi-fw pi-user-edit',
-    command: () => beginBlockUnblockUserInteraction(selectedUser.value!)
+    command: () => beginBlockUnblockUserInteraction(selected.value!)
   },
   {
     label: 'Подарить бонусы',
     icon: 'pi pi-fw pi-gift',
-    command: () => beginGiftBonusesToUserInteraction(selectedUser.value!)
+    command: () => beginGiftBonusesToUserInteraction(selected.value!)
   },
   {
     label: 'Отправить уведомление',
     icon: 'pi pi-fw pi-bell',
-    command: () => beginSendNotificationInteraction(selectedUser.value!)
+    command: () => beginSendNotificationInteraction(selected.value!)
   },
   {
     label: 'Подробнее',
     icon: 'pi pi-fw pi-search',
-    command: () => beginShowUserDetailsInteraction(selectedUser.value!)
+    command: () => beginShowUserDetailsInteraction(selected.value!)
   }
 ])
 
@@ -144,7 +156,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Пользователи</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedUser = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -163,20 +175,20 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-user-edit"
-              :disabled="!selectedUser"
-              @click="beginBlockUnblockUserInteraction(selectedUser!)"
+              :disabled="!selected"
+              @click="beginBlockUnblockUserInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedUser"
+              :disabled="!selected"
               icon="pi pi-gift"
               severity="primary"
-              @click="beginGiftBonusesToUserInteraction(selectedUser!)"
+              @click="beginGiftBonusesToUserInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedUser"
+              :disabled="!selected"
               icon="pi pi-bell"
               severity="primary"
-              @click="beginSendNotificationInteraction(selectedUser!)"
+              @click="beginSendNotificationInteraction(selected!)"
             />
           </div>
         </div>
@@ -193,10 +205,10 @@ onMounted(() => {
         class="h-full overflow-hidden rounded-lg border"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedUser"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedUser"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         @row-dblclick="onRowDoubleClick"
         :meta-key-selection="false"

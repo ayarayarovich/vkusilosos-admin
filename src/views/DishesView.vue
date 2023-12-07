@@ -13,7 +13,7 @@ const rowsPerPage = ref(20)
 const offset = ref(0)
 const limit = rowsPerPage
 const searchTerm = ref('')
-const selectedDish = ref<IDish>()
+const selected = ref<IDish>()
 const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
 const { data, refetch, isFetching, isError } = useDishes(
@@ -47,6 +47,9 @@ const beginUpdateDishInteraction = (dish: IDish) => {
       modal: true,
       header: 'Изменить блюдо'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       dish
     }
@@ -60,11 +63,11 @@ const beginDeleteDishInteraction = (dish: IDish) => {
       modal: true,
       header: 'Изменить блюдо'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       dish
-    },
-    onClose: () => {
-      selectedDish.value = undefined
     }
   })
 }
@@ -91,12 +94,12 @@ const menuModel = ref([
   {
     label: 'Изменить',
     icon: 'pi pi-fw pi-pencil',
-    command: () => beginUpdateDishInteraction(selectedDish.value!)
+    command: () => beginUpdateDishInteraction(selected.value!)
   },
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteDishInteraction(selectedDish.value!)
+    command: () => beginDeleteDishInteraction(selected.value!)
   }
 ])
 
@@ -114,7 +117,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Блюда</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedDish = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -134,14 +137,14 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
-              :disabled="!selectedDish"
-              @click="beginUpdateDishInteraction(selectedDish!)"
+              :disabled="!selected"
+              @click="beginUpdateDishInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedDish"
+              :disabled="!selected"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteDishInteraction(selectedDish!)"
+              @click="beginDeleteDishInteraction(selected!)"
             />
           </div>
         </div>
@@ -157,10 +160,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedDish"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedDish"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

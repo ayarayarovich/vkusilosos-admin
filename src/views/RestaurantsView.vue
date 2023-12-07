@@ -18,7 +18,7 @@ const offset = ref(0)
 const limit = rowsPerPage
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
-const selectedRestaurant = ref<IRestaurant>()
+const selected = ref<IRestaurant>()
 
 const { data, refetch, isFetching, isError } = useRestaurants(
   {
@@ -51,6 +51,9 @@ const beginUpdateRestaurantInteraction = (restaurant: IRestaurant) => {
       modal: true,
       header: 'Изменить ресторан'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       restaurant
     }
@@ -64,6 +67,9 @@ const beginDeleteRestaurantInteraction = (restaurant: IRestaurant) => {
       modal: true,
       header: 'Удалить ресторан'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       restaurant
     }
@@ -92,12 +98,12 @@ const menuModel = ref([
   {
     label: 'Изменить',
     icon: 'pi pi-fw pi-pencil',
-    command: () => beginUpdateRestaurantInteraction(selectedRestaurant.value!)
+    command: () => beginUpdateRestaurantInteraction(selected.value!)
   },
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteRestaurantInteraction(selectedRestaurant.value!)
+    command: () => beginDeleteRestaurantInteraction(selected.value!)
   }
 ])
 
@@ -115,7 +121,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Рестораны</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedRestaurant = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -135,14 +141,14 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
-              :disabled="!selectedRestaurant"
-              @click="beginUpdateRestaurantInteraction(selectedRestaurant!)"
+              :disabled="!selected"
+              @click="beginUpdateRestaurantInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedRestaurant"
+              :disabled="!selected"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteRestaurantInteraction(selectedRestaurant!)"
+              @click="beginDeleteRestaurantInteraction(selected!)"
             />
           </div>
         </div>
@@ -158,10 +164,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedRestaurant"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedRestaurant"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

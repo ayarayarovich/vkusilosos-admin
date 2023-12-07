@@ -8,7 +8,7 @@ import truncate from 'truncate'
 
 const rowsPerPage = ref(20)
 
-const selectedReview = ref<IReview>()
+const selected = ref<IReview>()
 const offset = ref(0)
 const limit = rowsPerPage
 
@@ -45,7 +45,7 @@ const menuModel = ref([
   {
     label: 'Ответить',
     icon: 'pi pi-fw pi-check',
-    command: () => beginRespondToReviewInteraction(selectedReview.value!)
+    command: () => beginRespondToReviewInteraction(selected.value!)
   }
 ])
 
@@ -56,6 +56,9 @@ const beginRespondToReviewInteraction = (review: IReview) => {
       modal: true,
       header: 'Ответить на отзыв'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       review
     }
@@ -76,7 +79,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Отзывы</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedReview = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -95,8 +98,8 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-check"
-              :disabled="!selectedReview"
-              @click="beginRespondToReviewInteraction(selectedReview!)"
+              :disabled="!selected"
+              @click="beginRespondToReviewInteraction(selected!)"
             />
           </div>
         </div>
@@ -112,10 +115,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedReview"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedReview"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

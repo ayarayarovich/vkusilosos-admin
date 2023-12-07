@@ -12,7 +12,7 @@ const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedTag = ref<ITag>()
+const selected = ref<ITag>()
 
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
@@ -49,11 +49,11 @@ const beginDeleteTagInteraction = (tag: ITag) => {
       modal: true,
       header: 'Удалить тег'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       tag
-    },
-    onClose: () => {
-      selectedTag.value = undefined
     }
   })
 }
@@ -65,6 +65,9 @@ const beginUpdateTagInteraction = (tag: ITag) => {
       modal: true,
       header: 'Изменить тег'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       tag
     }
@@ -93,12 +96,12 @@ const menuModel = ref([
   {
     label: 'Изменить',
     icon: 'pi pi-fw pi-pencil',
-    command: () => beginUpdateTagInteraction(selectedTag.value!)
+    command: () => beginUpdateTagInteraction(selected.value!)
   },
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteTagInteraction(selectedTag.value!)
+    command: () => beginDeleteTagInteraction(selected.value!)
   }
 ])
 
@@ -116,7 +119,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Теги</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedTag = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -136,14 +139,14 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
-              :disabled="!selectedTag"
-              @click="beginUpdateTagInteraction(selectedTag!)"
+              :disabled="!selected"
+              @click="beginUpdateTagInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedTag"
+              :disabled="!selected"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteTagInteraction(selectedTag!)"
+              @click="beginDeleteTagInteraction(selected!)"
             />
           </div>
         </div>
@@ -160,10 +163,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedTag"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedTag"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

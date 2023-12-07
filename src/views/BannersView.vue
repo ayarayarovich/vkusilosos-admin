@@ -13,7 +13,7 @@ const offset = ref(0)
 const limit = rowsPerPage
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
-const selectedBanner = ref<any>()
+const selected = ref<any>()
 
 const { data, isFetching, isError, refetch } = useBanners(
   {
@@ -37,7 +37,8 @@ const beginCreateBannerInteraction = () => {
       class: 'max-w-4xl w-full',
       modal: true,
       header: 'Новый баннер'
-    } as any
+    } as any,
+    onClose: () => (selected.value = undefined)
   })
 }
 
@@ -48,6 +49,9 @@ const beginDeleteBannerInteraction = (banner: IBanner) => {
       modal: true,
       header: 'Удалить баннер'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       banner
     }
@@ -76,7 +80,7 @@ const menuModel = ref([
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteBannerInteraction(selectedBanner.value!)
+    command: () => beginDeleteBannerInteraction(selected.value!)
   }
 ])
 
@@ -94,7 +98,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Баннеры</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedBanner = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -113,10 +117,10 @@ onMounted(() => {
 
           <div class="flex flex-1 justify-end gap-2">
             <Button
-              :disabled="!selectedBanner"
+              :disabled="!selected"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteBannerInteraction(selectedBanner!)"
+              @click="beginDeleteBannerInteraction(selected!)"
             />
           </div>
         </div>
@@ -132,10 +136,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedBanner"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedBanner"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

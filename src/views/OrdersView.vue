@@ -10,7 +10,7 @@ const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedOrder = ref<IOrder>()
+const selected = ref<IOrder>()
 
 const { data, isFetching, isError, refetch } = useOrders(
   {
@@ -45,7 +45,7 @@ const menuModel = ref([
   {
     label: 'Обновить статус',
     icon: 'pi pi-fw pi-pencil',
-    command: () => beginUpdateOrderStatusInteraction(selectedOrder.value!)
+    command: () => beginUpdateOrderStatusInteraction(selected.value!)
   }
 ])
 
@@ -56,6 +56,9 @@ const beginUpdateOrderStatusInteraction = (order: IOrder) => {
       modal: true,
       header: 'Обновить статус'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       order
     }
@@ -76,7 +79,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Заказы</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedOrder = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -95,8 +98,8 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
-              :disabled="!selectedOrder"
-              @click="beginUpdateOrderStatusInteraction(selectedOrder!)"
+              :disabled="!selected"
+              @click="beginUpdateOrderStatusInteraction(selected!)"
             />
           </div>
         </div>
@@ -112,10 +115,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedOrder"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedOrder"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

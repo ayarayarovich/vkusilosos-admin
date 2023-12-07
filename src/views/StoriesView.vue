@@ -10,7 +10,7 @@ const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selectedStory = ref<IStory>()
+const selected = ref<IStory>()
 
 const { data, isFetching, isError, refetch } = useStories(
   {
@@ -48,6 +48,9 @@ const beginDeleteStoryInteraction = (story: IStory) => {
       modal: true,
       header: 'Удалить историю'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       story
     }
@@ -76,7 +79,7 @@ const menuModel = ref([
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteStoryInteraction(selectedStory.value!)
+    command: () => beginDeleteStoryInteraction(selected.value!)
   }
 ])
 
@@ -94,7 +97,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Истории</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedStory = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -115,8 +118,8 @@ onMounted(() => {
             <Button
               icon="pi pi-times"
               severity="danger"
-              :disabled="!selectedStory"
-              @click="beginDeleteStoryInteraction(selectedStory!)"
+              :disabled="!selected"
+              @click="beginDeleteStoryInteraction(selected!)"
             />
           </div>
         </div>
@@ -132,10 +135,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedStory"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedStory"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"

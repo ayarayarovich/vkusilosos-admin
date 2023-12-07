@@ -17,7 +17,7 @@ const initialRowsPerPage = 20
 
 const offset = ref(0)
 const limit = ref(initialRowsPerPage)
-const selectedCategory = ref<ICategory>()
+const selected = ref<ICategory>()
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
 
@@ -50,11 +50,11 @@ const beginDeleteCategoryInteraction = (category: ICategory) => {
       modal: true,
       header: 'Подтвердите удаление'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       category
-    },
-    onClose: () => {
-      selectedCategory.value = undefined
     }
   })
 }
@@ -66,6 +66,9 @@ const beginUpdateCategoryInteraction = (category: ICategory) => {
       modal: true,
       header: 'Изменить категорию'
     } as any,
+    onClose: () => {
+      selected.value = undefined
+    },
     data: {
       category
     }
@@ -94,12 +97,12 @@ const menuModel = ref([
   {
     label: 'Изменить',
     icon: 'pi pi-fw pi-pencil',
-    command: () => beginUpdateCategoryInteraction(selectedCategory.value!)
+    command: () => beginUpdateCategoryInteraction(selected.value!)
   },
   {
     label: 'Удалить',
     icon: 'pi pi-fw pi-times',
-    command: () => beginDeleteCategoryInteraction(selectedCategory.value!)
+    command: () => beginDeleteCategoryInteraction(selected.value!)
   }
 ])
 
@@ -117,7 +120,7 @@ onMounted(() => {
   <main class="flex h-screen flex-col items-stretch px-4" ref="root">
     <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Категории</h1>
 
-    <ContextMenu ref="cm" :model="menuModel" @hide="selectedCategory = undefined" />
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
     <Toolbar>
       <template #center>
@@ -137,14 +140,14 @@ onMounted(() => {
           <div class="flex flex-1 justify-end gap-2">
             <Button
               icon="pi pi-pencil"
-              :disabled="!selectedCategory"
-              @click="beginUpdateCategoryInteraction(selectedCategory!)"
+              :disabled="!selected"
+              @click="beginUpdateCategoryInteraction(selected!)"
             />
             <Button
-              :disabled="!selectedCategory"
+              :disabled="!selected"
               icon="pi pi-times"
               severity="danger"
-              @click="beginDeleteCategoryInteraction(selectedCategory!)"
+              @click="beginDeleteCategoryInteraction(selected!)"
             />
           </div>
         </div>
@@ -160,10 +163,10 @@ onMounted(() => {
         size="small"
         scrollable
         :scroll-height="scrollHeight"
-        v-model:selection="selectedCategory"
+        v-model:selection="selected"
         selection-mode="single"
         contextMenu
-        v-model:contextMenuSelection="selectedCategory"
+        v-model:contextMenuSelection="selected"
         @rowContextmenu="onRowContextMenu"
         :meta-key-selection="false"
         class="h-full overflow-hidden rounded-lg border"
