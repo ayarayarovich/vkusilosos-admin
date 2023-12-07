@@ -13,6 +13,6 @@ export interface IDish {
     id: number
     rest_id: number
     price: number
-    iiko_id: number
+    iiko_id: string
   }[]
 }

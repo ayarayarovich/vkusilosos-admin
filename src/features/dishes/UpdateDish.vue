@@ -130,7 +130,7 @@
             disabled
             label="ID ресторана"
           />
-          <MyInputNumber class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
+          <MyInputText class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
           <MyInputNumber
             class="flex-1"
             :name="`vars[${idx}].price`"
@@ -218,7 +218,7 @@ const { handleSubmit } = useForm({
     vars: yup.array().of(
       yup.object({
         rest_id: yup.number().required().label('ID ресторана'),
-        iiko_id: yup.number().required().label('IIKO ID блюда'),
+        iiko_id: yup.string().required().label('IIKO ID блюда'),
         price: yup.number().required().label('Цена'),
         active: yup.boolean().label('Активно'),
         can_deliver: yup.boolean().label('Можно доставить'),
@@ -262,7 +262,7 @@ const { data: possibleTags } = useTags(
 const restaurantsFieldArray = ref<
   {
     rest_id: number
-    iiko_id: number
+    iiko_id: string
     price: number
     active: boolean
     can_deliver: boolean
