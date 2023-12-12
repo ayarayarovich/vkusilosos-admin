@@ -211,7 +211,7 @@ const { handleSubmit } = useForm({
     size: yup.number().required().label('Количество'),
     description: yup.string().label('Описание'),
     iiko_id: yup.string().required().label('IIKO ID'),
-    tags: yup.array().required().label('Теги'),
+    tags: yup.array().label('Теги'),
     active: yup.boolean().label('Активно'),
     can_deliver: yup.boolean().label('Можно доставить'),
     have: yup.boolean().label('В наличии'),
