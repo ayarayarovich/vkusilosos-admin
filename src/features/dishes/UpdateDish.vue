@@ -1,6 +1,6 @@
 <template>
   <form class="mt-8" @submit="onSubmit">
-    <div class="mb-4 grid grid-cols-3 items-center justify-items-center gap-4">
+    <div class="mb-8 grid grid-cols-3 items-center justify-items-center gap-4">
       <MyInputNumber name="id" label="ID" disabled />
       <MyInputText name="name" label="Название" />
       <MyInputText name="description" label="Описание" />
@@ -97,6 +97,15 @@
       </div>
     </div>
 
+    <h2 class="mb-6 text-lg font-bold">Время показа</h2>
+    <div class="mb-8 flex items-center justify-center gap-8">
+      <MyCalendar name="from_hour" time-only />
+      <div class="h-px bg-black w-8">
+
+      </div>
+      <MyCalendar name="to_hour" time-only />
+    </div>
+
     <div class="mb-8 flex flex-wrap items-center justify-center gap-12">
       <MyInputSwitch label="В наличии" :name="`have`" />
       <MyInputSwitch label="Можно доставить" :name="`can_deliver`" />
@@ -167,6 +176,7 @@ import DropdownSelect from '@/components/DropdownSelect.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
+import MyCalendar from '@/components/MyCalendar.vue'
 
 import { useCategories } from '@/features/categories'
 import { useUpdateDish, useDish } from './composables'
@@ -215,6 +225,8 @@ const { handleSubmit } = useForm({
     active: yup.boolean().label('Активно'),
     can_deliver: yup.boolean().label('Можно доставить'),
     have: yup.boolean().label('В наличии'),
+    from_hour: yup.number().required().label('Доступно С'),
+    to_hour: yup.number().required().label('Доступно ДО'),
     vars: yup.array().of(
       yup.object({
         rest_id: yup.number().required().label('ID ресторана'),

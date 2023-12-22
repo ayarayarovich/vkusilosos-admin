@@ -43,6 +43,7 @@ import ProgressBar from 'primevue/progressbar'
 import ContextMenu from 'primevue/contextmenu'
 import Toolbar from 'primevue/toolbar'
 import Chart from 'primevue/chart'
+import Calendar from 'primevue/calendar'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -298,5 +299,6 @@ app.component('ProgressBar', ProgressBar)
 app.component('ContextMenu', ContextMenu)
 app.component('Toolbar', Toolbar)
 app.component('Chart', Chart)
+app.component('Calendar', Calendar)
 
 app.mount('#app')

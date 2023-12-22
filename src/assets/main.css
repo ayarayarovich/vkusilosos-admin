@@ -45,3 +45,8 @@ img:before {
   background-size: cover;
   background-position: center;
 }
+
+
+input {
+  @apply min-w-0
+}
