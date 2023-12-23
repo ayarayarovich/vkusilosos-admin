@@ -21,22 +21,15 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { computed, toRefs } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   label: string
   name: string
-  initialValue?: boolean
 }>()
-
-const { initialValue } = toRefs(props)
 
 const { errorMessage, value, setValue } = useField<boolean>(
   () => props.name,
-  {},
-  {
-    initialValue
-  }
 )
 
 const inputID = computed(() => `input-number-${props.name}`)
