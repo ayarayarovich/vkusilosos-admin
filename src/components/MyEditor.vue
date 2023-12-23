@@ -17,15 +17,10 @@ const props = defineProps<{
   label: string
   name: string
   type?: string
-  initialValue?: string
 }>()
 
 const { errorMessage, value } = useField<any>(
-  () => props.name,
-  {},
-  {
-    initialValue: props.initialValue
-  }
+  () => props.name
 )
 
 const inputID = computed(() => `${uuidv4()}-input-text-${props.name}`)
