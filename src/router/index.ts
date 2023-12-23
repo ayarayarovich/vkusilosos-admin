@@ -16,6 +16,7 @@ import OrdersView from '@/views/OrdersView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 
 import { useUserStore } from '@/stores/user'
+import BlogsView from '@/views/BlogsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,11 @@ const router = createRouter({
           path: 'banners',
           name: 'banners',
           component: BannersView
+        },
+        {
+          path: 'articles',
+          name: 'articles',
+          component: BlogsView
         },
         {
           path: 'promotions',

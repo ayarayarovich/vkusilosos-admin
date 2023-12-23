@@ -200,7 +200,6 @@ const { data: dishData } = useDish(dish.id, (v) => {
   if (v.tags) {
     v.tags = v.tags.map((tag) => tag.id)
   }
-  console.log('dishData', v)
   return v
 })
 
@@ -285,7 +284,6 @@ const restaurantsFieldArray = ref<
 >()
 watch([restaurantsFieldArray], () => {
   if (restaurantsFieldArray.value) {
-    console.log('RestaurantsFieldArray', restaurantsFieldArray.value)
     const copy = restaurantsFieldArray.value.map((i) => ({ ...i }))
     replace(copy)
   }

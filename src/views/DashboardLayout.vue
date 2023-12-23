@@ -12,79 +12,100 @@
               v-slot="{ isExactActive }"
               class="w-full rounded-lg"
               :to="{ name: 'dashboard' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
-                :class="isExactActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-home" /> Дашборд</span
-              ></RouterLink
             >
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
+                :class="isExactActive ? '!bg-indigo-100 text-black' : ''"
+              >
+                <i class="pi pi-fw pi-home" />
+                Дашборд
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'settings' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'settings' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-cog" /> Настройки</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-cog" />
+                Настройки
+              </span>
+            </RouterLink>
           </li>
 
           <li class="mb-1 mt-2 text-sm font-bold">Пользователи</li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'users' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'users' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-user" /> Пользователи</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-user" />
+                Пользователи
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'reviews' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'reviews' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-comments" /> Отзывы</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-comments" />
+                Отзывы
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'orders' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'orders' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-shopping-cart" /> Заказы</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-shopping-cart" />
+                Заказы
+              </span>
+            </RouterLink>
           </li>
 
           <li class="mb-1 mt-2 text-sm font-bold">Еда</li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'categories' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
-                :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-sitemap" /> Категории</span
-              ></RouterLink
+            <RouterLink
+              v-slot="{ isActive }"
+              class="w-full rounded-lg"
+              :to="{ name: 'categories' }"
             >
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
+              >
+                <i class="pi pi-fw pi-sitemap" />
+                Категории
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'dishes' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'dishes' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-book" /> Блюда</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-book" />
+                Блюда
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'tags' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'tags' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-hashtag" /> Теги</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-hashtag" />
+                Теги
+              </span>
+            </RouterLink>
           </li>
 
           <li class="mb-1 mt-2 text-sm font-bold">Точки</li>
@@ -93,48 +114,73 @@
               v-slot="{ isActive }"
               class="w-full rounded-lg"
               :to="{ name: 'restaurants' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
-                :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-building" /> Рестораны</span
-              ></RouterLink
             >
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
+              >
+                <i class="pi pi-fw pi-building" />
+                Рестораны
+              </span>
+            </RouterLink>
           </li>
 
           <li class="mb-1 mt-2 text-sm font-bold">Маркетинг</li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'stories' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'stories' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-instagram" /> Истории</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-instagram" />
+                Истории
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'banners' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'banners' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-images" /> Баннеры</span
-              ></RouterLink
-            >
+              >
+                <i class="pi pi-fw pi-images" />
+                Баннеры
+              </span>
+            </RouterLink>
           </li>
           <li class="min-w-max">
-            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'promotions' }"
-              ><span
-                class="block rounded-lg px-4 py-2 text-sm transition-all hover:bg-gray-100"
+            <RouterLink v-slot="{ isActive }" class="w-full rounded-lg" :to="{ name: 'articles' }">
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
                 :class="isActive ? '!bg-indigo-100 text-black' : ''"
-                ><i class="pi pi-fw pi-percentage" /> Акции</span
-              ></RouterLink
+              >
+                <i class="pi pi-fw pi-bars" />
+                Статьи
+              </span>
+            </RouterLink>
+          </li>
+          <li class="min-w-max">
+            <RouterLink
+              v-slot="{ isActive }"
+              class="w-full rounded-lg"
+              :to="{ name: 'promotions' }"
             >
+              <span
+                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
+                :class="isActive ? '!bg-indigo-100 text-black' : ''"
+              >
+                <i class="pi pi-fw pi-percentage" />
+                Акции
+              </span>
+            </RouterLink>
           </li>
           <li class="mt-8 flex grow flex-col justify-end">
             <button
               @click="userStore.signOut"
               class="block rounded-lg p-3 text-start transition-all hover:bg-gray-100"
             >
-              <i class="pi pi-fw pi-sign-out" /> Выйти
+              <i class="pi pi-fw pi-sign-out" />
+              Выйти
             </button>
           </li>
         </ul>
