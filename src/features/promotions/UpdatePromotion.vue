@@ -1,79 +1,79 @@
 <template>
-  <form @submit="onSubmit">
-      <div class="flex gap-8 mb-2">
-          <MyInputNumber disabled class="flex-1" name="id" label="ID акции" />
-          <MyInputText class="flex-1" name="name" label="Название" />
-      </div>
-    <div class="flex gap-8 mb-2">
-      <DropdownSelect
-        class="flex-1"
-        name="active"
-        label="Активность"
-        placeholder="Выберите"
-        :options="[
-          {
-            label: 'Не активна',
-            code: false
-          },
-          {
-            label: 'Активна',
-            code: true
-          }
-        ]"
-      >
-        <template #value="slotProps">
-          <template v-if=slotProps.value> 
-              <Tag
-              v-if="slotProps.value.code === false"
-              icon="pi pi-ban"
-              :value="slotProps.value.label"
-              severity="danger"
-              />
-              <Tag
-              v-else-if="slotProps.value.code === true"
-              icon="pi pi-check-circle"
-              :value="slotProps.value.label"
-              severity="success"
-              />
-          </template>
-        </template>
-        <template #option="slotProps">
-          <Tag
-            v-if="slotProps.option.code === false"
-            icon="pi pi-ban"
-            :value="slotProps.option.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.option.code === true"
-            icon="pi pi-check-circle"
-            :value="slotProps.option.label"
-            severity="success"
-          />
-        </template>
-      </DropdownSelect>
-      <MyCalendarRange class="flex-1" name="date_range" label="Период активности" />
-    </div>
-    <div class="flex items-center gap-8">
-      <MyUploadImage
-        class="max-w-[25%]"
-        name="img"
-        :aspect-ratio="3 / 4"
-        filename-prop-in-request="file"
-        filename-prop-in-response="link"
-        upload-route="admin/upload"
-      />
-      <MyEditor class="h-full flex-1" name="text" label="Контент" />
-    </div>
+    <form @submit="onSubmit">
+        <div class="mb-2 flex gap-8">
+            <MyInputNumber disabled class="flex-1" name="id" label="ID акции" />
+            <MyInputText class="flex-1" name="name" label="Название" />
+        </div>
+        <div class="mb-2 flex gap-8">
+            <DropdownSelect
+                class="flex-1"
+                name="active"
+                label="Активность"
+                placeholder="Выберите"
+                :options="[
+                    {
+                        label: 'Не активна',
+                        code: false
+                    },
+                    {
+                        label: 'Активна',
+                        code: true
+                    }
+                ]"
+            >
+                <template #value="slotProps">
+                    <template v-if="slotProps.value">
+                        <Tag
+                            v-if="slotProps.value.code === false"
+                            icon="pi pi-ban"
+                            :value="slotProps.value.label"
+                            severity="danger"
+                        />
+                        <Tag
+                            v-else-if="slotProps.value.code === true"
+                            icon="pi pi-check-circle"
+                            :value="slotProps.value.label"
+                            severity="success"
+                        />
+                    </template>
+                </template>
+                <template #option="slotProps">
+                    <Tag
+                        v-if="slotProps.option.code === false"
+                        icon="pi pi-ban"
+                        :value="slotProps.option.label"
+                        severity="danger"
+                    />
+                    <Tag
+                        v-else-if="slotProps.option.code === true"
+                        icon="pi pi-check-circle"
+                        :value="slotProps.option.label"
+                        severity="success"
+                    />
+                </template>
+            </DropdownSelect>
+            <MyCalendarRange class="flex-1" name="date_range" label="Период активности" />
+        </div>
+        <div class="flex items-center gap-8">
+            <MyUploadImage
+                class="max-w-[25%]"
+                name="img"
+                :aspect-ratio="3 / 4"
+                filename-prop-in-request="file"
+                filename-prop-in-response="link"
+                upload-route="admin/upload"
+            />
+            <MyEditor class="h-full flex-1" name="text" label="Контент" />
+        </div>
 
-    <Button
-      class="mt-8 flex w-full items-center p-4"
-      type="submit"
-      label="Сохранить"
-      :loading="isLoading"
-      :disabled="isLoading"
-    />
-  </form>
+        <Button
+            class="mt-8 flex w-full items-center p-4"
+            type="submit"
+            label="Сохранить"
+            :loading="isLoading"
+            :disabled="isLoading"
+        />
+    </form>
 </template>
 
 <script setup lang="ts">
@@ -101,27 +101,37 @@ const { data: promotionData } = usePromotion(promotion.id, (v) => {
     delete obj.start
     delete obj.end
     obj.date_range = date_range
-    
+
     return obj
 })
 
 const { handleSubmit } = useForm({
-  validationSchema: yup.object({
-    id: yup.number().required().label('ID акции'),
-    name: yup.string().required().label('Название акции'),
-    img: yup.string().required().label('Картинка'),
-    text: yup.string().required().label('Контент'),
-    active: yup.boolean().required().label('Активность')
-  }),
-  initialValues: promotionData
+    validationSchema: yup.object({
+        id: yup.number().required().label('ID акции'),
+        name: yup.string().required().label('Название акции'),
+        img: yup.string().required().label('Картинка'),
+        text: yup.string().required().label('Контент'),
+        active: yup.boolean().required().label('Активность')
+    }),
+    initialValues: promotionData
 })
 
 const { mutate, isLoading } = useUpdatePromotion()
 
 const onSubmit = handleSubmit((vals) => {
-  vals.start = vals.date_range[0].getFullYear() + '-' + pad(vals.date_range[0].getMonth() + 1, 2) + '-' + pad(vals.date_range[0].getDate(), 2)
-  vals.end  = vals.date_range[1].getFullYear() + '-' + pad(vals.date_range[1].getMonth() + 1, 2) + '-' + pad(vals.date_range[1].getDate(), 2)
-  delete vals.date_range
-  mutate(vals)
+    vals.start =
+        vals.date_range[0].getFullYear() +
+        '-' +
+        pad(vals.date_range[0].getMonth() + 1, 2) +
+        '-' +
+        pad(vals.date_range[0].getDate(), 2)
+    vals.end =
+        vals.date_range[1].getFullYear() +
+        '-' +
+        pad(vals.date_range[1].getMonth() + 1, 2) +
+        '-' +
+        pad(vals.date_range[1].getDate(), 2)
+    delete vals.date_range
+    mutate(vals)
 })
 </script>

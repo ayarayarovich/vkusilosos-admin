@@ -5,115 +5,115 @@ import type { IDish } from './interfaces'
 import type { MaybeRef } from 'vue'
 
 interface GetDishesResponse {
-  list: IDish[]
-  total: number
+    list: IDish[]
+    total: number
 }
 
 interface QueryConfig {
-  offset: MaybeRef<number>
-  limit: MaybeRef<number>
-  search: MaybeRef<string>
+    offset: MaybeRef<number>
+    limit: MaybeRef<number>
+    search: MaybeRef<string>
 }
 
 export const useDishes = <SData>(
-  queryConfig: QueryConfig,
-  selector?: (response: GetDishesResponse) => SData
+    queryConfig: QueryConfig,
+    selector?: (response: GetDishesResponse) => SData
 ) => {
-  const { offset, limit, search } = queryConfig
-  return useQuery({
-    queryKey: ['dishes', { offset, limit, search }] as any,
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get<GetDishesResponse>('admin/dishes', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number,
-          search: (queryKey[1] as any).search as string
-        }
-      })
-      return response.data
-    },
-    select: selector,
-    keepPreviousData: true
-  })
+    const { offset, limit, search } = queryConfig
+    return useQuery({
+        queryKey: ['dishes', { offset, limit, search }] as any,
+        queryFn: async ({ queryKey }) => {
+            const response = await axiosPrivate.get<GetDishesResponse>('admin/dishes', {
+                params: {
+                    offset: (queryKey[1] as any).offset as number,
+                    limit: (queryKey[1] as any).limit as number,
+                    search: (queryKey[1] as any).search as string
+                }
+            })
+            return response.data
+        },
+        select: selector,
+        keepPreviousData: true
+    })
 }
 
 interface GetDishResponse {
-  [key: string]: any
+    [key: string]: any
 }
 
 export const useDish = <SData>(
-  id: MaybeRef<number>,
-  selector?: (response: GetDishResponse) => SData
+    id: MaybeRef<number>,
+    selector?: (response: GetDishResponse) => SData
 ) => {
-  return useQuery({
-    queryKey: ['dishes', { id }] as any,
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get<GetDishResponse>('admin/dish', {
-        params: {
-          id: (queryKey[1] as any).id as number
-        }
-      })
-      return response.data
-    },
-    select: selector,
-    keepPreviousData: true
-  })
+    return useQuery({
+        queryKey: ['dishes', { id }] as any,
+        queryFn: async ({ queryKey }) => {
+            const response = await axiosPrivate.get<GetDishResponse>('admin/dish', {
+                params: {
+                    id: (queryKey[1] as any).id as number
+                }
+            })
+            return response.data
+        },
+        select: selector,
+        keepPreviousData: true
+    })
 }
 
 export const useCreateDish = () => {
-  const toast = useToast()
-  const queryClient = useQueryClient()
+    const toast = useToast()
+    const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (vars: any) => {
-      const response = await axiosPrivate.post('admin/dish', vars)
-      return response
-    },
-    onSuccess(_, vars) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Добавлено блюдо ${vars.name}`
-      })
-      queryClient.invalidateQueries(['dishes'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось создать блюдо',
-        detail: error
-      })
-    }
-  })
+    return useMutation({
+        mutationFn: async (vars: any) => {
+            const response = await axiosPrivate.post('admin/dish', vars)
+            return response
+        },
+        onSuccess(_, vars) {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Добавлено блюдо ${vars.name}`
+            })
+            queryClient.invalidateQueries(['dishes'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось создать блюдо',
+                detail: error
+            })
+        }
+    })
 }
 
 export const useUpdateDish = () => {
-  const toast = useToast()
-  const queryClient = useQueryClient()
+    const toast = useToast()
+    const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: async (vars: any) => {
-      const response = await axiosPrivate.put('admin/dish', vars)
-      return response
-    },
-    onSuccess(_, vars) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Обновлено блюдо ${vars.name}`
-      })
-      queryClient.invalidateQueries(['dishes'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось обновить блюдо',
-        detail: error
-      })
-    }
-  })
+    return useMutation({
+        mutationFn: async (vars: any) => {
+            const response = await axiosPrivate.put('admin/dish', vars)
+            return response
+        },
+        onSuccess(_, vars) {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Обновлено блюдо ${vars.name}`
+            })
+            queryClient.invalidateQueries(['dishes'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось обновить блюдо',
+                detail: error
+            })
+        }
+    })
 }

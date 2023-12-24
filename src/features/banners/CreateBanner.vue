@@ -1,64 +1,64 @@
 <template>
-  <form @submit="onSubmit" class="w-full">
-    <MyUploadImage
-      name="img"
-      class="mb-8 rounded-lg"
-      filename-prop-in-request="file"
-      filename-prop-in-response="link"
-      upload-route="admin/upload"
-      :aspect-ratio="30 / 9"
-    />
-
-    <MyInputText name="link" label="Ссылка" />
-    <DropdownSelect
-      name="active"
-      label="Активен"
-      placeholder="Выберите"
-      :options="[
-        {
-          label: 'Не активен',
-          code: false
-        },
-        {
-          label: 'Активен',
-          code: true
-        }
-      ]"
-    >
-      <template #value="slotProps">
-        <template v-if="slotProps.value">
-          <Tag
-            v-if="slotProps.value.code === false"
-            icon="pi pi-ban"
-            :value="slotProps.value.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.value.code === true"
-            icon="pi pi-check-circle"
-            :value="slotProps.value.label"
-            severity="success"
-          />
-        </template>
-      </template>
-      <template #option="slotProps">
-        <Tag
-          v-if="slotProps.option.code === false"
-          icon="pi pi-ban"
-          :value="slotProps.option.label"
-          severity="danger"
+    <form @submit="onSubmit" class="w-full">
+        <MyUploadImage
+            name="img"
+            class="mb-8 rounded-lg"
+            filename-prop-in-request="file"
+            filename-prop-in-response="link"
+            upload-route="admin/upload"
+            :aspect-ratio="30 / 9"
         />
-        <Tag
-          v-else-if="slotProps.option.code === true"
-          icon="pi pi-check-circle"
-          :value="slotProps.option.label"
-          severity="success"
-        />
-      </template>
-    </DropdownSelect>
 
-    <Button class="mt-12 flex w-full justify-center p-4" type="submit"> Создать </Button>
-  </form>
+        <MyInputText name="link" label="Ссылка" />
+        <DropdownSelect
+            name="active"
+            label="Активен"
+            placeholder="Выберите"
+            :options="[
+                {
+                    label: 'Не активен',
+                    code: false
+                },
+                {
+                    label: 'Активен',
+                    code: true
+                }
+            ]"
+        >
+            <template #value="slotProps">
+                <template v-if="slotProps.value">
+                    <Tag
+                        v-if="slotProps.value.code === false"
+                        icon="pi pi-ban"
+                        :value="slotProps.value.label"
+                        severity="danger"
+                    />
+                    <Tag
+                        v-else-if="slotProps.value.code === true"
+                        icon="pi pi-check-circle"
+                        :value="slotProps.value.label"
+                        severity="success"
+                    />
+                </template>
+            </template>
+            <template #option="slotProps">
+                <Tag
+                    v-if="slotProps.option.code === false"
+                    icon="pi pi-ban"
+                    :value="slotProps.option.label"
+                    severity="danger"
+                />
+                <Tag
+                    v-else-if="slotProps.option.code === true"
+                    icon="pi pi-check-circle"
+                    :value="slotProps.option.label"
+                    severity="success"
+                />
+            </template>
+        </DropdownSelect>
+
+        <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
+    </form>
 </template>
 
 <script setup lang="ts">
@@ -70,20 +70,20 @@ import * as yup from 'yup'
 import { useCreateBanner } from './composables'
 
 const { handleSubmit } = useForm({
-  // TODO: поправить названия полей
-  validationSchema: yup.object({
-    img: yup.string().required().label('Изображение'),
-    link: yup.string().required().label('Ссылка'),
-    active: yup.boolean().required().label('Активно')
-  }),
-  initialValues: {
-    active: true
-  }
+    // TODO: поправить названия полей
+    validationSchema: yup.object({
+        img: yup.string().required().label('Изображение'),
+        link: yup.string().required().label('Ссылка'),
+        active: yup.boolean().required().label('Активно')
+    }),
+    initialValues: {
+        active: true
+    }
 })
 
 const { mutate } = useCreateBanner()
 
 const onSubmit = handleSubmit((vals) => {
-  mutate(vals)
+    mutate(vals)
 })
 </script>

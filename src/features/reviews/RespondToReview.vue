@@ -1,24 +1,24 @@
 <template>
-  <form @submit.prevent="onSubmit">
-    <div class="flex gap-4">
-      <MyInputNumber name="id" label="ID" disabled />
-      <MyInputNumber name="user_id" label="ID пользователя" disabled />
-    </div>
+    <form @submit.prevent="onSubmit">
+        <div class="flex gap-4">
+            <MyInputNumber name="id" label="ID" disabled />
+            <MyInputNumber name="user_id" label="ID пользователя" disabled />
+        </div>
 
-    <div class="mb-4 rounded-lg bg-indigo-50 p-4 text-gray-900">
-      <p>{{ review.text }}</p>
-    </div>
+        <div class="mb-4 rounded-lg bg-indigo-50 p-4 text-gray-900">
+            <p>{{ review.text }}</p>
+        </div>
 
-    <MyTextArea name="text" label="Ответ" />
+        <MyTextArea name="text" label="Ответ" />
 
-    <Button
-      class="mt-4 flex w-full items-center"
-      type="submit"
-      label="Сохранить"
-      :loading="isLoading"
-      :disabled="isLoading"
-    />
-  </form>
+        <Button
+            class="mt-4 flex w-full items-center"
+            type="submit"
+            label="Сохранить"
+            :loading="isLoading"
+            :disabled="isLoading"
+        />
+    </form>
 </template>
 
 <script setup lang="ts">
@@ -34,20 +34,20 @@ const dialogRef = inject('dialogRef') as any
 const review = dialogRef.value.data.review as IReview
 
 const { handleSubmit } = useForm({
-  validationSchema: yup.object({
-    id: yup.number().required().label('ID отзыва'),
-    user_id: yup.number().required().label('ID пользователя'),
-    text: yup.string().required().label('Ответ')
-  }),
-  initialValues: {
-    id: review.id,
-    user_id: review.user_id,
-  }
+    validationSchema: yup.object({
+        id: yup.number().required().label('ID отзыва'),
+        user_id: yup.number().required().label('ID пользователя'),
+        text: yup.string().required().label('Ответ')
+    }),
+    initialValues: {
+        id: review.id,
+        user_id: review.user_id
+    }
 })
 
 const { mutate, isLoading } = useChangeReviewStatus()
 
 const onSubmit = handleSubmit((vals) => {
-  mutate(vals)
+    mutate(vals)
 })
 </script>

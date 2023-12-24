@@ -6,88 +6,88 @@ import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
 
 interface GetTagsResponse {
-  list: ITag[]
-  total: number
+    list: ITag[]
+    total: number
 }
 
 interface QueryConfig {
-  offset: MaybeRef<number>
-  limit: MaybeRef<number>
-  search: MaybeRef<string>
+    offset: MaybeRef<number>
+    limit: MaybeRef<number>
+    search: MaybeRef<string>
 }
 
 export const useTags = <SData>(
-  queryConfig: QueryConfig,
-  selector?: (response: GetTagsResponse) => SData
+    queryConfig: QueryConfig,
+    selector?: (response: GetTagsResponse) => SData
 ) => {
-  const { offset, limit, search } = queryConfig
-  return useQuery({
-    queryKey: ['tags', { offset, limit, search }] as any,
-    queryFn: async ({ queryKey }) => {
-      const response = await axiosPrivate.get<GetTagsResponse>('admin/tags', {
-        params: {
-          offset: (queryKey[1] as any).offset as number,
-          limit: (queryKey[1] as any).limit as number,
-          search: (queryKey[1] as any).search as string
-        }
-      })
-      return response.data
-    },
-    select: selector,
-    keepPreviousData: true
-  })
+    const { offset, limit, search } = queryConfig
+    return useQuery({
+        queryKey: ['tags', { offset, limit, search }] as any,
+        queryFn: async ({ queryKey }) => {
+            const response = await axiosPrivate.get<GetTagsResponse>('admin/tags', {
+                params: {
+                    offset: (queryKey[1] as any).offset as number,
+                    limit: (queryKey[1] as any).limit as number,
+                    search: (queryKey[1] as any).search as string
+                }
+            })
+            return response.data
+        },
+        select: selector,
+        keepPreviousData: true
+    })
 }
 
 export const useCreateTag = () => {
-  const toast = useToast()
-  const queryClient = useQueryClient()
+    const toast = useToast()
+    const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.post('admin/tag', vars),
-    onSuccess(_, vars) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Создан тег ${vars.name}`
-      })
-      queryClient.invalidateQueries(['tags'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось создать тег',
-        detail: error
-      })
-    }
-  })
+    return useMutation({
+        mutationFn: (vars: any) => axiosPrivate.post('admin/tag', vars),
+        onSuccess(_, vars) {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Создан тег ${vars.name}`
+            })
+            queryClient.invalidateQueries(['tags'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось создать тег',
+                detail: error
+            })
+        }
+    })
 }
 
 export const useUpdateTag = () => {
-  const toast = useToast()
-  const queryClient = useQueryClient()
+    const toast = useToast()
+    const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (vars: any) => axiosPrivate.put('admin/tag', vars),
-    onSuccess(_, vars) {
-      toast.add({
-        severity: 'success',
-        life: 3000,
-        summary: 'Успешно',
-        detail: `Изменен тег ${vars.name}`
-      })
-      queryClient.invalidateQueries(['tags'])
-    },
-    onError(error: any) {
-      toast.add({
-        severity: 'error',
-        life: 3000,
-        summary: 'Не удалось Изменен тег',
-        detail: error
-      })
-    }
-  })
+    return useMutation({
+        mutationFn: (vars: any) => axiosPrivate.put('admin/tag', vars),
+        onSuccess(_, vars) {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Изменен тег ${vars.name}`
+            })
+            queryClient.invalidateQueries(['tags'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось Изменен тег',
+                detail: error
+            })
+        }
+    })
 }
 
 // export const useDeleteRestaurant = () => {
