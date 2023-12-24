@@ -11,53 +11,6 @@
 
     <MyTextArea name="text" label="Ответ" />
 
-    <DropdownSelect
-      name="status"
-      label="Статус"
-      placeholder="Выберите"
-      :options="[
-        {
-          label: 'Не отвечен',
-          code: 0
-        },
-        {
-          label: 'Отвечен',
-          code: 1
-        }
-      ]"
-    >
-      <template #value="slotProps">
-        <template v-if="slotProps.value">
-          <Tag
-            v-if="slotProps.value.code === 0"
-            icon="pi pi-times"
-            :value="slotProps.value.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.value.code === 1"
-            icon="pi pi-check-circle"
-            :value="slotProps.value.label"
-            severity="success"
-          />
-        </template>
-      </template>
-      <template #option="slotProps">
-        <Tag
-          v-if="slotProps.option.code === 0"
-          icon="pi pi-times"
-          :value="slotProps.option.label"
-          severity="danger"
-        />
-        <Tag
-          v-else-if="slotProps.option.code === 1"
-          icon="pi pi-check-circle"
-          :value="slotProps.option.label"
-          severity="success"
-        />
-      </template>
-    </DropdownSelect>
-
     <Button
       class="mt-4 flex w-full items-center"
       type="submit"
@@ -71,7 +24,6 @@
 <script setup lang="ts">
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyTextArea from '@/components/MyTextarea.vue'
-import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { inject } from 'vue'
@@ -85,13 +37,11 @@ const { handleSubmit } = useForm({
   validationSchema: yup.object({
     id: yup.number().required().label('ID отзыва'),
     user_id: yup.number().required().label('ID пользователя'),
-    status: yup.number().required().label('Статус'),
     text: yup.string().required().label('Ответ')
   }),
   initialValues: {
     id: review.id,
     user_id: review.user_id,
-    status: review.status
   }
 })
 
