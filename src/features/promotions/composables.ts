@@ -11,6 +11,7 @@ export interface IPromotion {
     start: string
     end: string
     img: string
+    name: string
     text: string
     active: boolean
 }
