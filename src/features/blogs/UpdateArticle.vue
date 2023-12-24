@@ -6,6 +6,7 @@
         class="flex-1"
         name="active"
         label="Активность"
+        placeholder="Выберите"
         :options="[
           {
             label: 'Не активна',
@@ -18,18 +19,20 @@
         ]"
       >
         <template #value="slotProps">
-          <Tag
-            v-if="slotProps.value.code === false"
-            icon="pi pi-ban"
-            :value="slotProps.value.label"
-            severity="danger"
-          />
-          <Tag
-            v-else-if="slotProps.value.code === true"
-            icon="pi pi-check-circle"
-            :value="slotProps.value.label"
-            severity="success"
-          />
+            <template v-if="slotProps.value">
+                <Tag
+                v-if="slotProps.value.code === false"
+                icon="pi pi-ban"
+                :value="slotProps.value.label"
+                severity="danger"
+                />
+                <Tag
+                v-else-if="slotProps.value.code === true"
+                icon="pi pi-check-circle"
+                :value="slotProps.value.label"
+                severity="success"
+                />
+            </template>
         </template>
         <template #option="slotProps">
           <Tag
