@@ -9,6 +9,8 @@
       <p>{{ review.text }}</p>
     </div>
 
+    <MyTextArea name="text" label="Ответ" />
+
     <DropdownSelect
       name="status"
       label="Статус"
@@ -68,6 +70,7 @@
 
 <script setup lang="ts">
 import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyTextArea from '@/components/MyTextarea.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
@@ -82,9 +85,14 @@ const { handleSubmit } = useForm({
   validationSchema: yup.object({
     id: yup.number().required().label('ID отзыва'),
     user_id: yup.number().required().label('ID пользователя'),
-    status: yup.number().required().label('Статус')
+    status: yup.number().required().label('Статус'),
+    text: yup.string().required().label('Ответ')
   }),
-  initialValues: review
+  initialValues: {
+    id: review.id,
+    user_id: review.user_id,
+    status: review.status
+  }
 })
 
 const { mutate, isLoading } = useChangeReviewStatus()
