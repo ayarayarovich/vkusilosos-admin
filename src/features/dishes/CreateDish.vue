@@ -221,7 +221,7 @@ const { handleSubmit } = useForm({
     }),
     initialValues: {
         from_hour: 600,
-        to_hour: 0
+        to_hour: 2200
     }
 })
 
