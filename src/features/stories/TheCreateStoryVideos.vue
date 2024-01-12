@@ -50,12 +50,23 @@
         <MyInputText :name="`link`" label="Ссылка" />
 
         <MyUploadFile
+            class="mb-6"
             name="file"
             uploadRoute="admin/upload"
             filenamePropInRequest="file"
             filenamePropInResponse="link"
             accept=".mp4,.mov"
         />
+
+        <video
+            v-if="videoSrc"
+            class="mx-auto rounded-xl shadow-lg"
+            width="320"
+            :src="videoSrc"
+            autoplay
+            controls
+            loop
+        ></video>
 
         <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
     </form>
@@ -65,7 +76,7 @@
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useToast } from 'primevue/usetoast'
-import { useForm } from 'vee-validate'
+import { useFieldValue, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { axiosPrivate } from '@/network'
 import MyInputText from '@/components/MyInputText.vue'
@@ -84,6 +95,8 @@ const { handleSubmit } = useForm({
         active: false
     }
 })
+
+const videoSrc = useFieldValue<string>('file')
 
 const { mutate } = useMutation({
     mutationFn: (vars: any) =>
