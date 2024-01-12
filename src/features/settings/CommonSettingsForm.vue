@@ -9,6 +9,12 @@
                     mode="currency"
                     currency="RUB"
                 />
+                <MyInputNumber
+                    name="deliver_price"
+                    label="Цена доставки"
+                    mode="currency"
+                    currency="RUB"
+                />
                 <MyInputNumber name="bonus_percent" label="Процент бонусов" />
                 <MyInputText name="instagram" label="Instagram" />
                 <MyInputText name="vk" label="VK" />
@@ -69,6 +75,7 @@ const { handleSubmit } = useForm({
             .number()
             .required()
             .label('Сумма, начиная с которой доставка бесплатная'),
+        deliver_price: yup.number().required().label('Цена доставки'),
         bonus_percent: yup.number().required().label('Процент бонусов от суммы заказа'),
         instagram: yup.string().required().label('Ссылка на Instagram'),
         vk: yup.string().required().label('Ссылка на ВК'),
