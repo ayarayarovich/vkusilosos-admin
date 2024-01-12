@@ -47,7 +47,19 @@
             </template>
         </DropdownSelect>
 
-        <MyInputText :name="`link`" label="Ссылка" />
+        <MyInputText class="mb-4" :name="`link`" label="Ссылка" />
+
+        <div class="mx-auto w-64 mb-8">
+            <p class="text-base mb-1 text-center font-medium">Превью</p>
+            <MyUploadImage
+                name="preview"
+                class="rounded-lg"
+                filename-prop-in-request="file"
+                filename-prop-in-response="link"
+                upload-route="admin/upload"
+                :aspect-ratio="9 / 16"
+            />
+        </div>
 
         <MyUploadFile
             class="mb-6"
@@ -81,6 +93,7 @@ import * as yup from 'yup'
 import { axiosPrivate } from '@/network'
 import MyInputText from '@/components/MyInputText.vue'
 import MyUploadFile from '@/components/MyUploadFile.vue'
+import MyUploadImage from '@/components/MyUploadImage.vue'
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -88,6 +101,7 @@ const queryClient = useQueryClient()
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
         file: yup.string().required().label('Видео'),
+        preview: yup.string().required().label('Превью'),
         link: yup.string().required().label('Ссылка'),
         active: yup.boolean().required().label('Статус')
     }),

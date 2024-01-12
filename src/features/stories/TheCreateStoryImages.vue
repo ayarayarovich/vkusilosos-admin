@@ -1,6 +1,7 @@
 <template>
     <form @submit="onSubmit" class="w-full">
         <DropdownSelect
+            class="mb-4"
             name="active"
             label="Активна"
             placeholder="Выберите"
@@ -47,6 +48,18 @@
             </template>
         </DropdownSelect>
 
+        <div class="mx-auto w-64 mb-8">
+            <p class="text-base mb-1 text-center font-medium">Превью</p>
+            <MyUploadImage
+                name="preview"
+                class="rounded-lg"
+                filename-prop-in-request="file"
+                filename-prop-in-response="link"
+                upload-route="admin/upload"
+                :aspect-ratio="9 / 16"
+            />
+        </div>
+
         <div v-if="fields.length === 0" class="flex flex-col items-center gap-2">
             <p class="text-center">Создайте первый слайд истории</p>
             <i class="pi pi-arrow-down text-base"></i>
@@ -84,7 +97,13 @@
             <i class="pi pi-plus" style="font-size: 1rem"></i>
         </Button>
 
-        <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
+        <Button
+            class="mt-12 flex w-full justify-center p-4"
+            type="submit"
+            :disabled="fields.length === 0"
+        >
+            Создать
+        </Button>
     </form>
 </template>
 
@@ -104,6 +123,7 @@ const queryClient = useQueryClient()
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
         active: yup.boolean().required().label('Статус'),
+        preview: yup.string().required().label('Превью'),
         story_items: yup
             .array()
             .of(
