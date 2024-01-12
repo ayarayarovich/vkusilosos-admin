@@ -14,6 +14,7 @@
                 customUpload
                 @uploader="fileUploader"
                 @select="onSelect"
+                :accept="props.accept"
             />
             <div>
                 <small>{{ value || '&nbsp;' }}</small>
@@ -54,6 +55,7 @@ const props = defineProps<{
     uploadRoute: string
     filenamePropInResponse: string
     filenamePropInRequest: string
+    accept?: string
 }>()
 
 const toast = useToast()

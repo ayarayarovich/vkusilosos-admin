@@ -54,6 +54,7 @@
             uploadRoute="admin/upload"
             filenamePropInRequest="file"
             filenamePropInResponse="link"
+            accept=".mp4,.mov"
         />
 
         <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
