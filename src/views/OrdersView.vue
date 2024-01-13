@@ -41,11 +41,6 @@ const menuModel = ref([
         label: 'Обновить',
         icon: 'pi pi-fw pi-refresh',
         command: () => refresh()
-    },
-    {
-        label: 'Обновить статус',
-        icon: 'pi pi-fw pi-pencil',
-        command: () => beginUpdateOrderStatusInteraction(selected.value!)
     }
 ])
 
@@ -97,6 +92,7 @@ onMounted(() => {
 
                     <div class="flex flex-1 justify-end gap-2">
                         <Button
+                            class="hidden"
                             icon="pi pi-pencil"
                             :disabled="!selected"
                             @click="beginUpdateOrderStatusInteraction(selected!)"

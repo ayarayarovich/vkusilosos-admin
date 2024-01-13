@@ -28,7 +28,7 @@
             </div>
         </div>
         <MyMultiSelect
-            label="Блюда"
+            label="Рекомендуемые блюда"
             name="dishes"
             :options="dishesOptions || []"
             :max-selected-labels="3"
