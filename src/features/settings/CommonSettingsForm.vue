@@ -28,9 +28,17 @@
             </div>
         </div>
         <MyMultiSelect
+            placeholder="Выберите"
             label="Рекомендуемые блюда"
             name="dishes"
             :options="dishesOptions || []"
+            :max-selected-labels="3"
+        />
+        <MyMultiSelect
+            placeholder="Выберите"
+            label="Важные теги"
+            name="tags"
+            :options="tagsOptions || []"
             :max-selected-labels="3"
         />
 
@@ -48,6 +56,7 @@ import { useForm } from 'vee-validate'
 import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyMultiSelect from '@/components/MyMultiSelect.vue'
+import { useTags } from '@/features/tags'
 
 const toast = useToast()
 const queryClient = useQueryClient()
@@ -60,6 +69,15 @@ const { data: dishesOptions } = useQuery({
     },
     select: (v) => v.map((d) => ({ code: d.id, label: `[id: ${d.id}]: ${d.name}` }))
 })
+
+const { data: tagsOptions } = useTags(
+    {
+        limit: 99999999,
+        offset: 0,
+        search: ''
+    },
+    (v) => v.list.map((t) => ({ code: t.id, label: `[id: ${t.id}]: ${t.name}` }))
+)
 
 const { data } = useQuery({
     queryKey: ['settings'],
@@ -83,7 +101,8 @@ const { handleSubmit } = useForm({
         viber: yup.string().required().label('Номер Viber'),
         phone: yup.string().required().label('Номер телефона'),
         email: yup.string().required().label('Электронная почта'),
-        dishes: yup.array().of(yup.number()).required().label('Блюда рекомендаций')
+        dishes: yup.array().of(yup.number()).required().label('Блюда рекомендаций'),
+        tags: yup.array().of(yup.number()).required().label('Важные теги')
     }),
     initialValues: data
 })
