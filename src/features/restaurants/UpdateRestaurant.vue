@@ -25,6 +25,7 @@
         />
 
         <DropdownSelect
+            class="mb-8"
             name="active"
             label="Активен"
             placeholder="Выберите"
@@ -71,6 +72,206 @@
             </template>
         </DropdownSelect>
 
+        <h2 class="mb-4 text-lg font-bold">Часы работы</h2>
+
+        <div class="flex flex-col gap-2">
+            <div
+                class="flex items-center justify-between gap-2 leading-none transition-opacity"
+                :class="{
+                    'opacity-50': !setMon
+                }"
+            >
+                <MyInputCheckbox name="setMon" />
+                <span>Понедельник</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="mon_from"
+                        class="input-text-center w-20"
+                        :disabled="!setMon"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="mon_to"
+                        class="input-text-center w-20"
+                        :disabled="!setMon"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setThu
+                }"
+            >
+                <MyInputCheckbox name="setThu" />
+                <span>Вторник</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="thu_from"
+                        class="input-text-center w-20"
+                        :disabled="!setThu"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="thu_to"
+                        class="input-text-center w-20"
+                        :disabled="!setThu"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setWed
+                }"
+            >
+                <MyInputCheckbox name="setWed" />
+                <span>Среда</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="wed_from"
+                        class="input-text-center w-20"
+                        :disabled="!setWed"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="wed_to"
+                        class="input-text-center w-20"
+                        :disabled="!setWed"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setThurs
+                }"
+            >
+                <MyInputCheckbox name="setThurs" />
+                <span>Четверг</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="thurs_from"
+                        class="input-text-center w-20"
+                        :disabled="!setThurs"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="thurs_to"
+                        class="input-text-center w-20"
+                        :disabled="!setThurs"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setFri
+                }"
+            >
+                <MyInputCheckbox name="setFri" />
+                <span>Пятница</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="fri_from"
+                        class="input-text-center w-20"
+                        :disabled="!setFri"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="fri_to"
+                        class="input-text-center w-20"
+                        :disabled="!setFri"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setSat
+                }"
+            >
+                <MyInputCheckbox name="setSat" />
+                <span>Суббота</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="sat_from"
+                        class="input-text-center w-20"
+                        :disabled="!setSat"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="sat_to"
+                        class="input-text-center w-20"
+                        :disabled="!setSat"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex items-center justify-between gap-2 leading-none"
+                :class="{
+                    'opacity-50': !setSun
+                }"
+            >
+                <MyInputCheckbox name="setSun" />
+                <span>Воскресенье</span>
+                <div
+                    class="grow border-b-2 border-dashed border-black/50"
+                    style="height: 1em"
+                ></div>
+                <div class="flex items-center gap-2">
+                    С
+                    <MyTimeSelector
+                        name="sun_from"
+                        class="input-text-center w-20"
+                        :disabled="!setSun"
+                    />
+                    до
+                    <MyTimeSelector
+                        name="sun_to"
+                        class="input-text-center w-20"
+                        :disabled="!setSun"
+                    />
+                </div>
+            </div>
+        </div>
+
         <Button
             class="mt-8 flex w-full items-center p-4"
             type="submit"
@@ -86,13 +287,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { reactive, inject, computed } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import { useForm } from 'vee-validate'
+import { useFieldValue, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import type { Restaurant } from '@/interfaces'
 import MyUploadFile from '@/components/MyUploadFile.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
+import MyInputCheckbox from '@/components/MyInputCheckbox.vue'
+import MyTimeSelector from '@/components/MyTimeSelector.vue'
 
 const dialogRef = inject('dialogRef') as any
 const restaurant = dialogRef.value.data.restaurant as Restaurant
@@ -136,7 +339,8 @@ const { data } = useQuery({
     }
 })
 
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<any>({
+    // prettier-ignore
     validationSchema: yup.object({
         id: yup.string().required().label('ID ресторана'),
         name: yup.string().required().label('Название ресторана'),
@@ -144,7 +348,30 @@ const { handleSubmit } = useForm({
         lat: yup.number().required().label('Широта'),
         lng: yup.number().required().label('Долгота'),
         geo: yup.string().label('GeoJson'),
-        active: yup.boolean().required().label('Активен')
+        active: yup.boolean().required().label('Активен'),
+
+        setMon: yup.boolean(),
+        setThu: yup.boolean(),
+        setWed: yup.boolean(),
+        setThurs: yup.boolean(),
+        setFri: yup.boolean(),
+        setSat: yup.boolean(),
+        setSun: yup.boolean(),
+
+        mon_from: yup.date().when('setMon', { is: true, then: (schema) => schema.required() }),
+        mon_to: yup.date().when('setMon', { is: true, then: (schema) => schema.required() }),
+        thu_from: yup.date().when('setThu', { is: true, then: (schema) => schema.required() }),
+        thu_to: yup.date().when('setThu', { is: true, then: (schema) => schema.required() }),
+        wed_from: yup.date().when('setWed', { is: true, then: (schema) => schema.required() }),
+        wed_to: yup.date().when('setWed', { is: true, then: (schema) => schema.required() }),
+        thurs_from: yup.date().when('setThurs', { is: true, then: (schema) => schema.required() }),
+        thurs_to: yup.date().when('setThurs', { is: true, then: (schema) => schema.required() }),
+        fri_from: yup.date().when('setFri', { is: true, then: (schema) => schema.required() }),
+        fri_to: yup.date().when('setFri', { is: true, then: (schema) => schema.required() }),
+        sat_from: yup.date().when('setSat', { is: true, then: (schema) => schema.required() }),
+        sat_to: yup.date().when('setSat', { is: true, then: (schema) => schema.required() }),
+        sun_from: yup.date().when('setSun', { is: true, then: (schema) => schema.required() }),
+        sun_to: yup.date().when('setSun', { is: true, then: (schema) => schema.required() })
     }),
     initialValues: computed(() => {
         if (data.value) {
@@ -155,14 +382,64 @@ const { handleSubmit } = useForm({
                 lat: data.value.lat,
                 lng: data.value.lng,
                 geo: data.value.geo,
-                active: data.value.active
+                active: data.value.active,
+
+                setMon: data.value.mon_from !== -1,
+                setThu: data.value.thu_from !== -1,
+                setWed: data.value.wed_from !== -1,
+                setThurs: data.value.thurs_from !== -1,
+                setFri: data.value.fri_from !== -1,
+                setSat: data.value.sat_from !== -1,
+                setSun: data.value.sun_from !== -1,
+
+                mon_from: data.value.mon_from === -1 ? undefined : data.value.mon_from,
+                mon_to: data.value.mon_to === -1 ? undefined : data.value.mon_to,
+                thu_from: data.value.thu_from === -1 ? undefined : data.value.thu_from,
+                thu_to: data.value.thu_to === -1 ? undefined : data.value.thu_to,
+                wed_from: data.value.wed_from === -1 ? undefined : data.value.wed_from,
+                wed_to: data.value.wed_to === -1 ? undefined : data.value.wed_to,
+                thurs_from: data.value.thurs_from === -1 ? undefined : data.value.thurs_from,
+                thurs_to: data.value.thurs_to === -1 ? undefined : data.value.thurs_to,
+                fri_from: data.value.fri_from === -1 ? undefined : data.value.fri_from,
+                fri_to: data.value.fri_to === -1 ? undefined : data.value.fri_to,
+                sat_from: data.value.sat_from === -1 ? undefined : data.value.sat_from,
+                sat_to: data.value.sat_to === -1 ? undefined : data.value.sat_to,
+                sun_from: data.value.sun_from === -1 ? undefined : data.value.sun_from,
+                sun_to: data.value.sun_to === -1 ? undefined : data.value.sun_to
             }
         }
         return {}
     })
 })
 
+const setMon = useFieldValue<boolean>('setMon')
+const setThu = useFieldValue<boolean>('setThu')
+const setWed = useFieldValue<boolean>('setWed')
+const setThurs = useFieldValue<boolean>('setThurs')
+const setFri = useFieldValue<boolean>('setFri')
+const setSat = useFieldValue<boolean>('setSat')
+const setSun = useFieldValue<boolean>('setSun')
+
 const onSubmit = handleSubmit((v) => {
+    // prettier-ignore
+    {
+        if (!v.setMon) { v.mon_from = -1; v.mon_to = -1 }
+        if (!v.setThu) { v.thu_from = -1; v.thu_to = -1 }
+        if (!v.setWed) { v.wed_from = -1; v.wed_to = -1 }
+        if (!v.setThurs) { v.thurs_from = -1; v.thurs_to = -1 }
+        if (!v.setFri) { v.fri_from = -1; v.fri_to = -1 }
+        if (!v.setSat) { v.sat_from = -1; v.sat_to = -1 }
+        if (!v.setSun) { v.sun_from = -1; v.sun_to = -1 }
+    }
+
+    delete v.setMon
+    delete v.setThu
+    delete v.setWed
+    delete v.setThurs
+    delete v.setFri
+    delete v.setSat
+    delete v.setSun
+
     updateRestaurantMutation.mutate(v)
 })
 </script>
