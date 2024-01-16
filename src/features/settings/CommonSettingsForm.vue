@@ -23,6 +23,7 @@
             <div class="flex-1">
                 <MyInputText name="whatsapp" label="WhatsApp" />
                 <MyInputText name="viber" label="Viber" />
+                <MyInputText name="youtube" label="YouTube" />
                 <MyInputText name="phone" label="Телефон" />
                 <MyInputText name="email" label="Email" />
             </div>
@@ -99,6 +100,7 @@ const { handleSubmit } = useForm({
         vk: yup.string().required().label('Ссылка на ВК'),
         whatsapp: yup.string().required().label('Номер WhatsApp'),
         viber: yup.string().required().label('Номер Viber'),
+        youtube: yup.string().required().label('Ссылка на YouTube'),
         phone: yup.string().required().label('Номер телефона'),
         email: yup.string().required().label('Электронная почта'),
         dishes: yup.array().of(yup.number()).required().label('Блюда рекомендаций'),
