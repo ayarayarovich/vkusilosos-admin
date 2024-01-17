@@ -115,8 +115,8 @@
             class="mb-8 w-full"
             display="chip"
             v-model="restaurantsFieldArray"
-            :options="restaurantsData || []"
-            optionLabel="name"
+            :options="restaurantsOptions"
+            option-label="rest_name"
             data-key="rest_id"
             placeholder="Выберите рестораны"
         />
@@ -127,29 +127,31 @@
                 class="relative mb-4 rounded-lg border-2 border-gray-200 p-4"
             >
                 <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
-                    "{{ field.value.name }}" - {{ field.value.adres }}
+                    "{{ field.value.rest_name }}" - {{ field.value.rest_address }}
                 </h3>
                 <div class="flex gap-4">
                     <MyInputNumber
                         class="flex-1"
-                        :name="`vars[${idx}].rest_id`"
+                        :name="`variations[${idx}].rest_id`"
                         :initial-value="field.value.id"
                         disabled
                         label="ID ресторана"
                     />
-                    <MyInputText class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
                     <MyInputNumber
                         class="flex-1"
-                        :name="`vars[${idx}].price`"
+                        :name="`variations[${idx}].price`"
                         label="Цена"
                         mode="currency"
                         currency="RUB"
                     />
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-12">
-                    <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
-                    <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
-                    <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
+                    <MyInputSwitch label="В наличии" :name="`variations[${idx}].have`" />
+                    <MyInputSwitch
+                        label="Можно доставить"
+                        :name="`variations[${idx}].can_deliver`"
+                    />
+                    <MyInputSwitch label="Активно" :name="`variations[${idx}].active`" />
                 </div>
             </fieldset>
         </div>
@@ -165,9 +167,9 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue'
+import { inject, ref, watch, toRaw, computed } from 'vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
-import { useFieldArray, useForm } from 'vee-validate'
+import { useFieldArray, useFieldValue, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 import DropdownSelect from '@/components/DropdownSelect.vue'
@@ -194,14 +196,7 @@ const possibleCardColors = ref([
     { label: '#FEEDB1', code: 5 }
 ])
 
-const { data: dishData } = useDish(dish.id, (v) => {
-    if (v.tags) {
-        v.tags = v.tags.map((tag) => tag.id)
-    }
-    return v
-})
-
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
     validationSchema: yup.object({
         id: yup.number().required().label('ID'),
         name: yup.string().required().label('Название'),
@@ -225,21 +220,36 @@ const { handleSubmit } = useForm({
         have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        vars: yup.array().of(
+        variations: yup.array().of(
             yup.object({
                 rest_id: yup.number().required().label('ID ресторана'),
-                iiko_id: yup.string().required().label('IIKO ID блюда'),
                 price: yup.number().required().label('Цена'),
                 active: yup.boolean().label('Активно'),
                 can_deliver: yup.boolean().label('Можно доставить'),
                 have: yup.boolean().label('В наличии')
             })
         )
-    }),
-    initialValues: dishData
+    })
 })
 
-const { replace, fields } = useFieldArray<any>('vars')
+const active = useFieldValue<boolean>('active')
+const can_deliver = useFieldValue<boolean>('can_deliver')
+const have = useFieldValue<boolean>('have')
+const price = useFieldValue<number>('price')
+
+const { data: dishData } = useDish(dish.id, (v) => {
+    const vals = {
+        ...v,
+        tags: v.tags.map((t) => t.id)
+    }
+
+    resetForm({
+        values: vals
+    })
+    return vals
+})
+
+const { replace, fields } = useFieldArray<any>('variations')
 
 const { mutate, isLoading } = useUpdateDish()
 
@@ -255,11 +265,24 @@ const { data: restaurantsData } = useRestaurants(
     (resp) => {
         return resp.list.map((r) => ({
             rest_id: r.id,
-            adres: r.adres,
-            name: r.name
+            rest_address: r.adres,
+            rest_name: r.name
         }))
     }
 )
+
+const restaurantsOptions = computed(() => {
+    return (
+        restaurantsData.value?.map((v) => ({
+            ...v,
+            active: active.value,
+            can_deliver: can_deliver.value,
+            have: have.value,
+            price: price.value
+        })) || []
+    )
+})
+
 const { data: possibleTags } = useTags(
     {
         offset: 0,
@@ -272,45 +295,29 @@ const { data: possibleTags } = useTags(
 const restaurantsFieldArray = ref<
     {
         rest_id: number
-        iiko_id: string
         price: number
         active: boolean
         can_deliver: boolean
         have: boolean
-        name: string
-        adres: string
+        rest_name: string
+        rest_address: string
     }[]
->()
-watch([restaurantsFieldArray], () => {
-    if (restaurantsFieldArray.value) {
-        const copy = restaurantsFieldArray.value.map((i) => ({ ...i }))
-        replace(copy)
+>([])
+watch(
+    [restaurantsFieldArray],
+    ([value]) => {
+        replace(value.map((v) => ({ ...v })))
+    },
+    {
+        immediate: true
     }
-})
+)
 watch(
     [restaurantsData, dishData],
     () => {
         if (restaurantsData.value && dishData.value) {
-            const arr: typeof restaurantsFieldArray.value = []
-            for (const restaurant of restaurantsData.value) {
-                if (dishData.value.vars) {
-                    for (const vr of dishData.value.vars) {
-                        if (vr.rest_id === restaurant.rest_id) {
-                            arr.push({
-                                active: vr.active,
-                                can_deliver: vr.can_deliver,
-                                have: vr.have,
-                                iiko_id: vr.iiko_id,
-                                price: vr.price,
-                                rest_id: vr.rest_id,
-                                name: restaurant.name,
-                                adres: restaurant.adres
-                            })
-                        }
-                    }
-                }
-            }
-            restaurantsFieldArray.value = arr
+            const copy = dishData.value.variations.map((v) => Object.assign({}, v))
+            restaurantsFieldArray.value = copy
         }
     },
     {

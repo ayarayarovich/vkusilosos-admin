@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { useToast } from 'primevue/usetoast'
 import type { IDish } from './interfaces'
 import type { MaybeRef } from 'vue'
+import { useRestaurants } from '@/features/restaurants'
+import type { ITag } from '@/features/tags'
 
 interface GetDishesResponse {
     list: IDish[]
@@ -38,13 +40,56 @@ export const useDishes = <SData>(
 }
 
 interface GetDishResponse {
-    [key: string]: any
+    active: boolean
+    belki: number
+    can_deliver: boolean
+    category: number
+    color: number
+    count: number
+    created_at: string
+    deleted_at: string | null
+    description: string
+    energ_cen: number
+    from_hour: number
+    have: boolean
+    id: number
+    iiko_id: string
+    img: string
+    name: string
+    pich_cen: number
+    price: number
+    size: number
+    to_hour: number
+    uglevodi: number
+    updated_at: string
+    weight: number
+    ziri: number
+
+    tags: ITag[]
+
+    variations: {
+        id: number
+        rest_id: number
+        price: number
+        active: boolean
+        can_deliver: boolean
+        have: boolean
+    }[]
 }
 
 export const useDish = <SData>(
     id: MaybeRef<number>,
-    selector?: (response: GetDishResponse) => SData
+    selector?: (response: IDish) => SData
 ) => {
+    const { data: restaurants, isSuccess } = useRestaurants(
+        {
+            offset: 0,
+            limit: 99999999,
+            search: ''
+        },
+        (v) => v
+    )
+
     return useQuery({
         queryKey: ['dishes', { id }] as any,
         queryFn: async ({ queryKey }) => {
@@ -53,10 +98,36 @@ export const useDish = <SData>(
                     id: (queryKey[1] as any).id as number
                 }
             })
-            return response.data
+
+            const rests = restaurants.value!
+            const data: IDish = {
+                ...response.data,
+                variations: response.data.variations.map((v) => {
+                    const rest = rests.list.find((r) => r.id === v.rest_id)
+
+                    if (!rest) {
+                        console.error(
+                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация блюда в которой он указан: `,
+                            v
+                        )
+                        throw new Error(
+                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация блюда в которой он указан: `
+                        )
+                    }
+
+                    return {
+                        ...v,
+                        rest_name: rest.name,
+                        rest_address: rest.adres
+                    }
+                })
+            }
+
+            return data
         },
         select: selector,
-        keepPreviousData: true
+        keepPreviousData: true,
+        enabled: isSuccess
     })
 }
 

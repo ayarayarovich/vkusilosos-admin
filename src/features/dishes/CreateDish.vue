@@ -113,9 +113,10 @@
         <MultiSelect
             class="mb-8 w-full"
             display="chip"
-            v-model="selectedRestaurants"
-            :options="restaurantsData || []"
-            optionLabel="name"
+            v-model="restaurantsFieldArray"
+            :options="restaurantsOptions"
+            optionLabel="rest_name"
+            data-key="rest_id"
             placeholder="Выберите рестораны"
         />
         <div class="mb-8">
@@ -125,28 +126,27 @@
                 class="relative mb-4 rounded-lg border-2 border-gray-200 p-4"
             >
                 <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
-                    "{{ field.value.name }}" - {{ field.value.adres }}
+                    "{{ field.value.rest_name }}" - {{ field.value.rest_address }}
                 </h3>
                 <div class="flex gap-4">
                     <MyInputNumber
                         class="flex-1"
-                        :name="`vars[${idx}].rest_id`"
+                        :name="`variations[${idx}].rest_id`"
                         disabled
                         label="ID ресторана"
                     />
-                    <MyInputText class="flex-1" :name="`vars[${idx}].iiko_id`" label="IIKO ID" />
                     <MyInputNumber
                         class="flex-1"
-                        :name="`vars[${idx}].price`"
+                        :name="`variations[${idx}].price`"
                         label="Цена"
                         mode="currency"
                         currency="RUB"
                     />
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-12">
-                    <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
-                    <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
-                    <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
+                    <MyInputSwitch label="В наличии" :name="`variations[${idx}].have`" />
+                    <MyInputSwitch label="Можно доставить" :name="`variations[${idx}].can_deliver`" />
+                    <MyInputSwitch label="Активно" :name="`variations[${idx}].active`" />
                 </div>
             </fieldset>
         </div>
@@ -162,10 +162,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Restaurant } from '@/interfaces'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
-import { useFieldArray, useForm } from 'vee-validate'
+import { useFieldArray, useFieldValue, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 import DropdownSelect from '@/components/DropdownSelect.vue'
@@ -190,6 +189,7 @@ const possibleCardColors = ref([
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
+        id: yup.number().required().label('ID'),
         name: yup.string().required().label('Название'),
         img: yup.string().required().label('Изображение'),
         price: yup.number().required().label('Цена'),
@@ -206,12 +206,14 @@ const { handleSubmit } = useForm({
         description: yup.string().label('Описание'),
         iiko_id: yup.string().required().label('IIKO ID'),
         tags: yup.array().label('Теги'),
+        active: yup.boolean().label('Активно'),
+        can_deliver: yup.boolean().label('Можно доставить'),
+        have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        vars: yup.array().of(
+        variations: yup.array().of(
             yup.object({
                 rest_id: yup.number().required().label('ID ресторана'),
-                iiko_id: yup.string().required().label('IIKO ID блюда'),
                 price: yup.number().required().label('Цена'),
                 active: yup.boolean().label('Активно'),
                 can_deliver: yup.boolean().label('Можно доставить'),
@@ -221,11 +223,16 @@ const { handleSubmit } = useForm({
     }),
     initialValues: {
         from_hour: 600,
-        to_hour: 2200
+        to_hour: 2200,
     }
 })
 
-const { replace, fields } = useFieldArray<any>('vars')
+const active = useFieldValue<boolean>('active')
+const can_deliver = useFieldValue<boolean>('can_deliver')
+const have = useFieldValue<boolean>('have')
+const price = useFieldValue<number>('price')
+
+const { replace, fields } = useFieldArray<any>('variations')
 
 const { mutate, isLoading } = useCreateDish()
 
@@ -238,8 +245,27 @@ const { data: restaurantsData } = useRestaurants(
         limit: 99999999,
         search: ''
     },
-    (r) => r.list
+    (resp) => {
+        return resp.list.map((r) => ({
+            rest_id: r.id,
+            rest_address: r.adres,
+            rest_name: r.name
+        }))
+    }
 )
+
+const restaurantsOptions = computed(() => {
+    return (
+        restaurantsData.value?.map((v) => ({
+            ...v,
+            active: active.value,
+            can_deliver: can_deliver.value,
+            have: have.value,
+            price: price.value
+        })) || []
+    )
+})
+
 const { data: possibleTags } = useTags(
     {
         offset: 0,
@@ -249,17 +275,26 @@ const { data: possibleTags } = useTags(
     (r) => r.list.map((v) => ({ label: v.name, code: v.id }))
 )
 
-const selectedRestaurants = ref<Restaurant[]>()
-watch([selectedRestaurants], () => {
-    if (selectedRestaurants.value) {
-        const copy = selectedRestaurants.value.map((item) => ({
-            rest_id: item.id,
-            name: item.name,
-            adres: item.adres
-        }))
-        replace(copy)
+const restaurantsFieldArray = ref<
+    {
+        rest_id: number
+        price: number
+        active: boolean
+        can_deliver: boolean
+        have: boolean
+        rest_name: string
+        rest_address: string
+    }[]
+>([])
+watch(
+    [restaurantsFieldArray],
+    ([value]) => {
+        replace(value.map((v) => ({ ...v })))
+    },
+    {
+        immediate: true
     }
-})
+)
 
 const onSubmit = handleSubmit((vals) => {
     mutate(vals)

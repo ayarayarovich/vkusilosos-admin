@@ -1,18 +1,41 @@
-export interface IDish {
-    id: number
-    created_at: string
-    updated_at: string
-    deleted_at: string | null
-    name: string
-    img: string
-    price: number
-    have: boolean
-    active: boolean
+import type { ITag } from '@/features/tags'
 
-    vars: {
+export interface IDish {
+    active: boolean
+    belki: number
+    can_deliver: boolean
+    category: number
+    color: number
+    count: number
+    created_at: string
+    deleted_at: string | null
+    description: string
+    energ_cen: number
+    from_hour: number
+    have: boolean
+    id: number
+    iiko_id: string
+    img: string
+    name: string
+    pich_cen: number
+    price: number
+    size: number
+    to_hour: number
+    uglevodi: number
+    updated_at: string
+    weight: number
+    ziri: number
+
+    tags: ITag[]
+
+    variations: {
         id: number
         rest_id: number
+        rest_name: string
+        rest_address: string
         price: number
-        iiko_id: string
+        active: boolean
+        can_deliver: boolean
+        have: boolean
     }[]
 }
