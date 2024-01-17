@@ -24,7 +24,7 @@
                 },
                 {
                     label: 'Ожидает оплаты',
-                    code: 'waitPay'
+                    code: 'wait pay'
                 },
                 {
                     label: 'Готовится',
@@ -83,7 +83,7 @@
                         severity="danger"
                     />
                     <Tag
-                        v-else-if="slotProps.value.code === 'waitPay'"
+                        v-else-if="slotProps.value.code === 'wait pay'"
                         icon="pi pi-fw pi-clock"
                         :value="slotProps.value.label"
                         severity="warning"
@@ -144,7 +144,7 @@
                     severity="danger"
                 />
                 <Tag
-                    v-else-if="slotProps.option.code === 'waitPay'"
+                    v-else-if="slotProps.option.code === 'wait pay'"
                     icon="pi pi-fw pi-clock"
                     :value="slotProps.option.label"
                     severity="warning"

@@ -171,7 +171,7 @@ onMounted(() => {
                             severity="danger"
                         />
                         <Tag
-                            v-else-if="slotProps.data.status === 'waitPay'"
+                            v-else-if="slotProps.data.status === 'wait pay'"
                             icon="pi pi-fw pi-clock"
                             value="Ожидает оплаты"
                             severity="warning"
