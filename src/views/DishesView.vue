@@ -34,7 +34,7 @@ const dialog = useDialog()
 const beginCreateDishInteraction = () => {
     dialog.open(CreateDish, {
         props: {
-            class: 'w-full max-w-4xl',
+            class: 'w-full max-w-5xl',
             modal: true,
             header: 'Новое блюдо'
         } as any
@@ -43,7 +43,7 @@ const beginCreateDishInteraction = () => {
 const beginUpdateDishInteraction = (dish: IDish) => {
     dialog.open(UpdateDish, {
         props: {
-            class: 'w-full max-w-4xl',
+            class: 'w-full max-w-5xl',
             modal: true,
             header: 'Изменить блюдо'
         } as any,
@@ -61,7 +61,7 @@ const beginDeleteDishInteraction = (dish: IDish) => {
         props: {
             class: 'w-full max-w-xl',
             modal: true,
-            header: 'Изменить блюдо'
+            header: 'Удалить блюдо'
         } as any,
         onClose: () => {
             selected.value = undefined

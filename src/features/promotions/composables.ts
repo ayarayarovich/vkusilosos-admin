@@ -90,7 +90,7 @@ export const useCreatePromotion = () => {
             toast.add({
                 severity: 'error',
                 life: 3000,
-                summary: 'Не удалось создать статью',
+                summary: 'Не удалось создать акцию',
                 detail: error
             })
         }
@@ -111,7 +111,7 @@ export const useUpdatePromotion = () => {
                 severity: 'success',
                 life: 3000,
                 summary: 'Успешно',
-                detail: `Обновлена статья ${vars.name}`
+                detail: `Обновлена акция ${vars.name}`
             })
             queryClient.invalidateQueries(['promotions'])
         },
@@ -119,7 +119,7 @@ export const useUpdatePromotion = () => {
             toast.add({
                 severity: 'error',
                 life: 3000,
-                summary: 'Не удалось обновить статью',
+                summary: 'Не удалось обновить акцию',
                 detail: error
             })
         }
