@@ -186,7 +186,7 @@ onMounted(() => {
                 <Column field="name" header="Название" />
                 <Column field="addable" header="Тип">
                     <template #body="slotProps">
-                        <template v-if="slotProps.data.addable">
+                        <template v-if="slotProps.data.addable !== undefined">
                             <Tag
                                 v-if="slotProps.data.addable === false"
                                 value="Обычная"
