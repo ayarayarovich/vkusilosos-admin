@@ -198,9 +198,7 @@ onMounted(() => {
                 <Column field="price" header="Сумма">
                     <template #body="slotProps">{{ slotProps.data.price }} ₽</template>
                 </Column>
-                <Column field="adres" header="Адрес" />
                 <Column field="count_items" header="Кол-во позиций" />
-                <Column field="rest" header="Ресторан" />
                 <Column field="pay_type" header="Способ оплаты">
                     <template #body="slotProps">
                         <Tag
