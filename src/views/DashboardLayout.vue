@@ -120,6 +120,21 @@
                         <RouterLink
                             v-slot="{ isActive }"
                             class="w-full rounded-lg"
+                            :to="{ name: 'additions' }"
+                        >
+                            <span
+                                class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm leading-none transition-all hover:bg-gray-100"
+                                :class="isActive ? '!bg-indigo-100 text-black' : ''"
+                            >
+                                <i class="pi pi-fw pi-plus-circle" />
+                                Добавки
+                            </span>
+                        </RouterLink>
+                    </li>
+                    <li class="min-w-max">
+                        <RouterLink
+                            v-slot="{ isActive }"
+                            class="w-full rounded-lg"
                             :to="{ name: 'tags' }"
                         >
                             <span
