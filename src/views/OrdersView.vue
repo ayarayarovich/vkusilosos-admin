@@ -130,7 +130,7 @@ onMounted(() => {
             >
                 <Column selectionMode="single" headerStyle="width: 3rem" />
                 <Column field="id" header="ID" />
-                <Column field="user_id" header="ID пользователя" />
+                <Column field="phone" header="Телефон" />
                 <Column field="promo" header="Промокод" />
                 <Column field="status" header="Статус">
                     <template #body="slotProps">
