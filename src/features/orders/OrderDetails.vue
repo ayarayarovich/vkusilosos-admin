@@ -1,0 +1,286 @@
+<template>
+    <div class="mt-4 flex flex-col items-stretch gap-4 text-black">
+        <div class="flex items-end leading-none">
+            <div>ID</div>
+            <div class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"></div>
+            <div>
+                <template v-if="order?.id != undefined">{{ order.id }}</template>
+                <template v-else>Нет данных</template>
+            </div>
+        </div>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>ID пользователя</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.user_id != undefined">{{ data.user_id }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Промокод</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.promo != undefined">{{ data.promo }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Телефон</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.phone != undefined">{{ data.phone }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Статус</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.status != undefined">
+                        <Tag
+                            v-if="data.status === 'accepted'"
+                            icon="pi pi-fw pi-check-circle"
+                            value="Выполнен"
+                            severity="success"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'delivered'"
+                            icon="pi pi-fw pi-check-circle"
+                            value="Доставлен"
+                            severity="success"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'waitAdmin'"
+                            icon="pi pi-fw pi-exclamation-circle"
+                            value="Ожидает подтверждения админа"
+                            severity="warning"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'rejectedByUser'"
+                            icon="pi pi-fw pi-ban"
+                            value="Отменён клиентом"
+                            severity="danger"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'rejectedByAdmin'"
+                            icon="pi pi-fw pi-ban"
+                            value="Отменён админом"
+                            severity="danger"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'rejected'"
+                            icon="pi pi-fw pi-ban"
+                            value="Отменён"
+                            severity="danger"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'wait pay'"
+                            icon="pi pi-fw pi-clock"
+                            value="Ожидает оплаты"
+                            severity="warning"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'cooking'"
+                            icon="pi pi-fw pi-heart-fill"
+                            value="Готовится"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'process'"
+                            icon="pi pi-fw pi-clock"
+                            value="В процессе"
+                        />
+                        <Tag
+                            v-else-if="data.status === 'deliver'"
+                            icon="pi pi-fw pi-truck"
+                            value="В пути"
+                            severity="info"
+                        />
+                        <Tag v-else :value="data.status" severity="danger" />
+                    </template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Полный адрес</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.full_adres != undefined">{{ data.full_adres }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Сумма заказа</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.price != undefined">{{ data.price }} ₽</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Стоимость доставки</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.delivery_price != undefined">
+                        {{ data.delivery_price }} ₽
+                    </template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Сдача</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.cashback != undefined">{{ data.cashback }} ₽</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Количество позиций в заказе</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.count_items != undefined">{{ data.count_items }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>ID ресторана</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.rest != undefined">{{ data.rest }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Способ оплаты</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.pay_type != undefined">
+                        <Tag
+                            v-if="data.pay_type === 0"
+                            icon="pi pi-fw pi-credit-card"
+                            value="Карта"
+                        />
+                        <Tag
+                            v-else-if="data.pay_type === 1"
+                            icon="pi pi-fw pi-money-bill"
+                            value="Наличные"
+                        />
+                        <Tag v-else-if="data.pay_type === 2" class="bg-gray-200">
+                            <img class="h-4" src="/tinkoff.svg" alt="" />
+                        </Tag>
+                        <Tag v-else :value="data.pay_type" severity="info" />
+                    </template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>IIKO ID</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.iiko_id != undefined">{{ data.iiko_id }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>Ссылка оплаты</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <a v-if="data.pay_link != undefined" :href="data.pay_link">Ссылка</a>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+
+        <MySkeleton :show-body="isSuccess" :skeleton="{}">
+            <div class="flex items-end leading-none">
+                <div>ID оплаты</div>
+                <div
+                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
+                ></div>
+                <div>
+                    <template v-if="data.payment_id != undefined">{{ data.payment_id }}</template>
+                    <template v-else>Нет данных</template>
+                </div>
+            </div>
+        </MySkeleton>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { computed, inject } from 'vue'
+import type { IOrder } from './interfaces'
+import { useOrder } from './composables'
+import MySkeleton from '@/components/MySkeleton.vue'
+
+const dialogRef = inject('dialogRef') as any
+console.log(dialogRef.value.data)
+const order = dialogRef.value.data.order as IOrder | undefined
+
+const orderId = computed(() => order?.id)
+
+const { data, isSuccess } = useOrder(orderId)
+</script>

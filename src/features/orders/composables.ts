@@ -63,3 +63,20 @@ export const useUpdateOrderStatus = () => {
         }
     })
 }
+
+export const useOrder = (id: MaybeRef<number | undefined>) => {
+    return useQuery({
+        queryKey: ['orders', { id }],
+        queryFn: async ({ queryKey }) => {
+            console.log({ queryKey })
+            const orderId = (queryKey[1] as any).id
+            const response = await axiosPrivate.get('admin/order', {
+                params: {
+                    id: orderId
+                }
+            })
+            console.log(response.data)
+            return response.data
+        }
+    })
+}

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { DataTablePageEvent } from 'primevue/datatable'
+import { ref, onMounted, toRaw } from 'vue'
+import type { DataTablePageEvent, DataTableRowDoubleClickEvent } from 'primevue/datatable'
 
 import { useOrders, type IOrder } from '@/features/orders'
 import UpdateOrderStatus from '@/features/orders/UpdateOrderStatus.vue'
 import { useDialog } from 'primevue/usedialog'
+import OrderDetails from '@/features/orders/OrderDetails.vue'
 
 const rowsPerPage = ref(20)
 
@@ -26,6 +27,10 @@ const onPage = (e: DataTablePageEvent) => {
     limit.value = e.rows
 }
 
+const onRowDoubleClick = (e: DataTableRowDoubleClickEvent) => {
+    beginShowOrderDetailsInteraction(e.data)
+}
+
 const refresh = () => {
     refetch()
 }
@@ -36,13 +41,6 @@ const cm = ref()
 const onRowContextMenu = (event: any) => {
     cm.value.show(event.originalEvent)
 }
-const menuModel = ref([
-    {
-        label: 'Обновить',
-        icon: 'pi pi-fw pi-refresh',
-        command: () => refresh()
-    }
-])
 
 const beginUpdateOrderStatusInteraction = (order: IOrder) => {
     dialog.open(UpdateOrderStatus, {
@@ -55,10 +53,40 @@ const beginUpdateOrderStatusInteraction = (order: IOrder) => {
             selected.value = undefined
         },
         data: {
+            order: toRaw(order)
+        }
+    })
+}
+
+const beginShowOrderDetailsInteraction = (order: IOrder) => {
+    console.log(order)
+    dialog.open(OrderDetails, {
+        props: {
+            class: 'w-full max-w-xl',
+            modal: true,
+            header: 'Подробности'
+        } as any,
+        onClose: () => {
+            selected.value = undefined
+        },
+        data: {
             order
         }
     })
 }
+
+const menuModel = ref([
+    {
+        label: 'Обновить',
+        icon: 'pi pi-fw pi-refresh',
+        command: () => refresh()
+    },
+    {
+        label: 'Подробнее',
+        icon: 'pi pi-fw pi-search',
+        command: () => beginShowOrderDetailsInteraction(selected.value!)
+    }
+])
 
 const root = ref<HTMLElement>()
 const scrollHeight = ref()
@@ -116,6 +144,7 @@ onMounted(() => {
                 contextMenu
                 v-model:contextMenuSelection="selected"
                 @rowContextmenu="onRowContextMenu"
+                @row-dblclick="onRowDoubleClick"
                 :meta-key-selection="false"
                 class="h-full overflow-hidden rounded-lg border"
                 :value="data?.list"
