@@ -131,22 +131,22 @@
                 <div class="flex gap-4">
                     <MyInputNumber
                         class="flex-1"
-                        :name="`variations[${idx}].rest_id`"
+                        :name="`vars[${idx}].rest_id`"
                         disabled
                         label="ID ресторана"
                     />
                     <MyInputNumber
                         class="flex-1"
-                        :name="`variations[${idx}].price`"
+                        :name="`vars[${idx}].price`"
                         label="Цена"
                         mode="currency"
                         currency="RUB"
                     />
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-12">
-                    <MyInputSwitch label="В наличии" :name="`variations[${idx}].have`" />
-                    <MyInputSwitch label="Можно доставить" :name="`variations[${idx}].can_deliver`" />
-                    <MyInputSwitch label="Активно" :name="`variations[${idx}].active`" />
+                    <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
+                    <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
+                    <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
                 </div>
             </fieldset>
         </div>
@@ -189,7 +189,6 @@ const possibleCardColors = ref([
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
-        id: yup.number().required().label('ID'),
         name: yup.string().required().label('Название'),
         img: yup.string().required().label('Изображение'),
         price: yup.number().required().label('Цена'),
@@ -211,7 +210,7 @@ const { handleSubmit } = useForm({
         have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        variations: yup.array().of(
+        vars: yup.array().of(
             yup.object({
                 rest_id: yup.number().required().label('ID ресторана'),
                 price: yup.number().required().label('Цена'),
@@ -223,7 +222,7 @@ const { handleSubmit } = useForm({
     }),
     initialValues: {
         from_hour: 600,
-        to_hour: 2200,
+        to_hour: 2200
     }
 })
 
@@ -232,7 +231,7 @@ const can_deliver = useFieldValue<boolean>('can_deliver')
 const have = useFieldValue<boolean>('have')
 const price = useFieldValue<number>('price')
 
-const { replace, fields } = useFieldArray<any>('variations')
+const { replace, fields } = useFieldArray<any>('vars')
 
 const { mutate, isLoading } = useCreateDish()
 
