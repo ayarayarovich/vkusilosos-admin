@@ -81,15 +81,16 @@ export const useCreateAddition = () => {
         mutationFn: async (vars: any) => {
             const response = await axiosPrivate.post('admin/dish', {
                 iiko_id: 'null',
-                to_hour: -1,
+                from_hour: 1,
+                to_hour: 1,
                 description: 'null',
                 vars: [],
-                pich_cen: -1,
-                belki: -1,
-                ziri: -1,
-                uglevodi: -1,
-                color: -1,
-                size: -1,
+                pich_cen: 1,
+                belki: 1,
+                ziri: 1,
+                uglevodi: 1,
+                color: 1,
+                size: 1,
                 category: additionsCategory.value?.id,
                 ...vars
             })
@@ -124,15 +125,16 @@ export const useUpdateAddition = () => {
         mutationFn: async (vars: any) => {
             const response = await axiosPrivate.put('admin/dish', {
                 iiko_id: 'null',
-                to_hour: -1,
+                from_hour: 1,
+                to_hour: 1,
                 description: 'null',
                 vars: [],
-                pich_cen: -1,
-                belki: -1,
-                ziri: -1,
-                uglevodi: -1,
-                color: -1,
-                size: -1,
+                pich_cen: 1,
+                belki: 1,
+                ziri: 1,
+                uglevodi: 1,
+                color: 1,
+                size: 1,
                 category: additionsCategory.value?.id,
                 ...vars
             })
