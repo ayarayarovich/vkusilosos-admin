@@ -134,9 +134,6 @@ export const useAdditionsCategory = () => {
             search: ''
         },
         (v) => {
-            console.log(v)
-            // TODO: временно, когда поправят роут с категориями измени на t.addable
-            console.warn('ОПРЕДЕЛЕНИЕ КАТЕГОРИИ ДОБАВОК ПРОИСХОДИТ ПО ID=9 - ИСПРАВИТЬ')
             return v.list.find((t) => t.addable)
         }
     )
