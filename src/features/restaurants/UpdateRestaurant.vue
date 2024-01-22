@@ -3,6 +3,10 @@
         <h2 class="mb-4 text-lg font-bold">Общая информация</h2>
         <div class="mb-8 flex gap-4">
             <MyInputNumber name="id" label="ID" disabled />
+            <MyInputText name="org_id" label="ID организации" />
+        </div>
+
+        <div class="mb-8 flex gap-4">
             <MyInputText name="name" label="Название" />
         </div>
 
@@ -349,6 +353,8 @@ const { handleSubmit } = useForm<any>({
         lng: yup.number().required().label('Долгота'),
         geo: yup.string().label('GeoJson'),
         active: yup.boolean().required().label('Активен'),
+        org_id: yup.string().required().label('ID организации'),
+
 
         setMon: yup.boolean(),
         setThu: yup.boolean(),

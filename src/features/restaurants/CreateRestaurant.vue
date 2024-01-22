@@ -3,6 +3,7 @@
         <h2 class="mb-4 text-lg font-bold">Общая информация</h2>
         <div class="mb-8 flex gap-4">
             <MyInputText name="name" label="Название" />
+            <MyInputText name="org_id" label="ID организации" />
         </div>
 
         <h2 class="mb-4 text-lg font-bold">Локация</h2>
@@ -309,6 +310,7 @@ const schema = yup.object({
     lat: yup.number().required().label('Широта'),
     lng: yup.number().required().label('Долгота'),
     geo: yup.string().label('GeoJson'),
+    org_id: yup.string().required().label('ID организации'),
 
     setMon: yup.boolean(),
     setThu: yup.boolean(),
