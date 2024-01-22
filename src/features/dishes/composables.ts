@@ -67,7 +67,7 @@ interface GetDishResponse {
 
     tags: ITag[]
 
-    variations: {
+    vars: {
         id: number
         rest_id: number
         price: number
@@ -77,10 +77,7 @@ interface GetDishResponse {
     }[]
 }
 
-export const useDish = <SData>(
-    id: MaybeRef<number>,
-    selector?: (response: IDish) => SData
-) => {
+export const useDish = <SData>(id: MaybeRef<number>, selector?: (response: IDish) => SData) => {
     const { data: restaurants, isSuccess } = useRestaurants(
         {
             offset: 0,
@@ -102,7 +99,7 @@ export const useDish = <SData>(
             const rests = restaurants.value!
             const data: IDish = {
                 ...response.data,
-                variations: response.data.variations.map((v) => {
+                vars: response.data.vars.map((v) => {
                     const rest = rests.list.find((r) => r.id === v.rest_id)
 
                     if (!rest) {

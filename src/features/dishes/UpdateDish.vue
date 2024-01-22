@@ -132,26 +132,26 @@
                 <div class="flex gap-4">
                     <MyInputNumber
                         class="flex-1"
-                        :name="`variations[${idx}].rest_id`"
+                        :name="`vars[${idx}].rest_id`"
                         :initial-value="field.value.id"
                         disabled
                         label="ID ресторана"
                     />
                     <MyInputNumber
                         class="flex-1"
-                        :name="`variations[${idx}].price`"
+                        :name="`vars[${idx}].price`"
                         label="Цена"
                         mode="currency"
                         currency="RUB"
                     />
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-12">
-                    <MyInputSwitch label="В наличии" :name="`variations[${idx}].have`" />
+                    <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
                     <MyInputSwitch
                         label="Можно доставить"
-                        :name="`variations[${idx}].can_deliver`"
+                        :name="`vars[${idx}].can_deliver`"
                     />
-                    <MyInputSwitch label="Активно" :name="`variations[${idx}].active`" />
+                    <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
                 </div>
             </fieldset>
         </div>
@@ -220,7 +220,7 @@ const { handleSubmit, resetForm } = useForm({
         have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        variations: yup.array().of(
+        vars: yup.array().of(
             yup.object({
                 rest_id: yup.number().required().label('ID ресторана'),
                 price: yup.number().required().label('Цена'),
@@ -249,7 +249,7 @@ const { data: dishData } = useDish(dish.id, (v) => {
     return vals
 })
 
-const { replace, fields } = useFieldArray<any>('variations')
+const { replace, fields } = useFieldArray<any>('vars')
 
 const { mutate, isLoading } = useUpdateDish()
 
@@ -316,7 +316,7 @@ watch(
     [restaurantsData, dishData],
     () => {
         if (restaurantsData.value && dishData.value) {
-            const copy = dishData.value.variations.map((v) => Object.assign({}, v))
+            const copy = dishData.value.vars.map((v) => Object.assign({}, v))
             restaurantsFieldArray.value = copy
         }
     },

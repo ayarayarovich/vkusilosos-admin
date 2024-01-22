@@ -28,7 +28,7 @@ export interface IDish {
 
     tags: ITag[]
 
-    variations: {
+    vars: {
         id: number
         rest_id: number
         rest_name: string
