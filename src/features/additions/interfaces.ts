@@ -9,4 +9,14 @@ export interface IAddition {
     price: number
     updated_at: string
     weight: number
+    vars: {
+        id: number
+        rest_id: number
+        rest_name: string
+        rest_address: string
+        price: number
+        active: boolean
+        can_deliver: boolean
+        have: boolean
+    }[]
 }

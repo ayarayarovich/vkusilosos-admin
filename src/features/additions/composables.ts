@@ -5,6 +5,7 @@ import type { IAddition } from './interfaces'
 import type { MaybeRef } from 'vue'
 import type { ITag } from '@/features/tags'
 import { useAdditionsCategory } from '@/features/categories'
+import { useRestaurants } from '@/features/restaurants'
 
 interface GetAdditionsResponse {
     list: IAddition[]
@@ -50,14 +51,33 @@ interface GetAdditionResponse {
     price: number
     updated_at: string
     weight: number
+    vars: {
+        id: number
+        rest_id: number
+        rest_name: string
+        rest_address: string
+        price: number
+        active: boolean
+        can_deliver: boolean
+        have: boolean
+    }[]
 }
 
 export const useAddition = <SData>(
     id: MaybeRef<number>,
     selector?: (response: IAddition) => SData
 ) => {
+    const { data: restaurants, isSuccess } = useRestaurants(
+        {
+            offset: 0,
+            limit: 99999999,
+            search: ''
+        },
+        (v) => v
+    )
+
     return useQuery({
-        queryKey: ['additions', { id }] as any,
+        queryKey: ['dishes', { id }] as any,
         queryFn: async ({ queryKey }) => {
             const response = await axiosPrivate.get<GetAdditionResponse>('admin/dish', {
                 params: {
@@ -65,10 +85,35 @@ export const useAddition = <SData>(
                 }
             })
 
-            return response.data
+            const rests = restaurants.value!
+            const data: IAddition = {
+                ...response.data,
+                vars: response.data.vars.map((v) => {
+                    const rest = rests.list.find((r) => r.id === v.rest_id)
+
+                    if (!rest) {
+                        console.error(
+                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация добавки в которой он указан: `,
+                            v
+                        )
+                        throw new Error(
+                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация добавки в которой он указан: `
+                        )
+                    }
+
+                    return {
+                        ...v,
+                        rest_name: rest.name,
+                        rest_address: rest.adres
+                    }
+                })
+            }
+
+            return data
         },
         select: selector,
-        keepPreviousData: true
+        keepPreviousData: true,
+        enabled: isSuccess
     })
 }
 

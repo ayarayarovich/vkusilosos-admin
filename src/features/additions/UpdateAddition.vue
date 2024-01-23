@@ -178,6 +178,19 @@ const { data: additionData } = useAddition(addition.id, (v) => {
     return v
 })
 
+watch(
+    [restaurantsData, additionData],
+    () => {
+        if (restaurantsData.value && additionData.value) {
+            const copy = additionData.value.vars.map((v) => Object.assign({}, v))
+            restaurantsFieldArray.value = copy
+        }
+    },
+    {
+        immediate: true
+    }
+)
+
 const { mutate, isLoading } = useUpdateAddition()
 
 const onSubmit = handleSubmit((vals) => {
