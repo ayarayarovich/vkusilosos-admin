@@ -1,9 +1,21 @@
 <template>
     <form class="p-2" @submit.prevent="onSubmit">
         <h2 class="mb-4 text-lg font-bold">Общая информация</h2>
-        <div class="mb-8 flex gap-4">
+        <div class="mb-1 flex gap-4">
             <MyInputText name="name" label="Название" />
             <MyInputText name="org_id" label="ID организации" />
+        </div>
+        <div class="mb-1 flex gap-4">
+            <MyInputText name="terminal_id" label="ID терминала" />
+            <MyInputText name="curier_card" label="ID оплаты картой курьеру" />
+        </div>
+        <div class="mb-1 flex gap-4">
+            <MyInputText name="online" label="ID оплаты онлайн" />
+            <MyInputText name="cash" label="ID оплаты наличными" />
+        </div>
+        <div class="mb-8 flex gap-4">
+            <MyInputText name="type_rest" label="Тип заказа ресторана" />
+            <MyInputText name="type_curier" label="Тип доставки ресторана" />
         </div>
 
         <h2 class="mb-4 text-lg font-bold">Локация</h2>
@@ -311,6 +323,12 @@ const schema = yup.object({
     lng: yup.number().required().label('Долгота'),
     geo: yup.string().label('GeoJson'),
     org_id: yup.string().required().label('ID организации'),
+    terminal_id: yup.string().label('ID терминала'),
+    curier_card: yup.string().label('ID оплаты картой курьеру'),
+    online: yup.string().label('ID оплаты онлайн'),
+    cash: yup.string().label('ID оплаты наличными'),
+    type_rest: yup.string().label('Тип заказа ресторана'),
+    type_curier: yup.string().label('Тип доставки ресторана'),
 
     setMon: yup.boolean(),
     setThu: yup.boolean(),
