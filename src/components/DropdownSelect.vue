@@ -9,6 +9,7 @@
             :options="props.options"
             optionLabel="label"
             :placeholder="props.placeholder"
+            show-clear
             @blur="handleBlur"
             @change="handleChange"
         >
@@ -44,7 +45,7 @@ watch([selected], () => {
     setValue(selected.value?.code)
 })
 watch(
-    [value],
+    [value, () => props.options],
     () => {
         selected.value = props.options.find((opt) => opt.code === value.value)
     },
