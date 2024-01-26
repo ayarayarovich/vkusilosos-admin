@@ -9,46 +9,12 @@
         >
             <template #value="slotProps">
                 <template v-if="slotProps.value">
-                    <Tag
-                        v-if="slotProps.value.code === 0"
-                        icon="pi pi-lock"
-                        value="Заблокирован"
-                        severity="danger"
-                    />
-                    <Tag
-                        v-else-if="slotProps.value.code === 1"
-                        icon="pi pi-check-circle"
-                        value="Активен"
-                        severity="success"
-                    />
-                    <Tag
-                        v-else-if="slotProps.value.code === 2"
-                        icon="pi pi-clock"
-                        value="На модерации"
-                        severity="warning"
-                    />
+                    <UserStatusBadge :code="slotProps.value.code" />
                 </template>
             </template>
             <template #option="slotProps">
                 <template v-if="slotProps.option">
-                    <Tag
-                        v-if="slotProps.option.code === 0"
-                        icon="pi pi-lock"
-                        value="Заблокирован"
-                        severity="danger"
-                    />
-                    <Tag
-                        v-else-if="slotProps.option.code === 1"
-                        icon="pi pi-check-circle"
-                        value="Активен"
-                        severity="success"
-                    />
-                    <Tag
-                        v-else-if="slotProps.option.code === 2"
-                        icon="pi pi-clock"
-                        value="На модерации"
-                        severity="warning"
-                    />
+                    <UserStatusBadge :code="slotProps.option.code" />
                 </template>
             </template>
         </DropdownSelect>
@@ -72,6 +38,7 @@ import yup from '@/yup'
 
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
+import { UserStatusBadge } from '.'
 
 const dialogRef = inject('dialogRef') as any
 const user = dialogRef.value.data.user as IUser

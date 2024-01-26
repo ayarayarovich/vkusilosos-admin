@@ -10,7 +10,9 @@ import {
     SendNotification,
     useUsers,
     type IUser,
-    UserDetails
+    UserDetails,
+    UserRoleBadge,
+    UserStatusBadge
 } from '@/features/users'
 import { useDialog } from 'primevue/usedialog'
 
@@ -231,42 +233,12 @@ onMounted(() => {
                 <Column field="phone" header="Телефон" />
                 <Column field="role" header="Роль">
                     <template #body="slotProps">
-                        <Tag
-                            v-if="slotProps.data.role === 'user'"
-                            icon="pi pi-user"
-                            value="Обычный"
-                            severity="info"
-                        ></Tag>
-                        <Tag
-                            v-else-if="slotProps.data.role === 'admin'"
-                            icon="pi pi-bolt"
-                            value="Админ"
-                            severity="warning"
-                        ></Tag>
-                        <Tag v-else :value="slotProps.data.role" severity="info" />
+                        <UserRoleBadge :code="slotProps.data.role" />
                     </template>
                 </Column>
                 <Column field="status" header="Статус">
                     <template #body="slotProps">
-                        <Tag
-                            v-if="slotProps.data.status === 0"
-                            icon="pi pi-lock"
-                            value="Заблокирован"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.data.status === 1"
-                            icon="pi pi-check-circle"
-                            value="Активен"
-                            severity="success"
-                        />
-                        <Tag
-                            v-else-if="slotProps.data.status === 2"
-                            icon="pi pi-clock"
-                            value="На модерации"
-                            severity="warning"
-                        />
-                        <Tag v-else :value="slotProps.data.status" severity="info" />
+                        <UserStatusBadge :code="slotProps.data.status" />
                     </template>
                 </Column>
                 <Column field="bonuses" header="Бонусы" />
