@@ -173,19 +173,6 @@
 
         <MySkeleton :show-body="isSuccess" :skeleton="{}">
             <div class="flex items-end leading-none">
-                <div>Ссылка оплаты</div>
-                <div
-                    class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
-                ></div>
-                <div>
-                    <a v-if="data.pay_link != undefined" :href="data.pay_link">Ссылка</a>
-                    <template v-else>Нет данных</template>
-                </div>
-            </div>
-        </MySkeleton>
-
-        <MySkeleton :show-body="isSuccess" :skeleton="{}">
-            <div class="flex items-end leading-none">
                 <div>ID оплаты</div>
                 <div
                     class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
