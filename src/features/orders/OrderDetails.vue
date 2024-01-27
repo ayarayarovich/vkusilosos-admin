@@ -56,65 +56,7 @@
                 ></div>
                 <div>
                     <template v-if="data.status != undefined">
-                        <Tag
-                            v-if="data.status === 'accepted'"
-                            icon="pi pi-fw pi-check-circle"
-                            value="Выполнен"
-                            severity="success"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'delivered'"
-                            icon="pi pi-fw pi-check-circle"
-                            value="Доставлен"
-                            severity="success"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'waitAdmin'"
-                            icon="pi pi-fw pi-exclamation-circle"
-                            value="Ожидает подтверждения админа"
-                            severity="warning"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'rejectedByUser'"
-                            icon="pi pi-fw pi-ban"
-                            value="Отменён клиентом"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'rejectedByAdmin'"
-                            icon="pi pi-fw pi-ban"
-                            value="Отменён админом"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'rejected'"
-                            icon="pi pi-fw pi-ban"
-                            value="Отменён"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'wait pay'"
-                            icon="pi pi-fw pi-clock"
-                            value="Ожидает оплаты"
-                            severity="warning"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'cooking'"
-                            icon="pi pi-fw pi-heart-fill"
-                            value="Готовится"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'process'"
-                            icon="pi pi-fw pi-clock"
-                            value="В процессе"
-                        />
-                        <Tag
-                            v-else-if="data.status === 'deliver'"
-                            icon="pi pi-fw pi-truck"
-                            value="В пути"
-                            severity="info"
-                        />
-                        <Tag v-else :value="data.status" severity="danger" />
+                        <OrderStatusBadge :code="data.status" />
                     </template>
                     <template v-else>Нет данных</template>
                 </div>
@@ -209,20 +151,7 @@
                 ></div>
                 <div>
                     <template v-if="data.pay_type != undefined">
-                        <Tag
-                            v-if="data.pay_type === 0"
-                            icon="pi pi-fw pi-credit-card"
-                            value="Карта"
-                        />
-                        <Tag
-                            v-else-if="data.pay_type === 1"
-                            icon="pi pi-fw pi-money-bill"
-                            value="Наличные"
-                        />
-                        <Tag v-else-if="data.pay_type === 2" class="bg-gray-200">
-                            <img class="h-4" src="/tinkoff.svg" alt="" />
-                        </Tag>
-                        <Tag v-else :value="data.pay_type" severity="info" />
+                        <PaymentStatusBadge :code="data.pay_type" />
                     </template>
                     <template v-else>Нет данных</template>
                 </div>
@@ -275,6 +204,8 @@ import { computed, inject } from 'vue'
 import type { IOrder } from './interfaces'
 import { useOrder } from './composables'
 import MySkeleton from '@/components/MySkeleton.vue'
+import OrderStatusBadge from './OrderStatusBadge.vue'
+import PaymentStatusBadge from './PaymentStatusBadge.vue'
 
 const dialogRef = inject('dialogRef') as any
 console.log(dialogRef.value.data)
