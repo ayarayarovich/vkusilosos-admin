@@ -11,6 +11,7 @@ import { axiosPublic } from '@/network'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import MyInputText from '@/components/MyInputText.vue'
+import { md5 } from 'js-md5'
 
 const toast = useToast()
 
@@ -27,6 +28,7 @@ const { handleSubmit } = useForm({
 
 const { isLoading, mutate } = useMutation<any, any, any>({
     mutationFn: async (payload: any) => {
+        payload.password = md5(payload.password)
         return axiosPublic.post('auth/login', payload)
     },
     onSuccess({ data }) {
