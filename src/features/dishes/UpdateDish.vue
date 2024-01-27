@@ -133,7 +133,7 @@
                     <MyInputNumber
                         class="flex-1"
                         :name="`vars[${idx}].rest_id`"
-                        :initial-value="field.value.id"
+                        :initial-value="field.value.rest_id"
                         disabled
                         label="ID ресторана"
                     />

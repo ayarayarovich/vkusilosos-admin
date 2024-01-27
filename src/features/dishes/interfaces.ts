@@ -1,5 +1,16 @@
 import type { ITag } from '@/features/tags'
 
+export interface IVariation {
+    id: number
+    rest_id: number
+    rest_name: string
+    rest_address: string
+    price: number
+    active: boolean
+    can_deliver: boolean
+    have: boolean
+}
+
 export interface IDish {
     active: boolean
     belki: number
@@ -28,14 +39,5 @@ export interface IDish {
 
     tags: ITag[]
 
-    vars: {
-        id: number
-        rest_id: number
-        rest_name: string
-        rest_address: string
-        price: number
-        active: boolean
-        can_deliver: boolean
-        have: boolean
-    }[]
+    vars: IVariation[]
 }

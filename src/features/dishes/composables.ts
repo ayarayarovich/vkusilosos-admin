@@ -1,7 +1,7 @@
 import { axiosPrivate } from '@/network'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { useToast } from 'primevue/usetoast'
-import type { IDish } from './interfaces'
+import type { IDish, IVariation } from './interfaces'
 import type { MaybeRef } from 'vue'
 import { useRestaurants } from '@/features/restaurants'
 import type { ITag } from '@/features/tags'
@@ -97,27 +97,26 @@ export const useDish = <SData>(id: MaybeRef<number>, selector?: (response: IDish
             })
 
             const rests = restaurants.value!
+
+            let vars: IVariation[] = []
+            for (const v of response.data.vars) {
+                const rest = rests.list.find((r) => r.id === v.rest_id)
+
+                if (!rest) {
+                    throw new Error(
+                        `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация блюда в которой он указан: `
+                    )
+                }
+
+                vars.push({
+                    ...v,
+                    rest_name: rest.name,
+                    rest_address: rest.adres
+                })
+            }
             const data: IDish = {
                 ...response.data,
-                vars: response.data.vars.map((v) => {
-                    const rest = rests.list.find((r) => r.id === v.rest_id)
-
-                    if (!rest) {
-                        console.error(
-                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация блюда в которой он указан: `,
-                            v
-                        )
-                        throw new Error(
-                            `Ресторан с ID = ${v.rest_id} не найден, хотя существует вариация блюда в которой он указан: `
-                        )
-                    }
-
-                    return {
-                        ...v,
-                        rest_name: rest.name,
-                        rest_address: rest.adres
-                    }
-                })
+                vars
             }
 
             return data
