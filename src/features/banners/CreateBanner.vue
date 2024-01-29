@@ -1,12 +1,23 @@
 <template>
     <form @submit="onSubmit" class="w-full">
+        <p class="mb-2 font-medium">Десктопная версия (11:3)</p>
         <MyUploadImage
             name="img"
             class="mb-8 rounded-lg"
             filename-prop-in-request="file"
             filename-prop-in-response="link"
             upload-route="admin/upload"
-            :aspect-ratio="30 / 9"
+            :aspect-ratio="11 / 3"
+        />
+
+        <p class="mb-2 font-medium">Мобильная версия (12:5)</p>
+        <MyUploadImage
+            name="phone_img"
+            class="mb-8 rounded-lg"
+            filename-prop-in-request="file"
+            filename-prop-in-response="link"
+            upload-route="admin/upload"
+            :aspect-ratio="12 / 5"
         />
 
         <MyInputText name="link" label="Ссылка" />
@@ -70,9 +81,9 @@ import * as yup from 'yup'
 import { useCreateBanner } from './composables'
 
 const { handleSubmit } = useForm({
-    // TODO: поправить названия полей
     validationSchema: yup.object({
-        img: yup.string().required().label('Изображение'),
+        img: yup.string().required().label('Десктопная версия изображения'),
+        phone_img: yup.string().required().label('Мобильная версия изображения'),
         link: yup.string().required().label('Ссылка'),
         active: yup.boolean().required().label('Активно')
     }),
