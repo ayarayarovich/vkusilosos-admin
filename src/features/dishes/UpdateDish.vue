@@ -123,7 +123,7 @@
         <div class="mb-8">
             <fieldset
                 v-for="(field, idx) in fields"
-                :key="field.value.id"
+                :key="field.key"
                 class="relative mb-4 rounded-lg border-2 border-gray-200 p-4"
             >
                 <h3 class="absolute top-0 -translate-y-1/2 bg-white px-3 font-semibold">
@@ -147,10 +147,7 @@
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-12">
                     <MyInputSwitch label="В наличии" :name="`vars[${idx}].have`" />
-                    <MyInputSwitch
-                        label="Можно доставить"
-                        :name="`vars[${idx}].can_deliver`"
-                    />
+                    <MyInputSwitch label="Можно доставить" :name="`vars[${idx}].can_deliver`" />
                     <MyInputSwitch label="Активно" :name="`vars[${idx}].active`" />
                 </div>
             </fieldset>
@@ -196,7 +193,15 @@ const possibleCardColors = ref([
     { label: '#FEEDB1', code: 5 }
 ])
 
-const { handleSubmit, resetForm } = useForm({
+const { data: dishData } = useDish(dish.id, (v) => {
+    const vals = {
+        ...v,
+        tags: v.tags.map((t) => t.id)
+    }
+    return vals
+})
+
+const { handleSubmit } = useForm({
     validationSchema: yup.object({
         id: yup.number().required().label('ID'),
         name: yup.string().required().label('Название'),
@@ -229,25 +234,14 @@ const { handleSubmit, resetForm } = useForm({
                 have: yup.boolean().label('В наличии')
             })
         )
-    })
+    }),
+    initialValues: computed(() => dishData.value)
 })
 
 const active = useFieldValue<boolean>('active')
 const can_deliver = useFieldValue<boolean>('can_deliver')
 const have = useFieldValue<boolean>('have')
 const price = useFieldValue<number>('price')
-
-const { data: dishData } = useDish(dish.id, (v) => {
-    const vals = {
-        ...v,
-        tags: v.tags.map((t) => t.id)
-    }
-
-    resetForm({
-        values: vals
-    })
-    return vals
-})
 
 const { replace, fields } = useFieldArray<any>('vars')
 
@@ -306,12 +300,14 @@ const restaurantsFieldArray = ref<
 watch(
     [restaurantsFieldArray],
     ([value]) => {
+        console.log('replacing with', value)
         replace(value.map((v) => ({ ...v })))
     },
     {
         immediate: true
     }
 )
+
 watch(
     [restaurantsData, dishData],
     () => {
