@@ -406,6 +406,13 @@ const { handleSubmit } = useForm<any>({
                 lng: data.value.lng,
                 geo: data.value.geo,
                 active: data.value.active,
+                org_id: data.value.org_id,
+                terminal_id: data.value.terminal_id,
+                cash: data.value.cash,
+                online: data.value.online,
+                curier_card: data.value.curier_card,
+                type_rest: data.value.type_rest,
+                type_curier: data.value.type_curier,
 
                 setMon: data.value.mon_from !== -1,
                 setThu: data.value.thu_from !== -1,
