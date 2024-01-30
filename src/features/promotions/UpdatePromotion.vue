@@ -54,17 +54,30 @@
             </DropdownSelect>
             <MyCalendarRange class="flex-1" name="date_range" label="Период активности" />
         </div>
-        <div class="flex items-center gap-8">
+        <div class="mb-8">
+            <p class="mb-2 text-center font-medium">Десктопная версия (3:4)</p>
             <MyUploadImage
-                class="max-w-[25%]"
+                class="mx-auto max-w-[50%]"
                 name="img"
                 :aspect-ratio="3 / 4"
                 filename-prop-in-request="file"
                 filename-prop-in-response="link"
                 upload-route="admin/upload"
             />
-            <MyEditor class="h-full flex-1" name="text" label="Контент" />
         </div>
+        <div class="mb-8">
+            <p class="mb-2 text-center font-medium">Мобильная версия (2:1)</p>
+            <MyUploadImage
+                class="mx-auto max-w-[50%]"
+                name="phone_img"
+                :aspect-ratio="2 / 1"
+                filename-prop-in-request="file"
+                filename-prop-in-response="link"
+                upload-route="admin/upload"
+            />
+        </div>
+
+        <MyEditor class="h-full flex-1" name="text" label="Контент" />
 
         <Button
             class="mt-8 flex w-full items-center p-4"
@@ -109,7 +122,8 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         id: yup.number().required().label('ID акции'),
         name: yup.string().required().label('Название акции'),
-        img: yup.string().required().label('Картинка'),
+        img: yup.string().required().label('Десктопная версия изображения'),
+        phone_img: yup.string().required().label('Мобильная версия изображения'),
         text: yup.string().required().label('Контент'),
         active: yup.boolean().required().label('Активность')
     }),
