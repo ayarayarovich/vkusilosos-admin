@@ -39,7 +39,7 @@
                                 wheel: isEditingImage,
                                 adjustStencil: false
                             }"
-                            image-restriction="stencil"
+                            image-restriction="none"
                         />
                     </div>
                 </div>
