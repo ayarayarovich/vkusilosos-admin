@@ -69,10 +69,10 @@
                 ]"
             ></DropdownSelect>
 
-            <DropdownSelect
+            <MyMultiSelect
                 class="w-full"
                 name="category"
-                label="Категория"
+                label="Категории"
                 placeholder="Выберите"
                 :options="possibleCategories || []"
             />
@@ -196,7 +196,8 @@ const possibleCardColors = ref([
 const { data: dishData } = useDish(dish.id, (v) => {
     const vals = {
         ...v,
-        tags: v.tags.map((t) => t.id)
+        tags: v.tags.map((t) => t.id),
+        category: v.category.map((c) => c.id)
     }
     return vals
 })
@@ -207,7 +208,7 @@ const { handleSubmit } = useForm({
         name: yup.string().required().label('Название'),
         img: yup.string().required().label('Изображение'),
         price: yup.number().required().label('Цена'),
-        category: yup.number().required().label('Категория'),
+        category: yup.array().required().label('Категория'),
         color: yup.string().required().label('Цвет карточки'),
         belki: yup.number().required().label('Количество белков'),
         pich_cen: yup.number().required().label('Пищевая ценность'),

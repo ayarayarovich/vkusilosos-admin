@@ -1,4 +1,5 @@
 import type { ITag } from '@/features/tags'
+import type { ICategory } from '@/features/categories'
 
 export interface IVariation {
     id: number
@@ -15,7 +16,7 @@ export interface IDish {
     active: boolean
     belki: number
     can_deliver: boolean
-    category: number
+    category: ICategory[]
     color: number
     count: number
     created_at: string
