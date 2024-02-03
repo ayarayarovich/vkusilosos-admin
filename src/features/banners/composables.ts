@@ -64,6 +64,32 @@ export const useCreateBanner = () => {
     })
 }
 
+export const useUpdateBanner = () => {
+    const toast = useToast()
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (vars: any) => axiosPrivate.put('admin/banner', vars),
+        onSuccess() {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Баннер изменён`
+            })
+            queryClient.invalidateQueries(['banners'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось изменить баннер',
+                detail: error
+            })
+        }
+    })
+}
+
 export const useDeleteBanner = () => {
     const toast = useToast()
     const queryClient = useQueryClient()

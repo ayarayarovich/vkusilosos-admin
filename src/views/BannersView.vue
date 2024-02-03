@@ -2,7 +2,13 @@
 import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 
-import { CreateBanner, useBanners, DeleteBanner, type IBanner } from '@/features/banners'
+import {
+    CreateBanner,
+    useBanners,
+    DeleteBanner,
+    type IBanner,
+    EditBanner
+} from '@/features/banners'
 import { useDialog } from 'primevue/usedialog'
 import { useDebounce } from '@vueuse/core'
 import dateFormat from 'dateformat'
@@ -42,6 +48,20 @@ const beginCreateBannerInteraction = () => {
     })
 }
 
+const beginEditBannerInteraction = (banner: IBanner) => {
+    dialog.open(EditBanner, {
+        props: {
+            class: 'max-w-4xl w-full',
+            modal: true,
+            header: 'Изменить баннер'
+        } as any,
+        onClose: () => (selected.value = undefined),
+        data: {
+            banner
+        }
+    })
+}
+
 const beginDeleteBannerInteraction = (banner: IBanner) => {
     dialog.open(DeleteBanner, {
         props: {
@@ -76,6 +96,11 @@ const menuModel = ref([
         label: 'Создать',
         icon: 'pi pi-fw pi-plus',
         command: () => beginCreateBannerInteraction()
+    },
+    {
+        label: 'Изменить',
+        icon: 'pi pi-fw pi-pencil',
+        command: () => beginEditBannerInteraction(selected.value!)
     },
     {
         label: 'Удалить',
@@ -116,6 +141,11 @@ onMounted(() => {
                     </div>
 
                     <div class="flex flex-1 justify-end gap-2">
+                        <Button
+                            :disabled="!selected"
+                            icon="pi pi-pencil"
+                            @click="beginEditBannerInteraction(selected!)"
+                        />
                         <Button
                             :disabled="!selected"
                             icon="pi pi-times"
