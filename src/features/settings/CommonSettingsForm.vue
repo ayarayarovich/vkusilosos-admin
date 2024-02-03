@@ -15,6 +15,12 @@
                     mode="currency"
                     currency="RUB"
                 />
+                <MyInputNumber
+                    name="min_price"
+                    label="Минимальная сумма заказа"
+                    mode="currency"
+                    currency="RUB"
+                />
                 <MyInputNumber name="bonus_percent" label="Процент бонусов" />
                 <MyInputText name="instagram" label="Instagram" />
                 <MyInputText name="vk" label="VK" />
@@ -28,13 +34,6 @@
                 <MyInputText name="email" label="Email" />
             </div>
         </div>
-        <MyMultiSelect
-            placeholder="Выберите"
-            label="Рекомендуемые блюда"
-            name="dishes"
-            :options="dishesOptions || []"
-            :max-selected-labels="3"
-        />
         <MyMultiSelect
             placeholder="Выберите"
             label="Важные теги"
@@ -62,15 +61,6 @@ import { useTags } from '@/features/tags'
 const toast = useToast()
 const queryClient = useQueryClient()
 
-const { data: dishesOptions } = useQuery({
-    queryKey: ['short-dishes'],
-    queryFn: async () => {
-        const response = await axiosPrivate.get('admin/dishes/rec')
-        return response.data
-    },
-    select: (v) => v.map((d) => ({ code: d.id, label: `[id: ${d.id}]: ${d.name}` }))
-})
-
 const { data: tagsOptions } = useTags(
     {
         limit: 99999999,
@@ -95,6 +85,7 @@ const { handleSubmit } = useForm({
             .required()
             .label('Сумма, начиная с которой доставка бесплатная'),
         deliver_price: yup.number().required().label('Цена доставки'),
+        min_price: yup.number().required().label('Минимальная сумма заказа'),
         bonus_percent: yup.number().required().label('Процент бонусов от суммы заказа'),
         instagram: yup.string().label('Ссылка на Instagram'),
         vk: yup.string().label('Ссылка на ВК'),
@@ -103,7 +94,6 @@ const { handleSubmit } = useForm({
         youtube: yup.string().label('Ссылка на YouTube'),
         phone: yup.string().required().label('Номер телефона'),
         email: yup.string().required().label('Электронная почта'),
-        dishes: yup.array().of(yup.number()).required().label('Блюда рекомендаций'),
         tags: yup.array().of(yup.number()).required().label('Важные теги')
     }),
     initialValues: data
