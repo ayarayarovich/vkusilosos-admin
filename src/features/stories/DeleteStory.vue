@@ -20,10 +20,10 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { inject, reactive } from 'vue'
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
-import type { IStory } from './interfaces'
+import type { IStoryImage, IStoryVideo } from './interfaces'
 
 const dialogRef = inject('dialogRef') as any
-const story = dialogRef.value.data.story as IStory
+const story = dialogRef.value.data.story as IStoryImage | IStoryVideo
 
 const toast = useToast()
 const queryClient = useQueryClient()

@@ -3,14 +3,21 @@ import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import dateFormat from 'dateformat'
 
-import { CreateStory, useStories, type IStory, DeleteStory } from '@/features/stories'
+import {
+    CreateStory,
+    useStories,
+    type IStoryImage,
+    type IStoryVideo,
+    DeleteStory,
+    EditStory
+} from '@/features/stories'
 import { useDialog } from 'primevue/usedialog'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const selected = ref<IStory>()
+const selected = ref<IStoryImage | IStoryVideo>()
 
 const { data, isFetching, isError, refetch } = useStories(
     {
@@ -41,12 +48,28 @@ const beginCreateStoryInteraction = () => {
     })
 }
 
-const beginDeleteStoryInteraction = (story: IStory) => {
+const beginDeleteStoryInteraction = (story: IStoryImage | IStoryVideo) => {
     dialog.open(DeleteStory, {
         props: {
             class: 'max-w-xl w-full',
             modal: true,
             header: 'Удалить историю'
+        } as any,
+        onClose: () => {
+            selected.value = undefined
+        },
+        data: {
+            story
+        }
+    })
+}
+
+const beginEditStoryInteraction = (story: IStoryImage | IStoryVideo) => {
+    dialog.open(EditStory, {
+        props: {
+            class: 'max-w-4xl w-full',
+            modal: true,
+            header: 'Изменить историю'
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -75,6 +98,11 @@ const menuModel = ref([
         label: 'Создать',
         icon: 'pi pi-fw pi-plus',
         command: () => beginCreateStoryInteraction()
+    },
+    {
+        label: 'Изменить',
+        icon: 'pi pi-fw pi-pencil',
+        command: () => beginEditStoryInteraction(selected.value!)
     },
     {
         label: 'Удалить',
@@ -115,6 +143,11 @@ onMounted(() => {
                     </div>
 
                     <div class="flex flex-1 justify-end gap-2">
+                        <Button
+                            icon="pi pi-pencil"
+                            :disabled="!selected"
+                            @click="beginEditStoryInteraction(selected!)"
+                        />
                         <Button
                             icon="pi pi-times"
                             severity="danger"
