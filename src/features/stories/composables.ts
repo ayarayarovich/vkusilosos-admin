@@ -1,9 +1,11 @@
 import { type MaybeRef } from 'vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { IStory } from './interfaces'
+import type { IStoryImage, IStoryVideo } from './interfaces'
 
 import { axiosPrivate } from '@/network'
 import { useToast } from 'primevue/usetoast'
+
+type IStory = IStoryImage | IStoryVideo
 
 interface GetStoriesResponse {
     list: IStory[]

@@ -5,6 +5,7 @@ import type { IDish, IVariation } from './interfaces'
 import type { MaybeRef } from 'vue'
 import { useRestaurants } from '@/features/restaurants'
 import type { ITag } from '@/features/tags'
+import type { ICategory } from '../categories'
 
 interface GetDishesResponse {
     list: IDish[]
@@ -43,7 +44,7 @@ interface GetDishResponse {
     active: boolean
     belki: number
     can_deliver: boolean
-    category: number
+    category: ICategory[]
     color: number
     count: number
     created_at: string

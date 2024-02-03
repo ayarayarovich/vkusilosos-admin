@@ -1,6 +1,6 @@
 <template>
     <div>
-        <EditStoryVideos v-if="story.type === 2" />
+        <EditStoryVideos :story="story" v-if="story.type === 2" />
         <EditStoryImages :story="story" v-else />
     </div>
 </template>
