@@ -48,50 +48,6 @@
                         />
                     </template>
                 </DropdownSelect>
-
-                <DropdownSelect
-                    class="flex-1"
-                    name="addable"
-                    label="Тип"
-                    placeholder="Выберите"
-                    :options="[
-                        {
-                            label: 'Обычная',
-                            code: false
-                        },
-                        {
-                            label: 'Добавки',
-                            code: true
-                        }
-                    ]"
-                >
-                    <template #value="slotProps">
-                        <template v-if="slotProps.value">
-                            <Tag
-                                v-if="slotProps.value.code === false"
-                                :value="slotProps.value.label"
-                                severity="warning"
-                            />
-                            <Tag
-                                v-else-if="slotProps.value.code === true"
-                                :value="slotProps.value.label"
-                                severity="primary"
-                            />
-                        </template>
-                    </template>
-                    <template #option="slotProps">
-                        <Tag
-                            v-if="slotProps.option.code === false"
-                            :value="slotProps.option.label"
-                            severity="warning"
-                        />
-                        <Tag
-                            v-else-if="slotProps.option.code === true"
-                            :value="slotProps.option.label"
-                            severity="primary"
-                        />
-                    </template>
-                </DropdownSelect>
             </div>
         </div>
 
@@ -123,13 +79,11 @@ const { handleSubmit } = useForm({
         id: yup.number().required().label('ID категории'),
         name: yup.string().required().label('Название категории'),
         active: yup.boolean().required().label('Активно'),
-        addable: yup.boolean().required().label('Тип категории')
     }),
     initialValues: {
         id: category.id,
         name: category.name,
         active: category.active,
-        addable: category.addable
     }
 })
 

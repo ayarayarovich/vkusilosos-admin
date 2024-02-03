@@ -48,49 +48,6 @@
                         />
                     </template>
                 </DropdownSelect>
-
-                <DropdownSelect
-                    class="flex-1"
-                    name="addable"
-                    label="Тип"
-                    :options="[
-                        {
-                            label: 'Обычная',
-                            code: false
-                        },
-                        {
-                            label: 'Добавки',
-                            code: true
-                        }
-                    ]"
-                >
-                    <template #value="slotProps">
-                        <template v-if="slotProps.value">
-                            <Tag
-                                v-if="slotProps.value.code === false"
-                                :value="slotProps.value.label"
-                                severity="warning"
-                            />
-                            <Tag
-                                v-else-if="slotProps.value.code === true"
-                                :value="slotProps.value.label"
-                                severity="primary"
-                            />
-                        </template>
-                    </template>
-                    <template #option="slotProps">
-                        <Tag
-                            v-if="slotProps.option.code === false"
-                            :value="slotProps.option.label"
-                            severity="warning"
-                        />
-                        <Tag
-                            v-else-if="slotProps.option.code === true"
-                            :value="slotProps.option.label"
-                            severity="primary"
-                        />
-                    </template>
-                </DropdownSelect>
             </div>
         </div>
         <Button
@@ -113,18 +70,19 @@ import DropdownSelect from '@/components/DropdownSelect.vue'
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
         name: yup.string().required().label('Название'),
-        active: yup.boolean().required().label('Активна'),
-        addable: yup.boolean().required().label('Тип категории')
+        active: yup.boolean().required().label('Активна')
     }),
     initialValues: {
-        active: false,
-        addable: false
+        active: false
     }
 })
 
 const { mutate, isLoading } = useCreateCategory()
 
 const onSubmit = handleSubmit((vals) => {
-    mutate(vals)
+    mutate({
+        ...vals,
+        addable: false
+    })
 })
 </script>
