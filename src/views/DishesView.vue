@@ -1,22 +1,31 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { DataTablePageEvent } from 'primevue/datatable'
+import { ref, watch } from 'vue'
 
 import dateFormat from 'dateformat'
 import { useDebounce } from '@vueuse/core'
+import draggable from 'vuedraggable'
 
-import { CreateDish, DeleteDish, UpdateDish, useDishes, type IDish } from '@/features/dishes'
+import {
+    CreateDish,
+    DeleteDish,
+    UpdateDish,
+    useDishes,
+    type IDish,
+    DishHavingBadge,
+    DishStatusBadge
+} from '@/features/dishes'
 import { useDialog } from 'primevue/usedialog'
 import { useCategories } from '@/features/categories'
+import type { PageState } from 'primevue/paginator'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
-const searchTerm = ref('')
+const search = ref('')
 const filterCategory = ref(-1)
 const selected = ref<IDish>()
-const debouncedSearchTerm = useDebounce(searchTerm, 500)
+const debouncedSearch = useDebounce(search, 500)
 
 const { data: categoriesOptions, isLoading: isCategoriesOptionsLoading } = useCategories(
     {
@@ -46,12 +55,26 @@ const { data, refetch, isFetching, isError } = useDishes(
     {
         limit,
         offset,
-        search: debouncedSearchTerm
+        search: debouncedSearch
     },
     (r) => r
 )
 
-const onPage = (e: DataTablePageEvent) => {
+const drag = ref(false)
+const ordered = ref<IDish[]>([])
+watch(
+    [data],
+    () => {
+        if (data.value) {
+            ordered.value = data.value.list.slice()
+        }
+    },
+    {
+        immediate: true
+    }
+)
+
+const onPage = (e: PageState) => {
     offset.value = e.first
     limit.value = e.rows
 }
@@ -103,8 +126,9 @@ const refresh = () => {
 }
 
 const cm = ref()
-const onRowContextMenu = (event: any) => {
-    cm.value.show(event.originalEvent)
+const onRowContextMenu = (event: any, element: IDish) => {
+    selected.value = element
+    cm.value.show(event)
 }
 const menuModel = ref([
     {
@@ -129,14 +153,15 @@ const menuModel = ref([
     }
 ])
 
-const root = ref<HTMLElement>()
-const scrollHeight = ref()
-onMounted(() => {
-    if (root.value) {
-        const pagginatorHeight = root.value.querySelector('.p-paginator-bottom')?.clientHeight
-        scrollHeight.value = `calc(100% - ${pagginatorHeight}px)`
+const onItemClick = (item: IDish) => {
+    if (selected.value?.id === item.id) {
+        selected.value = undefined
+    } else {
+        selected.value = item
     }
-})
+}
+
+const root = ref<HTMLElement>()
 </script>
 
 <template>
@@ -151,13 +176,6 @@ onMounted(() => {
                     <div class="flex flex-1 justify-start gap-2">
                         <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
                         <Button icon="pi pi-plus" @click="beginCreateDishInteraction()" />
-                    </div>
-
-                    <div class="flex flex-1 justify-center gap-4">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" v-model="searchTerm" />
-                        </span>
                         <Dropdown
                             placeholder="Категория"
                             option-label="label"
@@ -168,7 +186,19 @@ onMounted(() => {
                         />
                     </div>
 
+                    <div class="flex flex-1 justify-center gap-4">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search" />
+                            <InputText placeholder="Поиск" v-model="search" />
+                        </span>
+                    </div>
+
                     <div class="flex flex-1 justify-end gap-2">
+                        <Button
+                            icon="pi pi-arrows-v"
+                            :disabled="!!search.length || filterCategory === -1"
+                            label="Сохранить порядок"
+                        />
                         <Button
                             icon="pi pi-pencil"
                             :disabled="!selected"
@@ -189,7 +219,96 @@ onMounted(() => {
             <Message v-if="isError" severity="error" :closable="false">
                 Не удалось загрузить таблицу
             </Message>
-            <DataTable
+
+            <div v-else-if="!data?.total" class="flex flex-col items-center gap-4 py-12">
+                <img class="h-36" src="/empty.svg" alt="" />
+                <span>Нет данных</span>
+            </div>
+
+            <div v-else class="pb-8">
+                <Paginator
+                    v-if="filterCategory === -1"
+                    v-model:rows="rowsPerPage"
+                    :totalRecords="data.total"
+                    @page="onPage"
+                    :rowsPerPageOptions="[10, 20, 30]"
+                />
+                <draggable
+                    :disabled="filterCategory === -1 || !!search.length"
+                    v-model="ordered"
+                    @start="drag = true"
+                    @end="drag = false"
+                    item-key="id"
+                    :animation="200"
+                    ghostClass="ghost"
+                    :component-data="{ name: !drag ? 'flip-list' : undefined }"
+                >
+                    <template #item="{ element }">
+                        <button
+                            class="mb-2 flex w-full items-stretch gap-4 rounded-lg border-2 border-solid border-black/10 p-4 text-start outline-none transition-all focus:border-solid focus:border-indigo-400"
+                            :class="{
+                                '!border-solid !border-indigo-400 !bg-indigo-100 shadow-lg shadow-indigo-400/25':
+                                    selected?.id === element.id
+                            }"
+                            @click="onItemClick(element)"
+                            @contextmenu="onRowContextMenu($event, element)"
+                            aria-haspopup="true"
+                        >
+                            <img
+                                class="aspect-[4/3] w-32 shrink-0"
+                                :src="element.img"
+                                :alt="element.name"
+                            />
+                            <div class="flex grow flex-col justify-center gap-1">
+                                <div>
+                                    <span class="text-black/50">Название:</span>
+                                    {{ element.name }}
+                                </div>
+                                <div class="flex items-center justify-between gap-8">
+                                    <div class="flex-1">
+                                        <span class="text-black/50">ID:</span>
+                                        {{ element.id }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="text-black/50">Создана:</span>
+                                        {{ dateFormat(element.created_at) }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="text-black/50">Обновлена:</span>
+                                        {{ dateFormat(element.updated_at) }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between gap-8">
+                                    <div class="flex-1">
+                                        <span class="text-black/50">Цена:</span>
+                                        {{ element.price }}
+                                    </div>
+
+                                    <div class="flex flex-1 items-center gap-1.5">
+                                        <span class="text-black/50">Статус:</span>
+                                        <DishStatusBadge :code="element.active" />
+                                    </div>
+
+                                    <div class="flex flex-1 items-center gap-1.5">
+                                        <span class="text-black/50">Наличие:</span>
+                                        <DishHavingBadge :code="element.have" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="invisible flex shrink items-center justify-center"
+                                :class="{
+                                    '!visible': filterCategory !== -1 && !search.length
+                                }"
+                            >
+                                <i class="pi pi-bars" />
+                            </div>
+                        </button>
+                    </template>
+                </draggable>
+            </div>
+
+            <!-- <DataTable
                 v-else
                 size="small"
                 scrollable
@@ -264,7 +383,21 @@ onMounted(() => {
                         <span>Нет данных</span>
                     </div>
                 </template>
-            </DataTable>
+            </DataTable> -->
         </div>
     </main>
 </template>
+
+<style scoped>
+.flip-list-move {
+    transition: transform 0.5s;
+}
+
+.no-move {
+    transition: transform 0s;
+}
+
+.ghost {
+    @apply opacity-40;
+}
+</style>

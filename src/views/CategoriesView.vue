@@ -147,8 +147,8 @@ const root = ref<HTMLElement>()
 
                     <div class="flex flex-1 justify-end gap-2">
                         <Button
-                            icon="pi pi-arrows-v
-"
+                            icon="pi pi-arrows-v"
+                            :disabled="!!search.length"
                             label="Сохранить порядок"
                         />
                         <Button
@@ -171,35 +171,6 @@ const root = ref<HTMLElement>()
             <Message v-if="isError" severity="error" :closable="false">
                 Не удалось загрузить данные
             </Message>
-
-            <!-- <Column selectionMode="single" headerStyle="width: 3rem" />
-                <Column field="id" header="ID" />
-                <Column field="name" header="Название" />
-                <Column fiend="active" header="Активна">
-                    <template #body="slotProps">
-                        <CategoryStatusBadge :code="slotProps.data.active" />
-                    </template>
-                </Column>
-                <Column field="created_at" header="Создано">
-                    <template #body="slotProps">
-                        {{ dateFormat(slotProps.data.created_at) }}
-                    </template>
-                </Column>
-                <Column field="updated_at" header="Обновлено">
-                    <template #body="slotProps">
-                        {{ dateFormat(slotProps.data.updated_at) }}
-                    </template>
-                </Column> -->
-            <!-- 
-                <template #loading>
-                    <ProgressSpinner class="h-8" />
-                </template>
-                <template #empty>
-                    <div class="flex flex-col items-center gap-4 py-12">
-                        <img class="h-36" src="/empty.svg" alt="" />
-                        <span>Нет данных</span>
-                    </div>
-                </template> -->
 
             <div v-else-if="!data?.total" class="flex flex-col items-center gap-4 py-12">
                 <img class="h-36" src="/empty.svg" alt="" />
