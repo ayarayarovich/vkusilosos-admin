@@ -7,14 +7,40 @@ import { useDebounce } from '@vueuse/core'
 
 import { CreateDish, DeleteDish, UpdateDish, useDishes, type IDish } from '@/features/dishes'
 import { useDialog } from 'primevue/usedialog'
+import { useCategories } from '@/features/categories'
 
 const rowsPerPage = ref(20)
 
 const offset = ref(0)
 const limit = rowsPerPage
 const searchTerm = ref('')
+const filterCategory = ref(-1)
 const selected = ref<IDish>()
 const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
+const { data: categoriesOptions, isLoading: isCategoriesOptionsLoading } = useCategories(
+    {
+        offset: 0,
+        limit: 999999999,
+        search: ''
+    },
+    (v) => {
+        const options = [
+            {
+                code: -1,
+                label: 'Все'
+            }
+        ]
+
+        options.push(
+            ...v.list.map((c) => ({
+                code: c.id,
+                label: c.name
+            }))
+        )
+        return options
+    }
+)
 
 const { data, refetch, isFetching, isError } = useDishes(
     {
@@ -127,11 +153,19 @@ onMounted(() => {
                         <Button icon="pi pi-plus" @click="beginCreateDishInteraction()" />
                     </div>
 
-                    <div class="flex flex-1 justify-center">
+                    <div class="flex flex-1 justify-center gap-4">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
                             <InputText placeholder="Поиск" v-model="searchTerm" />
                         </span>
+                        <Dropdown
+                            placeholder="Категория"
+                            option-label="label"
+                            option-value="code"
+                            v-model="filterCategory"
+                            :loading="isCategoriesOptionsLoading"
+                            :options="categoriesOptions || []"
+                        />
                     </div>
 
                     <div class="flex flex-1 justify-end gap-2">
