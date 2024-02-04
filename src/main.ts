@@ -310,3 +310,6 @@ app.component('Chart', Chart)
 app.component('Calendar', Calendar)
 
 app.mount('#app')
+
+const t: unknown
+console.log(t.pampam)
