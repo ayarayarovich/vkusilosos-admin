@@ -20,32 +20,10 @@
                     ]"
                 >
                     <template #value="slotProps">
-                        <Tag
-                            v-if="slotProps.value.code === false"
-                            icon="pi pi-ban"
-                            :value="slotProps.value.label"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.value.code === true"
-                            icon="pi pi-check-circle"
-                            :value="slotProps.value.label"
-                            severity="success"
-                        />
+                        <CategoryStatusBadge :code="slotProps.value.code" />
                     </template>
                     <template #option="slotProps">
-                        <Tag
-                            v-if="slotProps.option.code === false"
-                            icon="pi pi-ban"
-                            :value="slotProps.option.label"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.option.code === true"
-                            icon="pi pi-check-circle"
-                            :value="slotProps.option.label"
-                            severity="success"
-                        />
+                        <CategoryStatusBadge :code="slotProps.option.code" />
                     </template>
                 </DropdownSelect>
             </div>
@@ -66,6 +44,7 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useCreateCategory } from './composables'
 import DropdownSelect from '@/components/DropdownSelect.vue'
+import { CategoryStatusBadge } from '.'
 
 const { handleSubmit } = useForm({
     validationSchema: yup.object({

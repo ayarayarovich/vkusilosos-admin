@@ -6,7 +6,8 @@ import {
     CreateCategory,
     DeleteCategory,
     UpdateCategory,
-    type ICategory
+    type ICategory,
+    CategoryStatusBadge
 } from '@/features/categories'
 import { useDialog } from 'primevue/usedialog'
 import { useCategories } from '@/features/categories/composables'
@@ -186,18 +187,7 @@ onMounted(() => {
                 <Column field="name" header="Название" />
                 <Column fiend="active" header="Активна">
                     <template #body="slotProps">
-                        <Tag
-                            v-if="slotProps.data.active === false"
-                            icon="pi pi-ban"
-                            value="Не активна"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.data.active === true"
-                            icon="pi pi-check-circle"
-                            value="Активна"
-                            severity="success"
-                        />
+                        <CategoryStatusBadge :code="slotProps.data.active" />
                     </template>
                 </Column>
                 <Column field="created_at" header="Создано">

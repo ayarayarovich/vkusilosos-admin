@@ -20,32 +20,10 @@
                     ]"
                 >
                     <template #value="slotProps">
-                        <Tag
-                            v-if="slotProps.value.code === false"
-                            icon="pi pi-ban"
-                            :value="slotProps.value.label"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.value.code === true"
-                            icon="pi pi-check-circle"
-                            :value="slotProps.value.label"
-                            severity="success"
-                        />
+                        <CategoryStatusBadge :code="slotProps.value.code" />
                     </template>
                     <template #option="slotProps">
-                        <Tag
-                            v-if="slotProps.option.code === false"
-                            icon="pi pi-ban"
-                            :value="slotProps.option.label"
-                            severity="danger"
-                        />
-                        <Tag
-                            v-else-if="slotProps.option.code === true"
-                            icon="pi pi-check-circle"
-                            :value="slotProps.option.label"
-                            severity="success"
-                        />
+                        <CategoryStatusBadge :code="slotProps.option.code" />
                     </template>
                 </DropdownSelect>
             </div>
@@ -70,6 +48,7 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useUpdateCategory } from './composables'
 import type { ICategory } from './interfaces'
+import { CategoryStatusBadge } from '.'
 
 const dialogRef = inject('dialogRef') as any
 const category = dialogRef.value.data.category as ICategory
@@ -78,12 +57,12 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         id: yup.number().required().label('ID категории'),
         name: yup.string().required().label('Название категории'),
-        active: yup.boolean().required().label('Активно'),
+        active: yup.boolean().required().label('Активно')
     }),
     initialValues: {
         id: category.id,
         name: category.name,
-        active: category.active,
+        active: category.active
     }
 })
 
