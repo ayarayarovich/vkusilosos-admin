@@ -39,11 +39,17 @@ const { data: categories } = useCategories(
 
 const drag = ref(false)
 const ordered = ref<ICategory[]>([])
-watch([categories], () => {
-    if (categories.value) {
-        ordered.value = categories.value.slice()
+watch(
+    [categories],
+    () => {
+        if (categories.value) {
+            ordered.value = categories.value.slice()
+        }
+    },
+    {
+        immediate: true
     }
-})
+)
 </script>
 
 <style scoped>
