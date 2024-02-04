@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { DataTablePageEvent } from 'primevue/datatable'
+import { ref, watch } from 'vue'
 
 import {
     CreateCategory,
@@ -14,10 +13,10 @@ import { useCategories } from '@/features/categories/composables'
 import { useDebounce } from '@vueuse/core'
 import dateFormat from 'dateformat'
 
-const initialRowsPerPage = 20
+import draggable from 'vuedraggable'
 
 const offset = ref(0)
-const limit = ref(initialRowsPerPage)
+const limit = ref(999999999)
 const selected = ref<ICategory>()
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
@@ -26,11 +25,17 @@ const { data, isFetching, isError, refetch } = useCategories(
     { offset, limit, search: debouncedSearch },
     (v) => v
 )
-
-const onPage = (e: DataTablePageEvent) => {
-    offset.value = e.first
-    limit.value = e.rows
-}
+const ordered = ref<ICategory[]>([])
+watch(
+    [data],
+    () => {
+        ordered.value = data.value?.list.slice() || []
+    },
+    {
+        immediate: true
+    }
+)
+const drag = ref(false)
 
 const dialog = useDialog()
 
@@ -81,8 +86,9 @@ const refresh = () => {
 }
 
 const cm = ref()
-const onRowContextMenu = (event: any) => {
-    cm.value.show(event.originalEvent)
+const onRowContextMenu = (event: any, item: ICategory) => {
+    selected.value = item
+    cm.value.show(event)
 }
 const menuModel = ref([
     {
@@ -107,18 +113,19 @@ const menuModel = ref([
     }
 ])
 
-const root = ref<HTMLElement>()
-const scrollHeight = ref()
-onMounted(() => {
-    if (root.value) {
-        const pagginatorHeight = root.value.querySelector('.p-paginator-bottom')?.clientHeight
-        scrollHeight.value = `calc(100% - ${pagginatorHeight}px)`
+const onItemClick = (item: ICategory) => {
+    if (selected.value?.id === item.id) {
+        selected.value = undefined
+    } else {
+        selected.value = item
     }
-})
+}
+
+const root = ref<HTMLElement>()
 </script>
 
 <template>
-    <main class="flex h-screen flex-col items-stretch px-4" ref="root">
+    <main class="flex flex-col items-stretch px-4" ref="root">
         <h1 class="my-12 text-center text-3xl font-semibold leading-none text-black">Категории</h1>
 
         <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
@@ -134,11 +141,16 @@ onMounted(() => {
                     <div class="flex flex-1 justify-center">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" />
+                            <InputText placeholder="Поиск" v-model="search" />
                         </span>
                     </div>
 
                     <div class="flex flex-1 justify-end gap-2">
+                        <Button
+                            icon="pi pi-arrows-v
+"
+                            label="Сохранить порядок"
+                        />
                         <Button
                             icon="pi pi-pencil"
                             :disabled="!selected"
@@ -157,32 +169,10 @@ onMounted(() => {
 
         <div class="min-h-0 flex-1 py-6">
             <Message v-if="isError" severity="error" :closable="false">
-                Не удалось загрузить таблицу
+                Не удалось загрузить данные
             </Message>
-            <DataTable
-                v-else
-                size="small"
-                scrollable
-                :scroll-height="scrollHeight"
-                v-model:selection="selected"
-                selection-mode="single"
-                contextMenu
-                v-model:contextMenuSelection="selected"
-                @rowContextmenu="onRowContextMenu"
-                :meta-key-selection="false"
-                class="h-full overflow-hidden rounded-lg border"
-                :value="data?.list"
-                lazy
-                paginator
-                :first="0"
-                :rows="initialRowsPerPage"
-                :rowsPerPageOptions="[5, 10, 20, 50]"
-                dataKey="id"
-                tableStyle="min-width: 50rem"
-                @page="onPage($event)"
-                :totalRecords="data?.total"
-            >
-                <Column selectionMode="single" headerStyle="width: 3rem" />
+
+            <!-- <Column selectionMode="single" headerStyle="width: 3rem" />
                 <Column field="id" header="ID" />
                 <Column field="name" header="Название" />
                 <Column fiend="active" header="Активна">
@@ -199,8 +189,8 @@ onMounted(() => {
                     <template #body="slotProps">
                         {{ dateFormat(slotProps.data.updated_at) }}
                     </template>
-                </Column>
-
+                </Column> -->
+            <!-- 
                 <template #loading>
                     <ProgressSpinner class="h-8" />
                 </template>
@@ -209,8 +199,74 @@ onMounted(() => {
                         <img class="h-36" src="/empty.svg" alt="" />
                         <span>Нет данных</span>
                     </div>
-                </template>
-            </DataTable>
+                </template> -->
+
+            <div v-else-if="!data?.total" class="flex flex-col items-center gap-4 py-12">
+                <img class="h-36" src="/empty.svg" alt="" />
+                <span>Нет данных</span>
+            </div>
+
+            <div v-else>
+                <draggable
+                    :disabled="search.length"
+                    v-model="ordered"
+                    @start="drag = true"
+                    @end="drag = false"
+                    item-key="id"
+                    :animation="200"
+                    ghostClass="ghost"
+                    :component-data="{ name: !drag ? 'flip-list' : undefined }"
+                >
+                    <template #item="{ element }">
+                        <button
+                            class="mb-2 w-full rounded-lg border-2 border-solid border-black/10 p-4 text-start outline-none transition-all focus:border-solid focus:border-indigo-400"
+                            :class="{
+                                '!border-solid !border-indigo-400 !bg-indigo-100 shadow-lg shadow-indigo-400/25':
+                                    selected?.id === element.id
+                            }"
+                            @click="onItemClick(element)"
+                            @contextmenu="onRowContextMenu($event, element)"
+                            aria-haspopup="true"
+                        >
+                            <div>
+                                <span class="text-black/50">Название:</span>
+                                {{ element.name }}
+                            </div>
+                            <div class="flex items-center justify-between gap-8">
+                                <div class="flex-1">
+                                    <span class="text-black/50">ID:</span>
+                                    {{ element.id }}
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-black/50">Создана:</span>
+                                    {{ dateFormat(element.created_at) }}
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-black/50">Обновлена:</span>
+                                    {{ dateFormat(element.updated_at) }}
+                                </div>
+                                <div class="flex-1 text-end">
+                                    <CategoryStatusBadge :code="element.active" />
+                                </div>
+                            </div>
+                        </button>
+                    </template>
+                </draggable>
+            </div>
         </div>
     </main>
 </template>
+
+<style scoped>
+.flip-list-move {
+    transition: transform 0.5s;
+}
+
+.no-move {
+    transition: transform 0s;
+}
+
+.ghost {
+    @apply opacity-40;
+}
+</style>
