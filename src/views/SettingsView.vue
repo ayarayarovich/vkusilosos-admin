@@ -3,6 +3,7 @@
         <h1 class="py-12 text-center text-3xl font-semibold leading-none text-black">Настройки</h1>
         <div class="flex flex-col items-stretch gap-24">
             <CommonSettingsForm />
+            <OrderCategories />
             <Promo />
             <BroadcastNotification />
             <DocumentsForm />
@@ -15,6 +16,7 @@ import {
     CommonSettingsForm,
     DocumentsForm,
     BroadcastNotification,
-    Promo
+    Promo,
+    OrderCategories
 } from '@/features/settings'
 </script>
