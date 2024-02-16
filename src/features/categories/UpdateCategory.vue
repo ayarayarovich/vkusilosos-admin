@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="onSubmit">
-        <div>
+        <div class="mb-6">
             <MyInputNumber name="id" label="ID" disabled />
             <MyInputText name="name" label="Название" />
             <div class="flex gap-4">
@@ -29,6 +29,13 @@
             </div>
         </div>
 
+        <h2 class="mb-6 text-lg font-bold">SEO</h2>
+        <div class="grid grid-flow-row grid-cols-1 gap-x-4">
+            <MyInputText name="alt" label="Альтернативный текст" />
+            <MyInputText name="link" label="Ссылка" />
+            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+        </div>
+
         <Button
             class="mt-4 flex w-full items-center"
             type="submit"
@@ -42,6 +49,7 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputChips from '@/components/MyInputChips.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
