@@ -70,7 +70,7 @@
         </DropdownSelect>
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
-        <div class="grid grid-flow-row grid-cols-2 gap-x-4">
+        <div class="grid grid-flow-row grid-cols-1 gap-x-4 lg:grid-cols-2">
             <MyInputText name="alt" label="Альтернативный текст" />
             <MyInputText name="link" label="Ссылка" />
             <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />

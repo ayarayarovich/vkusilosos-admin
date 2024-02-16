@@ -40,7 +40,7 @@ const dialog = useDialog()
 const beginCreateBannerInteraction = () => {
     dialog.open(CreateBanner, {
         props: {
-            class: 'max-w-4xl w-full',
+            class: 'max-w-4xl w-full mx-4',
             modal: true,
             header: 'Новый баннер'
         } as any,
@@ -51,7 +51,7 @@ const beginCreateBannerInteraction = () => {
 const beginEditBannerInteraction = (banner: IBanner) => {
     dialog.open(EditBanner, {
         props: {
-            class: 'max-w-4xl w-full',
+            class: 'max-w-4xl w-full mx-4',
             modal: true,
             header: 'Изменить баннер'
         } as any,
@@ -65,7 +65,7 @@ const beginEditBannerInteraction = (banner: IBanner) => {
 const beginDeleteBannerInteraction = (banner: IBanner) => {
     dialog.open(DeleteBanner, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Удалить баннер'
         } as any,
@@ -127,32 +127,35 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreateBannerInteraction()" />
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-plus"
+                        @click="beginCreateBannerInteraction()"
+                    />
+                    <div class="p-input-icon-left grow max-md:order-1 max-md:w-full">
+                        <i class="pi pi-search" />
+                        <InputText placeholder="Поиск" v-model="search" class="w-full" />
                     </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-pencil"
-                            @click="beginEditBannerInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-times"
-                            severity="danger"
-                            @click="beginDeleteBannerInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-pencil"
+                        :disabled="!selected"
+                        @click="beginEditBannerInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        :disabled="!selected"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeleteBannerInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
