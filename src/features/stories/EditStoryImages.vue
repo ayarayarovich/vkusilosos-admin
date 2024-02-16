@@ -83,6 +83,7 @@
             </div>
 
             <div class="w-full">
+                <MyInputText :name="`story_items[${idx}].text`" label="Альтернативый текст" />
                 <MyTextarea :name="`story_items[${idx}].text`" label="Текст" />
             </div>
             <button class="absolute right-4 top-4" type="button" @click="remove(idx)">
@@ -120,6 +121,7 @@ import { axiosPrivate } from '@/network'
 import type { IStoryImage } from '.'
 import { computed } from 'vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
+import MyInputText from '@/components/MyInputText.vue'
 
 const props = defineProps<{
     story: IStoryImage
