@@ -50,6 +50,3 @@ input {
     @apply min-w-0;
 }
 
-html {
-    @apply bg-white invert;
-}
