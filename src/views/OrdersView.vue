@@ -50,7 +50,7 @@ const onRowContextMenu = (event: any) => {
 const beginUpdateOrderStatusInteraction = (order: IOrder) => {
     dialog.open(UpdateOrderStatus, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Обновить статус'
         } as any,
@@ -67,7 +67,7 @@ const beginShowOrderDetailsInteraction = (order: IOrder) => {
     console.log(order)
     dialog.open(OrderDetails, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Подробности'
         } as any,

@@ -119,7 +119,7 @@
 
         <MySkeleton :show-body="isSuccess" :skeleton="{}">
             <div class="flex items-end leading-none">
-                <div>Количество позиций в заказе</div>
+                <div>Количество позиций</div>
                 <div
                     class="mx-2 grow border-b-2 border-dotted border-black border-opacity-50"
                 ></div>
