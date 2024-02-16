@@ -72,7 +72,14 @@
             />
         </div>
 
-        <MyEditor class="h-full flex-1" name="text" label="Контент" />
+        <MyEditor class="h-full flex-1 mb-6" name="text" label="Контент" />
+
+        <h2 class="mb-6 text-lg font-bold">SEO</h2>
+        <div class="grid grid-flow-row grid-cols-2 gap-x-4">
+            <MyInputText name="alt" label="Альтернативный текст" />
+            <MyInputText name="link" label="Ссылка" />
+            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+        </div>
 
         <Button
             class="mt-8 flex w-full items-center p-4"
@@ -91,6 +98,7 @@ import * as yup from 'yup'
 import MyUploadImage from '@/components/MyUploadImage.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputText from '@/components/MyInputText.vue'
+import MyInputChips from '@/components/MyInputChips.vue'
 import MyEditor from '@/components/MyEditor.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useCreateArticle } from './composables'
