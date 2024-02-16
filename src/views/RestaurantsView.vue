@@ -38,7 +38,7 @@ const dialog = useDialog()
 const beginCreateRestaurantInteraction = () => {
     dialog.open(CreateRestaurant, {
         props: {
-            class: 'w-full max-w-4xl',
+            class: 'w-full max-w-4xl mx-4',
             modal: true,
             header: 'Новый ресторан'
         } as any
@@ -47,7 +47,7 @@ const beginCreateRestaurantInteraction = () => {
 const beginUpdateRestaurantInteraction = (restaurant: IRestaurant) => {
     dialog.open(UpdateRestaurant, {
         props: {
-            class: 'w-full max-w-4xl',
+            class: 'w-full max-w-4xl mx-4',
             modal: true,
             header: 'Изменить ресторан'
         } as any,
@@ -63,7 +63,7 @@ const beginUpdateRestaurantInteraction = (restaurant: IRestaurant) => {
 const beginDeleteRestaurantInteraction = (restaurant: IRestaurant) => {
     dialog.open(DeleteRestaurant, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Удалить ресторан'
         } as any,
@@ -125,32 +125,35 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreateRestaurantInteraction()" />
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-plus"
+                        @click="beginCreateRestaurantInteraction()"
+                    />
+                    <div class="p-input-icon-left grow max-md:order-1 max-md:w-full">
+                        <i class="pi pi-search" />
+                        <InputText placeholder="Поиск" v-model="search" class="w-full" />
                     </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" v-model="search" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-pencil"
-                            :disabled="!selected"
-                            @click="beginUpdateRestaurantInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-times"
-                            severity="danger"
-                            @click="beginDeleteRestaurantInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-pencil"
+                        :disabled="!selected"
+                        @click="beginUpdateRestaurantInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        :disabled="!selected"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeleteRestaurantInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
