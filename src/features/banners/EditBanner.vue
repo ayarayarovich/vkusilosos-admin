@@ -22,6 +22,7 @@
 
         <MyInputText name="link" label="Ссылка" />
         <DropdownSelect
+            class="mb-6"
             name="active"
             label="Активен"
             placeholder="Выберите"
@@ -68,6 +69,13 @@
             </template>
         </DropdownSelect>
 
+        <h2 class="mb-6 text-lg font-bold">SEO</h2>
+        <div class="grid grid-flow-row grid-cols-2 gap-x-4">
+            <MyInputText name="alt" label="Альтернативный текст" />
+            <MyInputText name="link" label="Ссылка" />
+            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+        </div>
+
         <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
     </form>
 </template>
@@ -75,6 +83,7 @@
 <script setup lang="ts">
 import MyInputText from '@/components/MyInputText.vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
+import MyInputChips from '@/components/MyInputChips.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
