@@ -52,7 +52,7 @@ const menuModel = ref([
 const beginRespondToReviewInteraction = (review: IReview) => {
     dialog.open(RespondToReview, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Ответить на отзыв'
         } as any,
@@ -83,25 +83,23 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <div class="p-input-icon-left grow max-md:order-1 max-md:w-full">
+                        <i class="pi pi-search" />
+                        <InputText placeholder="Поиск" disabled class="w-full" />
                     </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-check"
-                            :disabled="!selected"
-                            @click="beginRespondToReviewInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-pencil"
+                        :disabled="!selected"
+                        @click="beginRespondToReviewInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
