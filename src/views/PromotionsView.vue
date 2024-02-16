@@ -31,7 +31,7 @@ const dialog = useDialog()
 const beginCreatePromotionInteraction = () => {
     dialog.open(CreatePromotion, {
         props: {
-            class: 'max-w-6xl w-full',
+            class: 'max-w-6xl w-full mx-4',
             modal: true,
             header: 'Новая статья'
         } as any
@@ -41,7 +41,7 @@ const beginCreatePromotionInteraction = () => {
 const beginDeletePromotionInteraction = (promotion: IPromotion) => {
     dialog.open(DeletePromotion, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Подтвердите удаление'
         } as any,
@@ -57,7 +57,7 @@ const beginDeletePromotionInteraction = (promotion: IPromotion) => {
 const beginUpdatePromotionInteraction = (promotion: IPromotion) => {
     dialog.open(UpdatePromotion, {
         props: {
-            class: 'max-w-6xl w-full',
+            class: 'max-w-6xl w-full mx-4',
             modal: true,
             header: 'Изменить акцию'
         } as any,
@@ -119,32 +119,35 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreatePromotionInteraction()" />
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-plus"
+                        @click="beginCreatePromotionInteraction()"
+                    />
+                    <div class="p-input-icon-left grow max-md:order-1 max-md:w-full">
+                        <i class="pi pi-search" />
+                        <InputText placeholder="Поиск" disabled v-model="search" class="w-full" />
                     </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText disabled v-model="search" placeholder="Поиск" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-pencil"
-                            :disabled="!selected"
-                            @click="beginUpdatePromotionInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-times"
-                            severity="danger"
-                            @click="beginDeletePromotionInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-pencil"
+                        :disabled="!selected"
+                        @click="beginUpdatePromotionInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        :disabled="!selected"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeletePromotionInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>

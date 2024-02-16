@@ -1,9 +1,7 @@
 <template>
     <form @submit="onSubmit">
-        <div class="mb-2 flex gap-8">
-            <MyInputText class="flex-1" name="name" label="Название" />
-        </div>
-        <div class="flex items-center gap-8">
+        <div class="grid grid-cols-1 gap-x-4 lg:grid-cols-2">
+            <MyInputText class="col-span-full" name="name" label="Название" />
             <DropdownSelect
                 class="flex-1"
                 name="active"
@@ -53,7 +51,7 @@
         <div class="mb-8">
             <p class="mb-2 text-center font-medium">Десктопная версия (3:4)</p>
             <MyUploadImage
-                class="mx-auto max-w-[50%]"
+                class="mx-auto sm:max-w-[50%]"
                 name="img"
                 :aspect-ratio="3 / 4"
                 filename-prop-in-request="file"
@@ -64,7 +62,7 @@
         <div class="mb-8">
             <p class="mb-2 text-center font-medium">Мобильная версия (2:1)</p>
             <MyUploadImage
-                class="mx-auto max-w-[50%]"
+                class="mx-auto sm:max-w-[50%]"
                 name="phone_img"
                 :aspect-ratio="2 / 1"
                 filename-prop-in-request="file"
@@ -76,7 +74,7 @@
         <MyEditor class="mb-6 h-full flex-1" name="text" label="Контент" />
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
-        <div class="grid grid-flow-row grid-cols-2 gap-x-4">
+        <div class="grid grid-flow-row grid-cols-1 gap-x-4 lg:grid-cols-2">
             <MyInputText name="alt" label="Альтернативный текст" />
             <MyInputText name="link" label="Ссылка" />
             <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
