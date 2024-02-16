@@ -47,7 +47,7 @@ const dialog = useDialog()
 const beginBlockUnblockUserInteraction = (user: IUser) => {
     dialog.open(ChangeStatus, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Изменить статус пользователя'
         } as any,
@@ -63,7 +63,7 @@ const beginBlockUnblockUserInteraction = (user: IUser) => {
 const beginGiftBonusesToUserInteraction = (user: IUser) => {
     dialog.open(GiftBonusesToUser, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Подарить бонусы пользователю'
         } as any,
@@ -79,7 +79,7 @@ const beginGiftBonusesToUserInteraction = (user: IUser) => {
 const beginSendNotificationInteraction = (user: IUser) => {
     dialog.open(SendNotification, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Отправить уведомление'
         } as any,
@@ -95,7 +95,7 @@ const beginSendNotificationInteraction = (user: IUser) => {
 const beginShowUserDetailsInteraction = (user: IUser) => {
     dialog.open(UserDetails, {
         props: {
-            class: 'w-full max-w-xl',
+            class: 'w-full max-w-xl mx-4',
             modal: true,
             header: 'Подробности'
         } as any,
@@ -164,37 +164,37 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                    </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" v-model="search" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-user-edit"
-                            :disabled="!selected"
-                            @click="beginBlockUnblockUserInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-gift"
-                            severity="primary"
-                            @click="beginGiftBonusesToUserInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-bell"
-                            severity="primary"
-                            @click="beginSendNotificationInteraction(selected!)"
-                        />
-                    </div>
+                <div class="flex w-full flex-wrap gap-2 lg:gap-4">
+                    <Button
+                        class="shrink-0 max-lg:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <span class="p-input-icon-left grow max-lg:order-1 max-lg:w-full">
+                        <i class="pi pi-search" />
+                        <InputText class="w-full" placeholder="Поиск" v-model="search" />
+                    </span>
+                    <Button
+                        class="shrink-0 max-lg:grow"
+                        icon="pi pi-user-edit"
+                        :disabled="!selected"
+                        @click="beginBlockUnblockUserInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-lg:grow"
+                        :disabled="!selected"
+                        icon="pi pi-gift"
+                        severity="primary"
+                        @click="beginGiftBonusesToUserInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-lg:grow"
+                        :disabled="!selected"
+                        icon="pi pi-bell"
+                        severity="primary"
+                        @click="beginSendNotificationInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
