@@ -97,6 +97,13 @@
             </div>
         </div>
 
+        <h2 class="mb-6 text-lg font-bold">SEO</h2>
+        <div class="mb-6 grid grid-flow-row grid-cols-2 gap-x-4">
+            <MyInputText name="alt" label="Альтернативный текст" />
+            <MyInputText name="link" label="Ссылка" />
+            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+        </div>
+
         <h2 class="mb-6 text-lg font-bold">Время показа</h2>
         <div class="mb-8 flex items-center justify-center gap-8">
             <MyCalendar name="from_hour" time-only />
@@ -174,6 +181,7 @@ import MyInputText from '@/components/MyInputText.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputSwitch from '@/components/MyInputSwitch.vue'
 import MyCalendar from '@/components/MyCalendar.vue'
+import MyInputChips from '@/components/MyInputChips.vue'
 
 import { useCategories } from '@/features/categories'
 import { useUpdateDish, useDish } from './composables'
