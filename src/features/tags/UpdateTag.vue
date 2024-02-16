@@ -14,6 +14,7 @@
             <div class="grow">
                 <MyInputNumber name="id" label="ID" disabled />
                 <MyInputText name="name" label="Название" />
+                <MyInputText name="alt" label="Альтернативный текст" />
                 <DropdownSelect
                     name="active"
                     label="Активен"
