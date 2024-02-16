@@ -14,6 +14,11 @@ import { useDebounce } from '@vueuse/core'
 import dateFormat from 'dateformat'
 
 import draggable from 'vuedraggable'
+import { useMutation } from '@tanstack/vue-query'
+import { axiosPrivate } from '@/network'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
 
 const offset = ref(0)
 const limit = ref(999999999)
@@ -35,6 +40,20 @@ watch(
         immediate: true
     }
 )
+
+const { mutateAsync: saveOrderMutate, isLoading: isSavingOrder } = useMutation({
+    mutationFn: (vals: { positions: { id: number; position: number }[] }) =>
+        axiosPrivate.post('admin/category/positions', vals),
+    onError: () => {
+        toast.add({
+            summary: 'Ошибка',
+            detail: 'Не удалось обновить порядок',
+            severity: 'error',
+            life: 3000
+        })
+    }
+})
+
 const drag = ref(false)
 
 const dialog = useDialog()
@@ -83,6 +102,16 @@ const beginUpdateCategoryInteraction = (category: ICategory) => {
 
 const refresh = () => {
     refetch()
+}
+
+const saveOrder = () => {
+    const vals = {
+        positions: ordered.value.map((c, i) => ({
+            id: c.id,
+            position: i
+        }))
+    }
+    saveOrderMutate(vals).then(refresh)
 }
 
 const cm = ref()
@@ -148,8 +177,9 @@ const root = ref<HTMLElement>()
                     <div class="flex flex-1 justify-end gap-2">
                         <Button
                             icon="pi pi-arrows-v"
-                            :disabled="!!search.length"
+                            :disabled="!!search.length || isSavingOrder"
                             label="Сохранить порядок"
+                            @click="saveOrder"
                         />
                         <Button
                             icon="pi pi-pencil"
