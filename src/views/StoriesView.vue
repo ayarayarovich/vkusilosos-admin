@@ -41,7 +41,7 @@ const dialog = useDialog()
 const beginCreateStoryInteraction = () => {
     dialog.open(CreateStory, {
         props: {
-            class: 'max-w-4xl w-full',
+            class: 'max-w-4xl w-full mx-4',
             modal: true,
             header: 'Новая история'
         } as any
@@ -51,7 +51,7 @@ const beginCreateStoryInteraction = () => {
 const beginDeleteStoryInteraction = (story: IStoryImage | IStoryVideo) => {
     dialog.open(DeleteStory, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Удалить историю'
         } as any,
@@ -67,7 +67,7 @@ const beginDeleteStoryInteraction = (story: IStoryImage | IStoryVideo) => {
 const beginEditStoryInteraction = (story: IStoryImage | IStoryVideo) => {
     dialog.open(EditStory, {
         props: {
-            class: 'max-w-4xl w-full',
+            class: 'max-w-4xl w-full mx-4',
             modal: true,
             header: 'Изменить историю'
         } as any,
@@ -129,32 +129,35 @@ onMounted(() => {
 
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreateStoryInteraction()" />
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-plus"
+                        @click="beginCreateStoryInteraction()"
+                    />
+                    <div class="p-input-icon-left grow max-md:order-1 max-md:w-full">
+                        <i class="pi pi-search" />
+                        <InputText placeholder="Поиск" disabled class="w-full" />
                     </div>
-
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText disabled placeholder="Поиск" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-pencil"
-                            :disabled="!selected"
-                            @click="beginEditStoryInteraction(selected!)"
-                        />
-                        <Button
-                            icon="pi pi-times"
-                            severity="danger"
-                            :disabled="!selected"
-                            @click="beginDeleteStoryInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        icon="pi pi-pencil"
+                        :disabled="!selected"
+                        @click="beginEditStoryInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-md:grow"
+                        :disabled="!selected"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeleteStoryInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>

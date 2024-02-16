@@ -68,9 +68,9 @@
         <fieldset
             v-for="(field, idx) in fields"
             :key="field.key"
-            class="relative mb-4 flex w-full items-center gap-8 rounded-lg border-2 border-dashed border-gray-200 p-4"
+            class="relative mb-4 flex w-full flex-wrap items-center justify-center gap-8 rounded-lg border-2 border-dashed border-gray-200 p-4"
         >
-            <div class="w-72 shrink-0">
+            <div class="mt-8 w-72 shrink-0">
                 <MyUploadImage
                     :name="`story_items[${idx}].img`"
                     class="rounded-lg"
@@ -81,7 +81,7 @@
                 />
             </div>
 
-            <div class="w-full">
+            <div class="grow">
                 <MyInputText :name="`story_items[${idx}].text`" label="Альтернативый текст" />
                 <MyTextarea :name="`story_items[${idx}].text`" label="Текст" />
             </div>
