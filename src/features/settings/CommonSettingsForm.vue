@@ -1,7 +1,7 @@
 <template>
     <form @submit="onSubmitCommonSettings">
         <h1 class="mb-6 text-xl font-bold">Общие настройки</h1>
-        <div class="flex gap-8">
+        <div class="flex flex-col lg:gap-8 lg:flex-row">
             <div class="flex-1">
                 <MyInputNumber
                     name="from_delivery"
