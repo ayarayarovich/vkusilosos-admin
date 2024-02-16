@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import {
     CreateCategory,
@@ -25,6 +25,18 @@ const limit = ref(999999999)
 const selected = ref<ICategory>()
 const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
+const reorderMode = ref(false)
+const canReorderMode = computed(() => !search.value)
+const toggleReorderMode = () => {
+    if (!reorderMode.value) {
+        if (canReorderMode.value) {
+            reorderMode.value = true
+        }
+    } else {
+        console.log('TODO: save ordering')
+        reorderMode.value = false
+    }
+}
 
 const { data, isFetching, isError, refetch } = useCategories(
     { offset, limit, search: debouncedSearch },
@@ -40,6 +52,12 @@ watch(
         immediate: true
     }
 )
+const cancelReorder = () => {
+    if (data.value) {
+        ordered.value = data.value.list.slice() || []
+    }
+    reorderMode.value = false
+}
 
 const { mutateAsync: saveOrderMutate, isLoading: isSavingOrder } = useMutation({
     mutationFn: (vals: { positions: { id: number; position: number }[] }) =>
@@ -61,7 +79,7 @@ const dialog = useDialog()
 const beginCreateCategoryInteraction = () => {
     dialog.open(CreateCategory, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Новая категория'
         } as any
@@ -71,7 +89,7 @@ const beginCreateCategoryInteraction = () => {
 const beginDeleteCategoryInteraction = (category: ICategory) => {
     dialog.open(DeleteCategory, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Подтвердите удаление'
         } as any,
@@ -87,7 +105,7 @@ const beginDeleteCategoryInteraction = (category: ICategory) => {
 const beginUpdateCategoryInteraction = (category: ICategory) => {
     dialog.open(UpdateCategory, {
         props: {
-            class: 'max-w-xl w-full',
+            class: 'max-w-xl w-full mx-4',
             modal: true,
             header: 'Изменить категорию'
         } as any,
@@ -117,7 +135,9 @@ const saveOrder = () => {
 const cm = ref()
 const onRowContextMenu = (event: any, item: ICategory) => {
     selected.value = item
-    cm.value.show(event)
+    if (!reorderMode.value) {
+        cm.value.show(event)
+    }
 }
 const menuModel = ref([
     {
@@ -159,45 +179,73 @@ const root = ref<HTMLElement>()
 
         <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
+        <div
+            class="fixed bottom-6 left-0 right-0 mx-4 flex h-12 justify-center gap-2 lg:justify-end xl:left-64"
+        >
+            <button
+                :disabled="!canReorderMode"
+                class="rounded-full px-8 text-white shadow-xl shadow-black/25 transition-all disabled:bg-gray-400"
+                :class="{
+                    'bg-green-500 !shadow-green-400/25': canReorderMode && reorderMode,
+                    'bg-indigo-500 !shadow-indigo-400/25': canReorderMode && !reorderMode
+                }"
+                @click="toggleReorderMode"
+            >
+                <span v-if="!reorderMode">Режим "Изменения порядка"</span>
+                <span v-else>Сохранить порядок</span>
+            </button>
+            <button
+                v-if="reorderMode"
+                class="rounded-full bg-red-500 px-8 text-white shadow-xl shadow-red-400/25 transition-all"
+                @click="cancelReorder"
+            >
+                <i class="pi pi-times" />
+            </button>
+        </div>
+
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreateCategoryInteraction()" />
-                    </div>
+                <div class="flex w-full flex-wrap gap-2 lg:flex-row lg:items-center">
+                    <Button
+                        class="shrink-0 max-lg:flex-1"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        :disabled="reorderMode"
+                        class="shrink-0 max-lg:flex-1"
+                        icon="pi pi-plus"
+                        @click="beginCreateCategoryInteraction()"
+                    />
+                    <span class="p-input-icon-left grow max-lg:order-1 max-lg:w-full">
+                        <i class="pi pi-search" />
+                        <InputText
+                            class="w-full"
+                            placeholder="Поиск"
+                            v-model="search"
+                            :disabled="reorderMode"
+                        />
+                    </span>
 
-                    <div class="flex flex-1 justify-center">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" v-model="search" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-arrows-v"
-                            :disabled="!!search.length || isSavingOrder"
-                            label="Сохранить порядок"
-                            @click="saveOrder"
-                        />
-                        <Button
-                            icon="pi pi-pencil"
-                            :disabled="!selected"
-                            @click="beginUpdateCategoryInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-times"
-                            severity="danger"
-                            @click="beginDeleteCategoryInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="shrink-0 max-lg:flex-1"
+                        icon="pi pi-pencil"
+                        :disabled="!selected || reorderMode"
+                        @click="beginUpdateCategoryInteraction(selected!)"
+                    />
+                    <Button
+                        class="shrink-0 max-lg:flex-1"
+                        :disabled="!selected || reorderMode"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeleteCategoryInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
 
-        <div class="min-h-0 flex-1 py-6">
+        <div class="min-h-0 flex-1 pb-20 pt-6">
             <Message v-if="isError" severity="error" :closable="false">
                 Не удалось загрузить данные
             </Message>
@@ -209,7 +257,9 @@ const root = ref<HTMLElement>()
 
             <div v-else>
                 <draggable
-                    :disabled="search.length"
+                    :delayOnTouchOnly="true"
+                    :delay="100"
+                    :disabled="!reorderMode"
                     v-model="ordered"
                     @start="drag = true"
                     @end="drag = false"
@@ -229,11 +279,13 @@ const root = ref<HTMLElement>()
                             @contextmenu="onRowContextMenu($event, element)"
                             aria-haspopup="true"
                         >
-                            <div>
+                            <div class="mb-2 lg:mb-0">
                                 <span class="text-black/50">Название:</span>
                                 {{ element.name }}
                             </div>
-                            <div class="flex items-center justify-between gap-8">
+                            <div
+                                class="flex flex-col items-start justify-between lg:flex-row lg:items-center lg:gap-8"
+                            >
                                 <div class="flex-1">
                                     <span class="text-black/50">ID:</span>
                                     {{ element.id }}
