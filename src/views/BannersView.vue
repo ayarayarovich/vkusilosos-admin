@@ -11,7 +11,7 @@ import {
 } from '@/features/banners'
 import { useDialog } from 'primevue/usedialog'
 import { useDebounce } from '@vueuse/core'
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 
 const rowsPerPage = ref(20)
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 import { useDebounce } from '@vueuse/core'
 import draggable from 'vuedraggable'
 

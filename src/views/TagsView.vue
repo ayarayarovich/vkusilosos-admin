@@ -6,7 +6,7 @@ import { CreateTag, DeleteTag, useTags, type ITag } from '@/features/tags'
 import { useDialog } from 'primevue/usedialog'
 import { useDebounce } from '@vueuse/core'
 import UpdateTag from '@/features/tags/UpdateTag.vue'
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 
 const rowsPerPage = ref(20)
 

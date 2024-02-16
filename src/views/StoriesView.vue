@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 
 import {
     CreateStory,

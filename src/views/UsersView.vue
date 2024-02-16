@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import type { DataTablePageEvent, DataTableRowDoubleClickEvent } from 'primevue/datatable'
 import { useDebounce } from '@vueuse/core'
 
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 import {
     ChangeStatus,
     GiftBonusesToUser,

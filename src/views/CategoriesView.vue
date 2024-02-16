@@ -11,7 +11,7 @@ import {
 import { useDialog } from 'primevue/usedialog'
 import { useCategories } from '@/features/categories/composables'
 import { useDebounce } from '@vueuse/core'
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 
 import draggable from 'vuedraggable'
 import { useMutation } from '@tanstack/vue-query'

@@ -10,7 +10,7 @@ import {
     usePromotions
 } from '@/features/promotions'
 import { useDialog } from 'primevue/usedialog'
-import dateFormat from 'dateformat'
+import dateFormat from '@/dateformat'
 
 const initialRowsPerPage = 20
 
