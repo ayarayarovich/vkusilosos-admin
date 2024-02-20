@@ -6,7 +6,6 @@
             v-model="value"
             :name="props.name"
             :label="props.label"
-            :type="props.type || 'text'"
             class="w-full"
             :pt="{
                 container: {
@@ -32,17 +31,9 @@ import { computed } from 'vue'
 const props = defineProps<{
     label: string
     name: string
-    type?: string
-    initialValue?: string
 }>()
 
-const { errorMessage, handleBlur, handleChange, value } = useField<any>(
-    () => props.name,
-    {},
-    {
-        initialValue: props.initialValue
-    }
-)
+const { errorMessage, handleBlur, handleChange, value } = useField<string[]>(() => props.name)
 
 const inputID = computed(() => `input-chips-${props.name}`)
 </script>
