@@ -65,6 +65,11 @@ interface GetDishResponse {
     updated_at: string
     weight: number
     ziri: number
+    alt: string | undefined
+    link: string | undefined
+    keywords: string | undefined
+    description_seo: string | undefined
+    title: string | undefined
 
     tags: ITag[]
 
