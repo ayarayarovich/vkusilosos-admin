@@ -70,6 +70,7 @@ interface GetDishResponse {
     keywords: string | undefined
     description_seo: string | undefined
     title: string | undefined
+    iiko_sale_id: string | undefined
 
     tags: ITag[]
 

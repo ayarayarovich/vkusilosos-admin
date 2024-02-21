@@ -5,6 +5,7 @@
             <MyInputText name="name" label="Название" />
             <MyInputText name="description" label="Описание" />
             <MyInputText label="IIKO ID" name="iiko_id" />
+            <MyInputText label="IIKO SALE ID" name="iiko_sale_id" />
             <MyInputNumber label="Вес" name="weight" />
             <MyInputNumber label="Количество кусочков" name="count" />
             <MyInputNumber label="Цена" name="price" />
@@ -230,6 +231,7 @@ const { handleSubmit } = useForm({
         size: yup.number().required().label('Размер карточки'),
         description: yup.string().label('Описание'),
         iiko_id: yup.string().required().label('IIKO ID'),
+        iiko_sale_id: yup.string().required().label('IIKO SALE ID'),
         tags: yup.array().label('Теги'),
         active: yup.boolean().label('Активно'),
         can_deliver: yup.boolean().label('Можно доставить'),

@@ -42,6 +42,7 @@ export interface IDish {
     description_seo: string | undefined
     title: string | undefined
     alt: string | undefined
+    iiko_sale_id: string | undefined
 
     tags: ITag[]
 
