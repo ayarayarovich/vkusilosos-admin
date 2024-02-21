@@ -31,9 +31,10 @@
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
         <div class="grid grid-flow-row grid-cols-1 gap-x-4">
-            <MyInputText name="alt" label="Альтернативный текст" />
             <MyInputText name="link" label="Ссылка" />
-            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+            <MyInputText name="keywords" label="Ключевые слова" />
+            <MyInputText name="description_seo" label="Описание" />
+            <MyInputText name="title" label="Title" />
         </div>
 
         <Button
@@ -49,7 +50,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
-import MyInputChips from '@/components/MyInputChips.vue'
 import MyInputText from '@/components/MyInputText.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
@@ -65,12 +65,20 @@ const { handleSubmit } = useForm({
     validationSchema: yup.object({
         id: yup.number().required().label('ID категории'),
         name: yup.string().required().label('Название категории'),
-        active: yup.boolean().required().label('Активно')
+        active: yup.boolean().required().label('Активно'),
+        link: yup.string().label('Ссылка'),
+        keywords: yup.string().label('Ключевые слова'),
+        description_seo: yup.string().label('Описание'),
+        title: yup.string().label('Title')
     }),
     initialValues: {
         id: category.id,
         name: category.name,
-        active: category.active
+        active: category.active,
+        link: category.link,
+        keywords: category.keywords,
+        description_seo: category.description_seo,
+        title: category.title
     }
 })
 
