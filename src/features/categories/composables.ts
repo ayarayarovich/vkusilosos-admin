@@ -31,6 +31,7 @@ export const useCategories = <SData>(
                     search: (queryKey[1] as any).search as string
                 }
             })
+            response.data.total = response.data.list.length
             return response.data
         },
         select: selector,
@@ -137,4 +138,41 @@ export const useAdditionsCategory = () => {
             return v.list.find((t) => t.addable)
         }
     )
+}
+
+export interface SaveCategoriesOrderingMutation {
+    positions: {
+        id: number
+        position: number
+    }[]
+    category_id: number
+}
+
+export const useSaveCategoriesOrdering = () => {
+    const queryClient = useQueryClient()
+    const toast = useToast()
+
+    return useMutation({
+        mutationFn: async (vals: SaveCategoriesOrderingMutation) => {
+            const response = await axiosPrivate.post('admin/category/positions', vals)
+            return response.data
+        },
+        onSuccess() {
+            toast.add({
+                severity: 'success',
+                life: 3000,
+                summary: 'Успешно',
+                detail: `Порядок категорий сохранён.`
+            })
+            queryClient.invalidateQueries(['categories'])
+        },
+        onError(error: any) {
+            toast.add({
+                severity: 'error',
+                life: 3000,
+                summary: 'Не удалось сохранить порядок',
+                detail: error
+            })
+        }
+    })
 }

@@ -6,10 +6,12 @@ import {
     DeleteCategory,
     UpdateCategory,
     type ICategory,
-    CategoryStatusBadge
+    CategoryStatusBadge,
+    type SaveCategoriesOrderingMutation,
+    useSaveCategoriesOrdering,
+    useCategories
 } from '@/features/categories'
 import { useDialog } from 'primevue/usedialog'
-import { useCategories } from '@/features/categories/composables'
 import { useDebounce } from '@vueuse/core'
 import dateFormat from '@/dateformat'
 
@@ -27,16 +29,6 @@ const search = ref('')
 const debouncedSearch = useDebounce(search, 500)
 const reorderMode = ref(false)
 const canReorderMode = computed(() => !search.value)
-const toggleReorderMode = () => {
-    if (!reorderMode.value) {
-        if (canReorderMode.value) {
-            reorderMode.value = true
-        }
-    } else {
-        console.log('TODO: save ordering')
-        reorderMode.value = false
-    }
-}
 
 const { data, isFetching, isError, refetch } = useCategories(
     { offset, limit, search: debouncedSearch },
@@ -52,25 +44,32 @@ watch(
         immediate: true
     }
 )
+
+const { mutate: saveCategoriesOrder } = useSaveCategoriesOrdering()
+const toggleReorderMode = () => {
+    if (!reorderMode.value) {
+        if (canReorderMode.value) {
+            reorderMode.value = true
+        }
+    } else {
+        const vals: SaveCategoriesOrderingMutation = {
+            positions: ordered.value.map((c, i) => ({
+                id: c.id,
+                position: i
+            })),
+            category_id: -1
+        }
+        saveCategoriesOrder(vals)
+        reorderMode.value = false
+    }
+}
+
 const cancelReorder = () => {
     if (data.value) {
         ordered.value = data.value.list.slice() || []
     }
     reorderMode.value = false
 }
-
-const { mutateAsync: saveOrderMutate, isLoading: isSavingOrder } = useMutation({
-    mutationFn: (vals: { positions: { id: number; position: number }[] }) =>
-        axiosPrivate.post('admin/category/positions', vals),
-    onError: () => {
-        toast.add({
-            summary: 'Ошибка',
-            detail: 'Не удалось обновить порядок',
-            severity: 'error',
-            life: 3000
-        })
-    }
-})
 
 const drag = ref(false)
 
@@ -120,16 +119,6 @@ const beginUpdateCategoryInteraction = (category: ICategory) => {
 
 const refresh = () => {
     refetch()
-}
-
-const saveOrder = () => {
-    const vals = {
-        positions: ordered.value.map((c, i) => ({
-            id: c.id,
-            position: i
-        }))
-    }
-    saveOrderMutate(vals).then(refresh)
 }
 
 const cm = ref()
