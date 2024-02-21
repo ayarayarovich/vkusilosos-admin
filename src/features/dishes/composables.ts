@@ -105,7 +105,7 @@ export const useDish = <SData>(id: MaybeRef<number>, selector?: (response: IDish
 
             const rests = restaurants.value!
 
-            let vars: IVariation[] = []
+            const vars: IVariation[] = []
             for (const v of response.data.vars) {
                 const rest = rests.list.find((r) => r.id === v.rest_id)
 
