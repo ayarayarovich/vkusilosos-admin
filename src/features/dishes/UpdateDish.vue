@@ -208,7 +208,6 @@ const { data: dishData } = useDish(dish.id, (v) => {
     const vals = {
         ...v,
         tags: v.tags.map((t) => t.id),
-        category: v.category.map((c) => c.id)
     }
     return vals
 })
