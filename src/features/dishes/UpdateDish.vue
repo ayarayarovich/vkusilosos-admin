@@ -229,7 +229,7 @@ const { handleSubmit } = useForm({
         size: yup.number().required().label('Размер карточки'),
         description: yup.string().label('Описание'),
         iiko_id: yup.string().required().label('IIKO ID'),
-        iiko_sale_id: yup.string().required().label('IIKO SALE ID'),
+        iiko_sale_id: yup.string().label('IIKO SALE ID'),
         tags: yup.array().label('Теги'),
         active: yup.boolean().label('Активно'),
         can_deliver: yup.boolean().label('Можно доставить'),
