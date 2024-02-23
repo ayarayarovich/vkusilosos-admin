@@ -37,7 +37,7 @@ export interface IDish {
     updated_at: string
     weight: number
     ziri: number
-    link: string | undefined
+    dish_link: string | undefined
     keywords: string | undefined
     description_seo: string | undefined
     title: string | undefined

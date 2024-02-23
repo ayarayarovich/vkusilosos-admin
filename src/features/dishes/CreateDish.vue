@@ -100,7 +100,7 @@
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
         <div class="mb-6 grid grid-flow-row grid-cols-2 gap-x-4">
             <MyInputText name="alt" label="Альтернативный текст" />
-            <MyInputText name="link" label="Ссылка" />
+            <MyInputText name="dish_link" label="Ссылка" />
             <MyInputText name="description_seo" label="Описание" />
             <MyInputText name="title" label="Title" />
             <MyInputText class="col-span-full" name="keywords" label="Ключевые слова" />
@@ -221,7 +221,7 @@ const { handleSubmit } = useForm({
         have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        link: yup.string().label('Ссылка'),
+        dish_link: yup.string().label('Ссылка'),
         keywords: yup.string().label('Ключевые слова'),
         description_seo: yup.string().label('Описание'),
         title: yup.string().label('Title'),
