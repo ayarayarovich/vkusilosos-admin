@@ -31,7 +31,7 @@
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
         <div class="grid grid-flow-row grid-cols-1 gap-x-4">
-            <MyInputText name="link" label="Ссылка" />
+            <MyInputText name="category_link" label="Ссылка" />
             <MyInputText name="keywords" label="Ключевые слова" />
             <MyInputText name="description_seo" label="Описание" />
             <MyInputText name="title" label="Title" />

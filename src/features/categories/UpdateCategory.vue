@@ -31,7 +31,7 @@
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
         <div class="grid grid-flow-row grid-cols-1 gap-x-4">
-            <MyInputText name="link" label="Ссылка" />
+            <MyInputText name="category_link" label="Ссылка" />
             <MyInputText name="keywords" label="Ключевые слова" />
             <MyInputText name="description_seo" label="Описание" />
             <MyInputText name="title" label="Title" />
@@ -66,7 +66,7 @@ const { handleSubmit } = useForm({
         id: yup.number().required().label('ID категории'),
         name: yup.string().required().label('Название категории'),
         active: yup.boolean().required().label('Активно'),
-        link: yup.string().label('Ссылка'),
+        category_link: yup.string().label('Ссылка'),
         keywords: yup.string().label('Ключевые слова'),
         description_seo: yup.string().label('Описание'),
         title: yup.string().label('Title')
@@ -75,7 +75,7 @@ const { handleSubmit } = useForm({
         id: category.id,
         name: category.name,
         active: category.active,
-        link: category.link,
+        category_link: category.category_link,
         keywords: category.keywords,
         description_seo: category.description_seo,
         title: category.title

@@ -10,7 +10,7 @@ export interface ICategory {
     name: string
     active: boolean
     addable: boolean
-    link: string | undefined
+    category_link: string | undefined
     keywords: string | undefined
     description_seo: string | undefined
     title: string | undefined
