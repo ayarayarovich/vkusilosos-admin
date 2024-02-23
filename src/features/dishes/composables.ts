@@ -66,7 +66,7 @@ interface GetDishResponse {
     weight: number
     ziri: number
     alt: string | undefined
-    dish_link: string | undefined
+    link: string | undefined
     keywords: string | undefined
     description_seo: string | undefined
     title: string | undefined
