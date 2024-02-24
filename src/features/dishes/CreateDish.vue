@@ -71,7 +71,7 @@
 
             <MyMultiSelect
                 class="w-full"
-                name="category"
+                name="categories"
                 label="Категории"
                 placeholder="Выберите"
                 :options="possibleCategories || []"
@@ -202,7 +202,7 @@ const { handleSubmit } = useForm({
         name: yup.string().required().label('Название'),
         img: yup.string().required().label('Изображение'),
         price: yup.number().required().label('Цена'),
-        category: yup.array().required().label('Категория'),
+        categories: yup.array().required().label('Категория'),
         color: yup.string().required().label('Цвет карточки'),
         belki: yup.number().required().label('Количество белков'),
         pich_cen: yup.number().required().label('Пищевая ценность'),
@@ -312,6 +312,9 @@ watch(
 )
 
 const onSubmit = handleSubmit((vals) => {
-    mutate(vals)
+    mutate({
+        category: -1,
+        ...vals
+    })
 })
 </script>

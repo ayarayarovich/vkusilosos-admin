@@ -44,7 +44,7 @@ interface GetDishResponse {
     active: boolean
     belki: number
     can_deliver: boolean
-    category: ICategory[]
+    categories: ICategory[]
     color: number
     count: number
     created_at: string
