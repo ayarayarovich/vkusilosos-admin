@@ -66,7 +66,7 @@ const { handleSubmit } = useForm({
         id: yup.number().required().label('ID категории'),
         name: yup.string().required().label('Название категории'),
         active: yup.boolean().required().label('Активно'),
-        link: yup.string().label('Ссылка'),
+        link: yup.string().required().label('Ссылка'),
         keywords: yup.string().label('Ключевые слова'),
         description_seo: yup.string().label('Описание'),
         title: yup.string().label('Title')

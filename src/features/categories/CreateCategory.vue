@@ -58,7 +58,11 @@ import { CategoryStatusBadge } from '.'
 const { handleSubmit } = useForm({
     validationSchema: yup.object({
         name: yup.string().required().label('Название'),
-        active: yup.boolean().required().label('Активна')
+        active: yup.boolean().required().label('Активна'),
+        link: yup.string().required().label('Ссылка'),
+        keywords: yup.string().label('Ключевые слова'),
+        description_seo: yup.string().label('Описание'),
+        title: yup.string().label('Title')
     }),
     initialValues: {
         active: false

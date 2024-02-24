@@ -236,7 +236,7 @@ const { handleSubmit } = useForm({
         have: yup.boolean().label('В наличии'),
         from_hour: yup.number().required().label('Доступно С'),
         to_hour: yup.number().required().label('Доступно ДО'),
-        link: yup.string().label('Ссылка'),
+        link: yup.string().required().label('Ссылка'),
         keywords: yup.string().label('Ключевые слова'),
         description_seo: yup.string().label('Описание'),
         title: yup.string().label('Title'),
