@@ -75,8 +75,9 @@
 
         <h2 class="mb-6 text-lg font-bold">SEO</h2>
         <div class="grid grid-flow-row grid-cols-1 gap-x-4 lg:grid-cols-2">
-            <MyInputText name="alt" label="Альтернативный текст" />
             <MyInputText name="link" label="Ссылка" />
+            <MyInputText name="title" label="Title" />
+            <MyInputText class="col-span-full" name="description_seo" label="Описание" />
             <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
         </div>
 
@@ -115,7 +116,11 @@ const { handleSubmit } = useForm({
             .of(yup.date().required())
             .min(2)
             .required()
-            .label('Период активности')
+            .label('Период активности'),
+        link: yup.string().required().label('Ссылка'),
+        keywords: yup.string().label('Ключевые слова'),
+        description_seo: yup.string().label('Описание'),
+        title: yup.string().label('Title')
     }),
     initialValues: {
         active: false
