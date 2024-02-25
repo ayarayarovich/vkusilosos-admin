@@ -29,7 +29,7 @@ const filterCategory = ref(0)
 const selected = ref<IDish>()
 const debouncedSearch = useDebounce(search, 500)
 const reorderMode = ref(false)
-const canReorderMode = computed(() => !search.value && filterCategory.value !== -1)
+const canReorderMode = computed(() => !search.value && filterCategory.value !== 0)
 
 const { data: categoriesOptions, isLoading: isCategoriesOptionsLoading } = useCategories(
     {
