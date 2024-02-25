@@ -231,7 +231,14 @@ const root = ref<HTMLElement>()
                     v-model:rows="rowsPerPage"
                     :totalRecords="data.total"
                     @page="onPage"
-                    :rowsPerPageOptions="[10, 20, 30]"
+                    :page-link-size="5"
+                    :template="{
+                        '640px': 'PrevPageLink CurrentPageReport NextPageLink',
+                        '960px':
+                            'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
+                        '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'
+                    }"
+                    current-page-report-template="{currentPage} из {totalPages}"
                 />
                 <draggable
                     :disabled="filterCategory === -1 || !!search.length"

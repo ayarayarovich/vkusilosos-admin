@@ -173,11 +173,18 @@ onMounted(() => {
                 paginator
                 :first="0"
                 :rows="initialRowsPerPage"
-                :rowsPerPageOptions="[5, 10, 20, 50]"
                 dataKey="id"
                 tableStyle="min-width: 50rem"
                 @page="onPage($event)"
                 :totalRecords="data?.total"
+                :page-link-size="5"
+                :paginator-template="{
+                    '640px': 'PrevPageLink CurrentPageReport NextPageLink',
+                    '960px':
+                        'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
+                    '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'
+                }"
+                current-page-report-template="{currentPage} из {totalPages}"
             >
                 <Column selectionMode="single" headerStyle="width: 3rem" />
                 <Column field="id" header="ID" />

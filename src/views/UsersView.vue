@@ -213,6 +213,14 @@ onMounted(() => {
                 selection-mode="single"
                 contextMenu
                 v-model:contextMenuSelection="selected"
+                :page-link-size="5"
+                :paginator-template="{
+                    '640px': 'PrevPageLink CurrentPageReport NextPageLink',
+                    '960px':
+                        'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
+                    '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'
+                }"
+                current-page-report-template="{currentPage} из {totalPages}"
                 @rowContextmenu="onRowContextMenu"
                 @row-dblclick="onRowDoubleClick"
                 :meta-key-selection="false"
