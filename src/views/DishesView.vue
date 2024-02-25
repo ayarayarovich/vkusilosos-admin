@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import dateFormat from '@/dateformat'
 import { useDebounce } from '@vueuse/core'
@@ -12,7 +12,9 @@ import {
     useDishes,
     type IDish,
     DishHavingBadge,
-    DishStatusBadge
+    DishStatusBadge,
+    useSaveDishesOrdering,
+    type SaveDishesOrderingMutation
 } from '@/features/dishes'
 import { useDialog } from 'primevue/usedialog'
 import { useCategories } from '@/features/categories'
@@ -23,9 +25,11 @@ const rowsPerPage = ref(20)
 const offset = ref(0)
 const limit = rowsPerPage
 const search = ref('')
-const filterCategory = ref(-1)
+const filterCategory = ref(0)
 const selected = ref<IDish>()
 const debouncedSearch = useDebounce(search, 500)
+const reorderMode = ref(false)
+const canReorderMode = computed(() => !search.value && filterCategory.value !== -1)
 
 const { data: categoriesOptions, isLoading: isCategoriesOptionsLoading } = useCategories(
     {
@@ -36,7 +40,7 @@ const { data: categoriesOptions, isLoading: isCategoriesOptionsLoading } = useCa
     (v) => {
         const options = [
             {
-                code: -1,
+                code: 0,
                 label: 'Все'
             }
         ]
@@ -55,7 +59,8 @@ const { data, refetch, isFetching, isError } = useDishes(
     {
         limit,
         offset,
-        search: debouncedSearch
+        search: debouncedSearch,
+        categoryID: filterCategory
     },
     (r) => r
 )
@@ -73,6 +78,32 @@ watch(
         immediate: true
     }
 )
+
+const { mutate: saveDishesOrder } = useSaveDishesOrdering()
+const toggleReorderMode = () => {
+    if (!reorderMode.value) {
+        if (canReorderMode.value) {
+            reorderMode.value = true
+        }
+    } else {
+        const vals: SaveDishesOrderingMutation = {
+            positions: ordered.value.map((c, i) => ({
+                id: c.id,
+                position: i
+            })),
+            category_id: filterCategory.value
+        }
+        saveDishesOrder(vals)
+        reorderMode.value = false
+    }
+}
+
+const cancelReorder = () => {
+    if (data.value) {
+        ordered.value = data.value.list.slice() || []
+    }
+    reorderMode.value = false
+}
 
 const onPage = (e: PageState) => {
     offset.value = e.first
@@ -128,7 +159,9 @@ const refresh = () => {
 const cm = ref()
 const onRowContextMenu = (event: any, element: IDish) => {
     selected.value = element
-    cm.value.show(event)
+    if (!reorderMode.value) {
+        cm.value.show(event)
+    }
 }
 const menuModel = ref([
     {
@@ -170,47 +203,78 @@ const root = ref<HTMLElement>()
 
         <ContextMenu ref="cm" :model="menuModel" @hide="selected = undefined" />
 
+        <div
+            class="fixed bottom-6 left-0 right-0 z-10 mx-4 flex h-12 justify-center gap-2 lg:justify-end xl:left-64"
+        >
+            <button
+                :disabled="!canReorderMode"
+                class="rounded-full px-8 text-white shadow-xl shadow-black/25 transition-all disabled:bg-gray-400"
+                :class="{
+                    'bg-green-500 !shadow-green-400/25': canReorderMode && reorderMode,
+                    'bg-indigo-500 !shadow-indigo-400/25': canReorderMode && !reorderMode
+                }"
+                @click="toggleReorderMode"
+            >
+                <span v-if="!reorderMode">Режим "Изменения порядка"</span>
+                <span v-else>Сохранить порядок</span>
+            </button>
+            <button
+                v-if="reorderMode"
+                class="rounded-full bg-red-500 px-8 text-white shadow-xl shadow-red-400/25 transition-all"
+                @click="cancelReorder"
+            >
+                <i class="pi pi-times" />
+            </button>
+        </div>
+
         <Toolbar>
             <template #center>
-                <div class="flex w-full">
-                    <div class="flex flex-1 justify-start gap-2">
-                        <Button icon="pi pi-refresh" :disabled="isFetching" @click="refresh()" />
-                        <Button icon="pi pi-plus" @click="beginCreateDishInteraction()" />
-                        <Dropdown
-                            placeholder="Категория"
-                            option-label="label"
-                            option-value="code"
-                            v-model="filterCategory"
-                            :loading="isCategoriesOptionsLoading"
-                            :options="categoriesOptions || []"
+                <div class="flex w-full flex-wrap gap-2">
+                    <Button
+                        class="grow md:grow-0"
+                        icon="pi pi-refresh"
+                        :disabled="isFetching"
+                        @click="refresh()"
+                    />
+                    <Button
+                        class="grow md:grow-0"
+                        icon="pi pi-plus"
+                        :disabled="reorderMode"
+                        @click="beginCreateDishInteraction()"
+                    />
+                    <Dropdown
+                        class="w-full max-w-xs grow max-md:order-2 md:w-auto"
+                        placeholder="Категория"
+                        option-label="label"
+                        option-value="code"
+                        :disabled="reorderMode"
+                        v-model="filterCategory"
+                        :loading="isCategoriesOptionsLoading"
+                        :options="categoriesOptions || []"
+                    />
+                    <span class="p-input-icon-left w-full grow max-md:order-1 md:w-auto">
+                        <i class="pi pi-search" />
+                        <InputText
+                            placeholder="Поиск"
+                            class="w-full"
+                            v-model="search"
+                            :disabled="reorderMode"
                         />
-                    </div>
+                    </span>
 
-                    <div class="flex flex-1 justify-center gap-4">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText placeholder="Поиск" v-model="search" />
-                        </span>
-                    </div>
-
-                    <div class="flex flex-1 justify-end gap-2">
-                        <Button
-                            icon="pi pi-arrows-v"
-                            :disabled="!!search.length || filterCategory === -1"
-                            label="Сохранить порядок"
-                        />
-                        <Button
-                            icon="pi pi-pencil"
-                            :disabled="!selected"
-                            @click="beginUpdateDishInteraction(selected!)"
-                        />
-                        <Button
-                            :disabled="!selected"
-                            icon="pi pi-times"
-                            severity="danger"
-                            @click="beginDeleteDishInteraction(selected!)"
-                        />
-                    </div>
+                    <Button
+                        class="grow md:grow-0"
+                        icon="pi pi-pencil"
+                        :disabled="!selected || reorderMode"
+                        @click="beginUpdateDishInteraction(selected!)"
+                    />
+                    <Button
+                        class="grow md:grow-0"
+                        :disabled="!selected || reorderMode"
+                        icon="pi pi-times"
+                        severity="danger"
+                        @click="beginDeleteDishInteraction(selected!)"
+                    />
                 </div>
             </template>
         </Toolbar>
@@ -227,7 +291,7 @@ const root = ref<HTMLElement>()
 
             <div v-else class="pb-8">
                 <Paginator
-                    v-if="filterCategory === -1"
+                    v-if="!reorderMode"
                     v-model:rows="rowsPerPage"
                     :totalRecords="data.total"
                     @page="onPage"
@@ -241,7 +305,7 @@ const root = ref<HTMLElement>()
                     current-page-report-template="{currentPage} из {totalPages}"
                 />
                 <draggable
-                    :disabled="filterCategory === -1 || !!search.length"
+                    :disabled="!reorderMode"
                     v-model="ordered"
                     @start="drag = true"
                     @end="drag = false"
@@ -252,7 +316,7 @@ const root = ref<HTMLElement>()
                 >
                     <template #item="{ element }">
                         <button
-                            class="mb-2 flex w-full items-stretch gap-4 rounded-lg border-2 border-solid border-black/10 p-4 text-start outline-none transition-all focus:border-solid focus:border-indigo-400"
+                            class="mb-2 flex w-full flex-col items-stretch gap-4 rounded-lg border-2 border-solid border-black/10 p-4 text-start outline-none transition-all focus:border-solid focus:border-indigo-400 lg:flex-row"
                             :class="{
                                 '!border-solid !border-indigo-400 !bg-indigo-100 shadow-lg shadow-indigo-400/25':
                                     selected?.id === element.id
@@ -262,50 +326,80 @@ const root = ref<HTMLElement>()
                             aria-haspopup="true"
                         >
                             <img
-                                class="aspect-[4/3] w-32 shrink-0"
+                                class="aspect-[4/3] w-32 shrink-0 self-center drop-shadow-xl max-lg:w-52"
                                 :src="element.img"
                                 :alt="element.name"
                             />
                             <div class="flex grow flex-col justify-center gap-1">
-                                <div>
+                                <div
+                                    class="flex flex-1 gap-x-1 max-lg:w-full max-lg:items-center max-lg:justify-between max-lg:gap-1.5"
+                                >
                                     <span class="text-black/50">Название:</span>
-                                    {{ element.name }}
+                                    <span class="text-end">
+                                        {{ element.name }}
+                                    </span>
                                 </div>
-                                <div class="flex items-center justify-between gap-8">
-                                    <div class="flex-1">
+                                <div
+                                    class="flex flex-col items-start justify-between gap-y-1 lg:flex-row lg:items-center lg:gap-8"
+                                >
+                                    <div
+                                        class="flex flex-1 gap-x-1 max-lg:w-full max-lg:items-center max-lg:justify-between max-lg:gap-1.5"
+                                    >
                                         <span class="text-black/50">ID:</span>
-                                        {{ element.id }}
+                                        <span class="text-end">
+                                            {{ element.id }}
+                                        </span>
                                     </div>
-                                    <div class="flex-1">
+                                    <div
+                                        class="flex flex-1 gap-x-1 max-lg:w-full max-lg:items-center max-lg:justify-between max-lg:gap-1.5"
+                                    >
                                         <span class="text-black/50">Создана:</span>
-                                        {{ dateFormat(element.created_at) }}
+                                        <span class="text-end">
+                                            {{ dateFormat(element.created_at) }}
+                                        </span>
                                     </div>
-                                    <div class="flex-1">
+                                    <div
+                                        class="flex flex-1 gap-x-1 max-lg:w-full max-lg:items-center max-lg:justify-between max-lg:gap-1.5"
+                                    >
                                         <span class="text-black/50">Обновлена:</span>
-                                        {{ dateFormat(element.updated_at) }}
+                                        <span class="text-end">
+                                            {{ dateFormat(element.updated_at) }}
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between gap-8">
-                                    <div class="flex-1">
+                                <div
+                                    class="flex flex-col items-start justify-between gap-y-1 lg:flex-row lg:items-center lg:gap-8"
+                                >
+                                    <div
+                                        class="flex flex-1 gap-x-1 max-lg:w-full max-lg:items-center max-lg:justify-between max-lg:gap-1.5"
+                                    >
                                         <span class="text-black/50">Цена:</span>
-                                        {{ element.price }}
+                                        <span class="text-end">{{ element.price }} ₽</span>
                                     </div>
 
-                                    <div class="flex flex-1 items-center gap-1.5">
+                                    <div
+                                        class="flex flex-1 items-center gap-1.5 max-lg:w-full max-lg:justify-between"
+                                    >
                                         <span class="text-black/50">Статус:</span>
-                                        <DishStatusBadge :code="element.active" />
+                                        <span class="text-end">
+                                            <DishStatusBadge :code="element.active" />
+                                        </span>
                                     </div>
 
-                                    <div class="flex flex-1 items-center gap-1.5">
+                                    <div
+                                        class="flex flex-1 items-center gap-1.5 max-lg:w-full max-lg:justify-between"
+                                    >
                                         <span class="text-black/50">Наличие:</span>
-                                        <DishHavingBadge :code="element.have" />
+                                        <span class="text-end">
+                                            <DishHavingBadge :code="element.have" />
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             <div
                                 class="invisible flex shrink items-center justify-center"
                                 :class="{
-                                    '!visible': filterCategory !== -1 && !search.length
+                                    '!visible': reorderMode
                                 }"
                             >
                                 <i class="pi pi-bars" />
