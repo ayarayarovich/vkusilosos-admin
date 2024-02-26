@@ -69,14 +69,6 @@
             </template>
         </DropdownSelect>
 
-        <h2 class="mb-6 text-lg font-bold">SEO</h2>
-        <div class="grid grid-flow-row grid-cols-1 gap-x-4 lg:grid-cols-2">
-            <MyInputText name="link" label="Ссылка" />
-            <MyInputText name="title" label="Title" />
-            <MyInputText class="col-span-full" name="description_seo" label="Описание" />
-            <MyInputText class="col-span-full" name="keywords" label="Ключевые слова" />
-        </div>
-
         <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
     </form>
 </template>
@@ -95,9 +87,6 @@ const { handleSubmit } = useForm({
         phone_img: yup.string().required().label('Мобильная версия изображения'),
         active: yup.boolean().required().label('Активно'),
         link: yup.string().required().label('Ссылка'),
-        keywords: yup.string().label('Ключевые слова'),
-        description_seo: yup.string().label('Описание'),
-        title: yup.string().label('Title')
     }),
     initialValues: {
         active: true
