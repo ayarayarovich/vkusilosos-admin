@@ -78,7 +78,7 @@
             <MyInputText name="link" label="Ссылка" />
             <MyInputText name="title" label="Title" />
             <MyInputText class="col-span-full" name="description_seo" label="Описание" />
-            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+            <MyInputText class="col-span-full" name="keywords" label="Ключевые слова" />
         </div>
 
         <Button
@@ -98,7 +98,6 @@ import * as yup from 'yup'
 import MyUploadImage from '@/components/MyUploadImage.vue'
 import MyInputNumber from '@/components/MyInputNumber.vue'
 import MyInputText from '@/components/MyInputText.vue'
-import MyInputChips from '@/components/MyInputChips.vue'
 import MyEditor from '@/components/MyEditor.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useCreateArticle } from './composables'

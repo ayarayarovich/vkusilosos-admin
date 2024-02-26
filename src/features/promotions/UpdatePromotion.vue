@@ -81,7 +81,7 @@
             <MyInputText name="link" label="Ссылка" />
             <MyInputText name="title" label="Title" />
             <MyInputText class="col-span-full" name="description_seo" label="Описание" />
-            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+            <MyInputText class="col-span-full" name="keywords" label="Ключевые слова" />
         </div>
 
         <Button
@@ -101,7 +101,6 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 import MyInputText from '@/components/MyInputText.vue'
-import MyInputChips from '@/components/MyInputChips.vue'
 import MyEditor from '@/components/MyEditor.vue'
 
 import { usePromotion, type IPromotion, useUpdatePromotion } from './composables'

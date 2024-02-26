@@ -74,7 +74,7 @@
             <MyInputText name="link" label="Ссылка" />
             <MyInputText name="title" label="Title" />
             <MyInputText class="col-span-full" name="description_seo" label="Описание" />
-            <MyInputChips class="col-span-full" name="keywords" label="Ключевые слова" />
+            <MyInputText class="col-span-full" name="keywords" label="Ключевые слова" />
         </div>
 
         <Button class="mt-12 flex w-full justify-center p-4" type="submit">Создать</Button>
@@ -84,7 +84,6 @@
 <script setup lang="ts">
 import MyInputText from '@/components/MyInputText.vue'
 import MyUploadImage from '@/components/MyUploadImage.vue'
-import MyInputChips from '@/components/MyInputChips.vue'
 import DropdownSelect from '@/components/DropdownSelect.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
