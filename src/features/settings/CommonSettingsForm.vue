@@ -1,7 +1,7 @@
 <template>
     <form @submit="onSubmitCommonSettings">
         <h1 class="mb-6 text-xl font-bold">Общие настройки</h1>
-        <div class="flex flex-col lg:gap-8 lg:flex-row">
+        <div class="flex flex-col lg:flex-row lg:gap-8">
             <div class="flex-1">
                 <MyInputNumber
                     name="from_delivery"
@@ -15,6 +15,7 @@
                     mode="currency"
                     currency="RUB"
                 />
+                <MyInputText name="time_deliver" label="Время доставки" />
                 <MyInputNumber
                     name="min_price"
                     label="Минимальная сумма заказа"
@@ -23,10 +24,10 @@
                 />
                 <MyInputNumber name="bonus_percent" label="Процент бонусов" />
                 <MyInputText name="instagram" label="Instagram" />
-                <MyInputText name="vk" label="VK" />
             </div>
 
             <div class="flex-1">
+                <MyInputText name="vk" label="VK" />
                 <MyInputText name="whatsapp" label="WhatsApp" />
                 <MyInputText name="viber" label="Viber" />
                 <MyInputText name="youtube" label="YouTube" />
@@ -85,6 +86,7 @@ const { handleSubmit } = useForm({
             .required()
             .label('Сумма, начиная с которой доставка бесплатная'),
         deliver_price: yup.number().required().label('Цена доставки'),
+        time_deliver: yup.string().required().label('Время доставки'),
         min_price: yup.number().required().label('Минимальная сумма заказа'),
         bonus_percent: yup.number().required().label('Процент бонусов от суммы заказа'),
         instagram: yup.string().label('Ссылка на Instagram'),
