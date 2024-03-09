@@ -290,20 +290,6 @@ const root = ref<HTMLElement>()
             </div>
 
             <div v-else class="pb-8">
-                <Paginator
-                    v-if="!reorderMode"
-                    v-model:rows="rowsPerPage"
-                    :totalRecords="data.total"
-                    @page="onPage"
-                    :page-link-size="5"
-                    :template="{
-                        '640px': 'PrevPageLink CurrentPageReport NextPageLink',
-                        '960px':
-                            'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
-                        '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'
-                    }"
-                    current-page-report-template="{currentPage} из {totalPages}"
-                />
                 <draggable
                     :disabled="!reorderMode"
                     v-model="ordered"
@@ -407,6 +393,21 @@ const root = ref<HTMLElement>()
                         </button>
                     </template>
                 </draggable>
+
+                <Paginator
+                    v-if="!reorderMode"
+                    v-model:rows="rowsPerPage"
+                    :totalRecords="data.total"
+                    @page="onPage"
+                    :page-link-size="5"
+                    :template="{
+                        '640px': 'PrevPageLink CurrentPageReport NextPageLink',
+                        '960px':
+                            'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
+                        '1300px': 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'
+                    }"
+                    current-page-report-template="{currentPage} из {totalPages}"
+                />
             </div>
 
             <!-- <DataTable
