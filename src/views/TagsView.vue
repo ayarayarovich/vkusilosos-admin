@@ -37,7 +37,8 @@ const beginCreateTagInteraction = () => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Новый тег'
+            header: 'Новый тег',
+            dismissableMask: true
         } as any
     })
 }
@@ -47,7 +48,8 @@ const beginDeleteTagInteraction = (tag: ITag) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Удалить тег'
+            header: 'Удалить тег',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -63,7 +65,8 @@ const beginUpdateTagInteraction = (tag: ITag) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Изменить тег'
+            header: 'Изменить тег',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

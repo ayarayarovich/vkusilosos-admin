@@ -33,7 +33,8 @@ const beginCreateArticleInteraction = () => {
         props: {
             class: 'max-w-6xl w-full mx-4',
             modal: true,
-            header: 'Новая статья'
+            header: 'Новая статья',
+            dismissableMask: true
         } as any
     })
 }
@@ -43,7 +44,8 @@ const beginDeleteArticleInteraction = (article: IBlog) => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Подтвердите удаление'
+            header: 'Подтвердите удаление',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -59,7 +61,8 @@ const beginUpdateArticleInteraction = (article: IBlog) => {
         props: {
             class: 'max-w-6xl w-full mx-4',
             modal: true,
-            header: 'Изменить статью'
+            header: 'Изменить статью',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

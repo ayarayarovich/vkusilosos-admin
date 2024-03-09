@@ -80,7 +80,8 @@ const beginCreateCategoryInteraction = () => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Новая категория'
+            header: 'Новая категория',
+            dismissableMask: true
         } as any
     })
 }
@@ -90,7 +91,8 @@ const beginDeleteCategoryInteraction = (category: ICategory) => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Подтвердите удаление'
+            header: 'Подтвердите удаление',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -106,7 +108,8 @@ const beginUpdateCategoryInteraction = (category: ICategory) => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Изменить категорию'
+            header: 'Изменить категорию',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

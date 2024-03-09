@@ -40,7 +40,8 @@ const beginCreateRestaurantInteraction = () => {
         props: {
             class: 'w-full max-w-4xl mx-4',
             modal: true,
-            header: 'Новый ресторан'
+            header: 'Новый ресторан',
+            dismissableMask: true
         } as any
     })
 }
@@ -49,7 +50,8 @@ const beginUpdateRestaurantInteraction = (restaurant: IRestaurant) => {
         props: {
             class: 'w-full max-w-4xl mx-4',
             modal: true,
-            header: 'Изменить ресторан'
+            header: 'Изменить ресторан',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -65,7 +67,8 @@ const beginDeleteRestaurantInteraction = (restaurant: IRestaurant) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Удалить ресторан'
+            header: 'Удалить ресторан',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

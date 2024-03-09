@@ -54,7 +54,8 @@ const beginRespondToReviewInteraction = (review: IReview) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Ответить на отзыв'
+            header: 'Ответить на отзыв',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

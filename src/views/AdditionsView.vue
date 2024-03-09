@@ -42,7 +42,8 @@ const beginCreateAdditionInteraction = () => {
         props: {
             class: 'w-full max-w-5xl',
             modal: true,
-            header: 'Новая добавка'
+            header: 'Новая добавка',
+            dismissableMask: true
         } as any
     })
 }
@@ -51,7 +52,8 @@ const beginUpdateAdditionInteraction = (addition: IAddition) => {
         props: {
             class: 'w-full max-w-5xl',
             modal: true,
-            header: 'Изменить добавку'
+            header: 'Изменить добавку',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -67,7 +69,8 @@ const beginDeleteAdditionInteraction = (addition: IAddition) => {
         props: {
             class: 'w-full max-w-xl',
             modal: true,
-            header: 'Удалить добавку'
+            header: 'Удалить добавку',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

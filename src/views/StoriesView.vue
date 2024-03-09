@@ -43,7 +43,8 @@ const beginCreateStoryInteraction = () => {
         props: {
             class: 'max-w-4xl w-full mx-4',
             modal: true,
-            header: 'Новая история'
+            header: 'Новая история',
+            dismissableMask: true
         } as any
     })
 }
@@ -53,7 +54,8 @@ const beginDeleteStoryInteraction = (story: IStoryImage | IStoryVideo) => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Удалить историю'
+            header: 'Удалить историю',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -69,7 +71,8 @@ const beginEditStoryInteraction = (story: IStoryImage | IStoryVideo) => {
         props: {
             class: 'max-w-4xl w-full mx-4',
             modal: true,
-            header: 'Изменить историю'
+            header: 'Изменить историю',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

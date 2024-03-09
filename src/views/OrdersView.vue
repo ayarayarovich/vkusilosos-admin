@@ -52,7 +52,8 @@ const beginUpdateOrderStatusInteraction = (order: IOrder) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Обновить статус'
+            header: 'Обновить статус',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -69,7 +70,8 @@ const beginShowOrderDetailsInteraction = (order: IOrder) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Подробности'
+            header: 'Подробности',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

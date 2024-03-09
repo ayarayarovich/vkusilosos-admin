@@ -49,7 +49,8 @@ const beginBlockUnblockUserInteraction = (user: IUser) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Изменить статус пользователя'
+            header: 'Изменить статус пользователя',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -65,7 +66,8 @@ const beginGiftBonusesToUserInteraction = (user: IUser) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Подарить бонусы пользователю'
+            header: 'Подарить бонусы пользователю',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -81,7 +83,8 @@ const beginSendNotificationInteraction = (user: IUser) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Отправить уведомление'
+            header: 'Отправить уведомление',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -97,7 +100,8 @@ const beginShowUserDetailsInteraction = (user: IUser) => {
         props: {
             class: 'w-full max-w-xl mx-4',
             modal: true,
-            header: 'Подробности'
+            header: 'Подробности',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

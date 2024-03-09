@@ -116,7 +116,8 @@ const beginCreateDishInteraction = () => {
         props: {
             class: 'w-full max-w-5xl',
             modal: true,
-            header: 'Новое блюдо'
+            header: 'Новое блюдо',
+            dismissableMask: true
         } as any
     })
 }
@@ -125,7 +126,8 @@ const beginUpdateDishInteraction = (dish: IDish) => {
         props: {
             class: 'w-full max-w-5xl',
             modal: true,
-            header: 'Изменить блюдо'
+            header: 'Изменить блюдо',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
@@ -141,7 +143,8 @@ const beginDeleteDishInteraction = (dish: IDish) => {
         props: {
             class: 'w-full max-w-xl',
             modal: true,
-            header: 'Удалить блюдо'
+            header: 'Удалить блюдо',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined

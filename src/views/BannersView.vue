@@ -42,7 +42,8 @@ const beginCreateBannerInteraction = () => {
         props: {
             class: 'max-w-4xl w-full mx-4',
             modal: true,
-            header: 'Новый баннер'
+            header: 'Новый баннер',
+            dismissableMask: true
         } as any,
         onClose: () => (selected.value = undefined)
     })
@@ -53,7 +54,8 @@ const beginEditBannerInteraction = (banner: IBanner) => {
         props: {
             class: 'max-w-4xl w-full mx-4',
             modal: true,
-            header: 'Изменить баннер'
+            header: 'Изменить баннер',
+            dismissableMask: true
         } as any,
         onClose: () => (selected.value = undefined),
         data: {
@@ -67,7 +69,8 @@ const beginDeleteBannerInteraction = (banner: IBanner) => {
         props: {
             class: 'max-w-xl w-full mx-4',
             modal: true,
-            header: 'Удалить баннер'
+            header: 'Удалить баннер',
+            dismissableMask: true
         } as any,
         onClose: () => {
             selected.value = undefined
