@@ -75,7 +75,6 @@ export const useOrder = (id: MaybeRef<number | undefined>) => {
                     id: orderId
                 }
             })
-            console.log(response.data)
             return response.data
         }
     })

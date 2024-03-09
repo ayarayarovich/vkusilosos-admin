@@ -11,6 +11,7 @@ import {
     PaymentStatusBadge
 } from '@/features/orders'
 import { useDialog } from 'primevue/usedialog'
+import dateformat from '@/dateformat'
 
 const rowsPerPage = ref(20)
 
@@ -184,6 +185,11 @@ onMounted(() => {
                     </template>
                 </Column>
                 <Column field="iiko_id" header="IIKO ID" />
+                <Column field="created_at" header="Создан">
+                    <template #body="slotProps">
+                        {{ dateformat(slotProps.data.created_at) }}
+                    </template>
+                </Column>
 
                 <template #loading>
                     <ProgressSpinner class="h-8" />
