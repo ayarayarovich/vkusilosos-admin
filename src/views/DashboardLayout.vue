@@ -10,7 +10,13 @@
             class="w-full max-w-xs"
         >
             <template #header>
-                <img :src="logoSrc" class="h-8 w-full object-contain object-center pl-5" alt="" />
+                <a href="https://vkusilosos.ru">
+                    <img
+                        :src="logoSrc"
+                        class="h-8 w-full object-contain object-center pl-5"
+                        alt=""
+                    />
+                </a>
             </template>
             <div class="flex flex-col items-stretch px-6 py-4 text-black">
                 <ul class="flex grow flex-col gap-1">
@@ -56,7 +62,13 @@
             class="fixed hidden h-screen w-64 shrink-0 overflow-y-auto scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-gray-200 xl:block"
         >
             <div class="flex flex-col items-stretch px-6 py-4 text-black">
-                <img :src="logoSrc" class="my-6 h-8 w-full object-contain object-center" alt="" />
+                <a href="https://vkusilosos.ru">
+                    <img
+                        :src="logoSrc"
+                        class="my-6 h-8 w-full object-contain object-center"
+                        alt=""
+                    />
+                </a>
 
                 <ul class="flex grow flex-col gap-1">
                     <template v-for="g of menu" :key="g.name">
