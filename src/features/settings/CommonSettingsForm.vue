@@ -43,6 +43,10 @@
             :max-selected-labels="3"
         />
 
+        <MyInputText name="title" label="Title" />
+        <MyInputText name="description" label="Описание" />
+        <MyInputText name="keywords" label="Ключевые слова" />
+
         <Button label="Обновить настройки" class="mt-4 w-full" type="submit" />
     </form>
 </template>
@@ -96,7 +100,11 @@ const { handleSubmit } = useForm({
         youtube: yup.string().label('Ссылка на YouTube'),
         phone: yup.string().required().label('Номер телефона'),
         email: yup.string().required().label('Электронная почта'),
-        tags: yup.array().of(yup.number()).required().label('Важные теги')
+        tags: yup.array().of(yup.number()).required().label('Важные теги'),
+
+        title: yup.string().required().label('Title'),
+        description: yup.string().label('Описание'),
+        keywords: yup.string().label('Ключевые слова')
     }),
     initialValues: data
 })
